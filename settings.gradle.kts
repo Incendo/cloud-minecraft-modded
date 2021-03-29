@@ -44,3 +44,6 @@ rootProject.name = "cloud-minecraft-modded"
 include("cloud-minecraft-modded-common")
 include("cloud-fabric")
 include("cloud-neoforge")
+include("cloud-sponge")
+include("examples/cloud-sponge")
+findProject(":examples/cloud-sponge")?.name = "cloud-sponge"
