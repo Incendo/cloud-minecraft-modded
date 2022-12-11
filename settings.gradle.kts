@@ -6,6 +6,9 @@ pluginManagement {
             mavenContent { snapshotsOnly() }
         }
         maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.spongepowered.org/repository/maven-public/") {
+            mavenContent { includeGroup("org.spongepowered") }
+        }
         maven("https://maven.fabricmc.net/")
         maven("https://maven.neoforged.net/releases/")
         maven("https://maven.architectury.dev/")
@@ -26,6 +29,9 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://central.sonatype.com/repository/maven-snapshots/") {
             mavenContent { snapshotsOnly() }
+        }
+        maven("https://repo.spongepowered.org/repository/maven-public/") {
+            mavenContent { includeGroup("org.spongepowered") }
         }
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://maven.fabricmc.net/")
