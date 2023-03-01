@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[44,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/Incendo/cloud-forge/issues"
+showAsResourcePack = false
+
+[[mods]]
+modId = "cloud_forge"
+version = "$version"
+displayName = "Cloud Command Framework"
+displayURL = "https://github.com/Incendo/cloud-forge"
+authors = "Cloud Contributors"
+description = "Cloud Command Framework on Forge"
+displayTest = "NONE"
+
+[[dependencies.cloud_forge]]
+modId = "forge"
+mandatory = true
+versionRange = "[44,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.cloud_forge]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.3,1.20)"
+ordering = "NONE"
+side = "BOTH"
