@@ -4,6 +4,7 @@ plugins {
     val indraVer = "3.0.1"
     id("net.kyori.indra") version indraVer
     id("net.kyori.indra.publishing") version indraVer
+    id("net.kyori.indra.publishing.sonatype") version indraVer
     id("net.kyori.indra.license-header") version indraVer
     id("dev.architectury.loom") version "1.1-SNAPSHOT"
 }
