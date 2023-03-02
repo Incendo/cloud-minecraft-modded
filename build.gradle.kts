@@ -18,6 +18,10 @@ license {
 
 val transitiveInclude: Configuration by configurations.creating
 
+loom {
+    silentMojangMappingsLicense()
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:1.19.3")
     mappings(loom.officialMojangMappings())
@@ -42,7 +46,7 @@ configurations.include {
 
 tasks {
     withType<AbstractRunTask>().configureEach {
-        systemProperty("cloud_forge.test_commands", true)
+        systemProperty("cloud.test_commands", true)
     }
     processResources {
         inputs.property("version", project.version)

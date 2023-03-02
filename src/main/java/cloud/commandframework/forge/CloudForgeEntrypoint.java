@@ -50,7 +50,7 @@ import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@Mod("cloud_forge")
+@Mod("cloud")
 public final class CloudForgeEntrypoint {
     private static boolean serverStartingCalled;
 
@@ -58,7 +58,7 @@ public final class CloudForgeEntrypoint {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> serverStartingCalled = true);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, CloudForgeEntrypoint::registerPermissions);
 
-        if (Boolean.getBoolean("cloud_forge.test_commands")) {
+        if (Boolean.getBoolean("cloud.test_commands")) {
             testServerManager();
             testClientManager();
         }
@@ -144,7 +144,7 @@ public final class CloudForgeEntrypoint {
         manager.command(manager.commandBuilder("cloud")
             .literal("forge")
             .argument(StringArgument.greedy("string"))
-            .permission("cloud_forge.hello")
+            .permission("cloud.hello")
             .handler(ctx -> ctx.getSender().sendSystemMessage(Component.literal(ctx.get("string")))));
     }
 }
