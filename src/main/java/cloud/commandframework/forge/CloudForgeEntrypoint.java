@@ -36,13 +36,16 @@ import cloud.commandframework.permission.PredicatePermission;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -66,6 +69,12 @@ public final class CloudForgeEntrypoint {
     }
 
     private static void registerPermissions(final PermissionGatherEvent.Nodes event) {
+        event.addNodes(new PermissionNode<>(
+            "cloud",
+            "hover-stacktrace",
+            PermissionTypes.BOOLEAN,
+            CloudForgeEntrypoint::defaultPermissionHandler
+        ));
         for (final ForgeCommandManager<?> manager : ForgeServerCommandManager.INSTANCES) {
             registerPermissionsForManager(event, manager);
         }
@@ -82,7 +91,7 @@ public final class CloudForgeEntrypoint {
                     permissionString.substring(0, i),
                     permissionString.substring(i + 1),
                     PermissionTypes.BOOLEAN,
-                    (player, uuid, contexts) -> player != null && player.hasPermissions(player.server.getOperatorUserPermissionLevel())
+                    CloudForgeEntrypoint::defaultPermissionHandler
                 );
             })
             .forEach(event::addNodes);
@@ -116,10 +125,14 @@ public final class CloudForgeEntrypoint {
         }
     }
 
+    private static Boolean defaultPermissionHandler(final @Nullable ServerPlayer player, final UUID uuid, final PermissionDynamicContext<?>... contexts) {
+        return player != null && player.hasPermissions(player.server.getOperatorUserPermissionLevel());
+    }
+
     private static void testClientManager() {
-        final ForgeClientCommandManager<CommandSourceStack> clientManager = ForgeClientCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
-        clientManager.brigadierManager().setNativeNumberSuggestions(false);
-        clientManager.command(clientManager.commandBuilder("cloud_client")
+        final ForgeClientCommandManager<CommandSourceStack> manager = ForgeClientCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
+        manager.brigadierManager().setNativeNumberSuggestions(false);
+        manager.command(manager.commandBuilder("cloud_client")
             .literal("forge")
             .argument(StringArgument.greedy("string"))
             .handler(ctx -> ctx.getSender().sendSystemMessage(Component.literal(ctx.get("string")))));
