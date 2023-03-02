@@ -26,15 +26,15 @@ package cloud.commandframework.forge;
 import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.keys.SimpleCloudKey;
 import io.leangen.geantyref.TypeToken;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
 
 public final class ForgeCommandContextKeys {
 
     private ForgeCommandContextKeys() {
     }
 
-    public static final CloudKey<SharedSuggestionProvider> NATIVE_COMMAND_SOURCE = SimpleCloudKey.of(
+    public static final CloudKey<CommandSourceStack> NATIVE_COMMAND_SOURCE = SimpleCloudKey.of(
         "cloud:forge_command_source",
-        TypeToken.get(SharedSuggestionProvider.class)
+        TypeToken.get(CommandSourceStack.class)
     );
 }
