@@ -18,9 +18,7 @@ license {
 
 val transitiveInclude: Configuration by configurations.creating
 
-loom {
-    silentMojangMappingsLicense()
-}
+loom.silentMojangMappingsLicense()
 
 dependencies {
     minecraft("com.mojang:minecraft:1.19.3")
