@@ -22,9 +22,9 @@ val transitiveInclude: Configuration by configurations.creating
 loom.silentMojangMappingsLicense()
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.19.3")
+    minecraft("com.mojang:minecraft:1.19.4")
     mappings(loom.officialMojangMappings())
-    forge("net.minecraftforge", "forge", "1.19.3-44.1.0")
+    forge("net.minecraftforge", "forge", "1.19.4-45.0.0")
     api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.2"))!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-core")!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-brigadier")!!)!!)
