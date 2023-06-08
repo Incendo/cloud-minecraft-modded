@@ -6,7 +6,7 @@ plugins {
     id("net.kyori.indra.publishing") version indraVer
     id("net.kyori.indra.publishing.sonatype") version indraVer
     id("net.kyori.indra.license-header") version indraVer
-    id("dev.architectury.loom") version "1.1-SNAPSHOT"
+    id("dev.architectury.loom") version "1.2-SNAPSHOT"
 }
 
 indra {
@@ -22,10 +22,10 @@ val transitiveInclude: Configuration by configurations.creating
 loom.silentMojangMappingsLicense()
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.19.4")
+    minecraft("com.mojang:minecraft:1.20")
     mappings(loom.officialMojangMappings())
-    forge("net.minecraftforge", "forge", "1.19.4-45.0.0")
-    api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.2"))!!)!!)
+    forge("net.minecraftforge", "forge", "1.20-46.0.1")
+    api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.3"))!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-core")!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-brigadier")!!)!!)
 }
