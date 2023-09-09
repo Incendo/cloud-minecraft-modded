@@ -163,7 +163,7 @@ final class ForgeExecutor<C> implements Command<CommandSourceStack> {
                     LOGGER.warn(
                         "Error occurred while executing command for user {}:",
                         this.getName.apply(source),
-                        throwable
+                        throwable.getCause()
                     );
                 }
             );
