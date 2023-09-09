@@ -25,7 +25,7 @@ dependencies {
     minecraft("com.mojang:minecraft:1.20")
     mappings(loom.officialMojangMappings())
     forge("net.minecraftforge", "forge", "1.20-46.0.1")
-    api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.3"))!!)!!)
+    api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.4"))!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-core")!!)!!)
     api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-brigadier")!!)!!)
 }
