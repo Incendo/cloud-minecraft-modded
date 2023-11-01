@@ -34,14 +34,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ClientCommandSourceStack;
+import net.neoforged.neoforge.client.ClientCommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A command manager for registering client-side commands.
  *
  * <p>All commands should be registered within mod initializers. Any registrations occurring after the first call to
- * {@link net.minecraftforge.client.event.RegisterClientCommandsEvent} will be considered <em>unsafe</em>, and will only be permitted when the unsafe
+ * {@link net.neoforged.neoforge.client.event.RegisterClientCommandsEvent} will be considered <em>unsafe</em>, and will only be permitted when the unsafe
  * registration manager option is enabled.</p>
  *
  * @param <C> the command sender type

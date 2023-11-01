@@ -38,11 +38,11 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.client.ClientCommandHandler;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -132,8 +132,8 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
         @Override
         void initialize(final ForgeCommandManager<C> manager) {
             super.initialize(manager);
-            MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
-            MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> this.registerEventFired = false);
+            NeoForge.EVENT_BUS.addListener(this::registerCommands);
+            NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> this.registerEventFired = false);
         }
 
         @Override
@@ -181,7 +181,7 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
         @Override
         void initialize(final ForgeCommandManager<C> manager) {
             super.initialize(manager);
-            MinecraftForge.EVENT_BUS.addListener(this::registerAllCommands);
+            NeoForge.EVENT_BUS.addListener(this::registerAllCommands);
         }
 
         @Override

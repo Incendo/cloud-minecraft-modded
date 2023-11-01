@@ -1,12 +1,17 @@
 import net.fabricmc.loom.task.AbstractRunTask
+import org.gradlex.javaecosystem.capabilities.rules.GuavaListenableFutureRule
 
 plugins {
-    val indraVer = "3.0.1"
+    val indraVer = "3.1.3"
     id("net.kyori.indra") version indraVer
     id("net.kyori.indra.publishing") version indraVer
     id("net.kyori.indra.publishing.sonatype") version indraVer
     id("net.kyori.indra.license-header") version indraVer
-    id("dev.architectury.loom") version "1.2-SNAPSHOT"
+    id("dev.architectury.loom") version "1.4-SNAPSHOT"
+}
+
+repositories {
+    maven("https://maven.neoforged.net/releases/")
 }
 
 indra {
@@ -17,17 +22,32 @@ license {
     header(file("HEADER"))
 }
 
-val transitiveInclude: Configuration by configurations.creating
+val transitiveInclude: Configuration by configurations.creating {
+    exclude("org.checkerframework")
+    exclude("org.apiguardian")
+}
 
 loom.silentMojangMappingsLicense()
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.20")
+    components.withModule(GuavaListenableFutureRule.MODULES[0]) {
+        // Ad-hoc rule to revert the effect of 'GuavaListenableFutureRule' (NeoForge has broken dependencies)
+        allVariants {
+            withCapabilities {
+                removeCapability(GuavaListenableFutureRule.CAPABILITY_GROUP, GuavaListenableFutureRule.CAPABILITY_NAME)
+            }
+        }
+    }
+
+    minecraft("com.mojang:minecraft:1.20.2")
     mappings(loom.officialMojangMappings())
-    forge("net.minecraftforge", "forge", "1.20-46.0.1")
-    api(transitiveInclude(forgeExtra(platform("cloud.commandframework:cloud-bom:1.8.4"))!!)!!)
-    api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-core")!!)!!)
-    api(transitiveInclude(forgeExtra("cloud.commandframework:cloud-brigadier")!!)!!)
+    neoForge("net.neoforged", "neoforge", "20.2.54-beta")
+
+    listOf("api", transitiveInclude.name, "forgeExtra").forEach { c ->
+        c(platform("cloud.commandframework:cloud-bom:1.8.4"))
+        c("cloud.commandframework:cloud-core")
+        c("cloud.commandframework:cloud-brigadier")
+    }
 }
 
 java {

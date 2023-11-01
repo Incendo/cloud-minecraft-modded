@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[46,)"
+loaderVersion = "[1,)"
 license = "MIT"
 issueTrackerURL = "https://github.com/Incendo/cloud-forge/issues"
 showAsResourcePack = false
@@ -14,15 +14,15 @@ description = "Cloud Command Framework on Forge"
 displayTest = "IGNORE_ALL_VERSION"
 
 [[dependencies.cloud]]
-modId = "forge"
+modId = "neoforge"
 mandatory = true
-versionRange = "[46,)"
+versionRange = "[20.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.cloud]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,1.21)"
+versionRange = "[1.20.2,1.21)"
 ordering = "NONE"
 side = "BOTH"

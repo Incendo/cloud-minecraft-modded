@@ -36,9 +36,9 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
-import net.minecraftforge.server.permission.nodes.PermissionTypes;
+import net.neoforged.neoforge.server.permission.PermissionAPI;
+import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
+import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 
 public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
 
@@ -81,7 +81,7 @@ public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
         );
 
         if (CloudForgeEntrypoint.hasServerAlreadyStarted()) {
-            throw new IllegalStateException("ForgefabrServerCommandManager was created too late! Because command registration "
+            throw new IllegalStateException("ForgeServerCommandManager was created too late! Because command registration "
                 + "occurs before the server instance is created, commands should be registered in mod initializers.");
         }
     }
