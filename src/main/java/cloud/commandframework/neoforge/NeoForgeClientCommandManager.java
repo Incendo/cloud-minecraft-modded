@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
@@ -46,19 +46,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <C> the command sender type
  */
-public final class ForgeClientCommandManager<C> extends ForgeCommandManager<C> {
+public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManager<C> {
 
     /**
      * Create a command manager using native source types.
      *
      * @param execCoordinator Execution coordinator instance.
      * @return a new command manager
-     * @see #ForgeClientCommandManager(Function, Function, Function) for a more thorough explanation
+     * @see #NeoForgeClientCommandManager(Function, Function, Function) for a more thorough explanation
      */
-    public static ForgeClientCommandManager<CommandSourceStack> createNative(
+    public static NeoForgeClientCommandManager<CommandSourceStack> createNative(
         final Function<CommandTree<CommandSourceStack>, CommandExecutionCoordinator<CommandSourceStack>> execCoordinator
     ) {
-        return new ForgeClientCommandManager<>(execCoordinator, Function.identity(), Function.identity());
+        return new NeoForgeClientCommandManager<>(execCoordinator, Function.identity(), Function.identity());
     }
 
     /**
@@ -75,7 +75,7 @@ public final class ForgeClientCommandManager<C> extends ForgeCommandManager<C> {
      * @param commandSourceMapper          Function that maps {@link CommandSourceStack} to the command sender type
      * @param backwardsCommandSourceMapper Function that maps the command sender type to {@link CommandSourceStack}
      */
-    public ForgeClientCommandManager(
+    public NeoForgeClientCommandManager(
         final Function<CommandTree<C>, CommandExecutionCoordinator<C>> commandExecutionCoordinator,
         final Function<CommandSourceStack, C> commandSourceMapper,
         final Function<C, CommandSourceStack> backwardsCommandSourceMapper
@@ -84,7 +84,7 @@ public final class ForgeClientCommandManager<C> extends ForgeCommandManager<C> {
             commandExecutionCoordinator,
             commandSourceMapper,
             backwardsCommandSourceMapper,
-            new ForgeCommandRegistrationHandler.Client<>(),
+            new NeoForgeCommandRegistrationHandler.Client<>(),
             () -> new ClientCommandSourceStack(
                 CommandSource.NULL,
                 Vec3.ZERO,

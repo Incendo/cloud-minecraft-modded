@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.exceptions.ArgumentParseException;
 import cloud.commandframework.exceptions.CommandExecutionException;
@@ -47,7 +47,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import org.slf4j.Logger;
 
-final class ForgeExecutor<C> implements Command<CommandSourceStack> {
+final class NeoForgeExecutor<C> implements Command<CommandSourceStack> {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -58,18 +58,18 @@ final class ForgeExecutor<C> implements Command<CommandSourceStack> {
             + "Please contact the server administrators if you believe that this is in error.";
     private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
-    private final ForgeCommandManager<C> manager;
+    private final NeoForgeCommandManager<C> manager;
     private final Function<CommandSourceStack, String> getName;
     private final BiConsumer<CommandSourceStack, Component> sendError;
 
-    ForgeExecutor(
-        final ForgeCommandManager<C> manager
+    NeoForgeExecutor(
+        final NeoForgeCommandManager<C> manager
     ) {
         this(manager, CommandSourceStack::getTextName, CommandSourceStack::sendFailure);
     }
 
-    ForgeExecutor(
-        final ForgeCommandManager<C> manager,
+    NeoForgeExecutor(
+        final NeoForgeCommandManager<C> manager,
         final Function<CommandSourceStack, String> getName,
         final BiConsumer<CommandSourceStack, Component> sendError
     ) {

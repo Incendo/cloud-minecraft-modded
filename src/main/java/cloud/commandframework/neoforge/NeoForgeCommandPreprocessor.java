@@ -21,20 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.keys.SimpleCloudKey;
-import io.leangen.geantyref.TypeToken;
-import net.minecraft.commands.CommandSourceStack;
+import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
+import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
-public final class ForgeCommandContextKeys {
+@DefaultQualifier(NonNull.class)
+final class NeoForgeCommandPreprocessor<C> implements CommandPreprocessor<C> {
 
-    private ForgeCommandContextKeys() {
+    private final NeoForgeCommandManager<C> manager;
+
+    NeoForgeCommandPreprocessor(final NeoForgeCommandManager<C> manager) {
+        this.manager = manager;
     }
 
-    public static final CloudKey<CommandSourceStack> NATIVE_COMMAND_SOURCE = SimpleCloudKey.of(
-        "cloud:forge_command_source",
-        TypeToken.get(CommandSourceStack.class)
-    );
+    @Override
+    public void accept(final CommandPreprocessingContext<C> context) {
+        context.getCommandContext().store(
+            NeoForgeCommandContextKeys.NATIVE_COMMAND_SOURCE,
+            this.manager.backwardsCommandSourceMapper().apply(context.getCommandContext().getSender())
+        );
+    }
 }

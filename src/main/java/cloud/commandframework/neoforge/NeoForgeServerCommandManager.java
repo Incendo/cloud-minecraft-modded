@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
@@ -40,7 +40,7 @@ import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 
-public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
+public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManager<C> {
 
     public static final CommandMeta.Key<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CommandMeta.Key.of(
         Commands.CommandSelection.class,
@@ -49,14 +49,14 @@ public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
 
     private final Cache<String, PermissionNode<Boolean>> permissionNodeCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
-    public static ForgeServerCommandManager<CommandSourceStack> createNative(
+    public static NeoForgeServerCommandManager<CommandSourceStack> createNative(
         final Function<CommandTree<CommandSourceStack>,
             CommandExecutionCoordinator<CommandSourceStack>> execCoordinator
     ) {
-        return new ForgeServerCommandManager<>(execCoordinator, Function.identity(), Function.identity());
+        return new NeoForgeServerCommandManager<>(execCoordinator, Function.identity(), Function.identity());
     }
 
-    public ForgeServerCommandManager(
+    public NeoForgeServerCommandManager(
         final Function<CommandTree<C>,
             CommandExecutionCoordinator<C>> commandExecutionCoordinator,
         final Function<CommandSourceStack, C> commandSourceMapper,
@@ -66,7 +66,7 @@ public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
             commandExecutionCoordinator,
             commandSourceMapper,
             backwardsCommandSourceMapper,
-            new ForgeCommandRegistrationHandler.Server<>(),
+            new NeoForgeCommandRegistrationHandler.Server<>(),
             () -> new CommandSourceStack(
                 CommandSource.NULL,
                 Vec3.ZERO,
@@ -80,8 +80,8 @@ public final class ForgeServerCommandManager<C> extends ForgeCommandManager<C> {
             )
         );
 
-        if (CloudForgeEntrypoint.hasServerAlreadyStarted()) {
-            throw new IllegalStateException("ForgeServerCommandManager was created too late! Because command registration "
+        if (CloudNeoForgeEntrypoint.hasServerAlreadyStarted()) {
+            throw new IllegalStateException(this.getClass().getSimpleName() + " was created too late! Because command registration "
                 + "occurs before the server instance is created, commands should be registered in mod initializers.");
         }
     }

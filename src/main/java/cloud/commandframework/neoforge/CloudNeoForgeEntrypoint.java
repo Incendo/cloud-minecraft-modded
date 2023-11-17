@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.CommandTree;
@@ -51,12 +51,12 @@ import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Mod("cloud")
-public final class CloudForgeEntrypoint {
+public final class CloudNeoForgeEntrypoint {
     private static boolean serverStartingCalled;
 
-    public CloudForgeEntrypoint() {
+    public CloudNeoForgeEntrypoint() {
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> serverStartingCalled = true);
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, CloudForgeEntrypoint::registerPermissions);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, CloudNeoForgeEntrypoint::registerPermissions);
 
         if (Boolean.getBoolean("cloud.test_commands")) {
             testServerManager();
@@ -73,14 +73,14 @@ public final class CloudForgeEntrypoint {
             "cloud",
             "hover-stacktrace",
             PermissionTypes.BOOLEAN,
-            CloudForgeEntrypoint::defaultPermissionHandler
+            CloudNeoForgeEntrypoint::defaultPermissionHandler
         ));
-        for (final ForgeCommandManager<?> manager : ForgeServerCommandManager.INSTANCES) {
+        for (final NeoForgeCommandManager<?> manager : NeoForgeServerCommandManager.INSTANCES) {
             registerPermissionsForManager(event, manager);
         }
     }
 
-    private static void registerPermissionsForManager(final PermissionGatherEvent.Nodes event, final ForgeCommandManager<?> manager) {
+    private static void registerPermissionsForManager(final PermissionGatherEvent.Nodes event, final NeoForgeCommandManager<?> manager) {
         final Set<String> permissions = new HashSet<>();
         collectPermissions(permissions, manager.commandTree().getRootNodes());
         permissions.stream()
@@ -91,7 +91,7 @@ public final class CloudForgeEntrypoint {
                     permissionString.substring(0, i),
                     permissionString.substring(i + 1),
                     PermissionTypes.BOOLEAN,
-                    CloudForgeEntrypoint::defaultPermissionHandler
+                    CloudNeoForgeEntrypoint::defaultPermissionHandler
                 );
             })
             .forEach(event::addNodes);
@@ -130,7 +130,7 @@ public final class CloudForgeEntrypoint {
     }
 
     private static void testClientManager() {
-        final ForgeClientCommandManager<CommandSourceStack> manager = ForgeClientCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
+        final NeoForgeClientCommandManager<CommandSourceStack> manager = NeoForgeClientCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
         manager.brigadierManager().setNativeNumberSuggestions(false);
         manager.command(manager.commandBuilder("cloud_client")
             .literal("forge")
@@ -139,7 +139,7 @@ public final class CloudForgeEntrypoint {
     }
 
     private static void testServerManager() {
-        final ForgeServerCommandManager<CommandSourceStack> manager = ForgeServerCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
+        final NeoForgeServerCommandManager<CommandSourceStack> manager = NeoForgeServerCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
         manager.brigadierManager().setNativeNumberSuggestions(false);
         manager.command(manager.commandBuilder("cloud")
             .literal("forge")

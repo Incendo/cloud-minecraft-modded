@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import java.util.Collections;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.ApiStatus;
 public final class ContextualArgumentTypeProvider<V> implements Supplier<ArgumentType<V>> {
 
     private static final ThreadLocal<ThreadLocalContext> CONTEXT = new ThreadLocal<>();
-    private static final Map<ForgeCommandManager<?>, Set<ContextualArgumentTypeProvider<?>>> INSTANCES = new WeakHashMap<>();
+    private static final Map<NeoForgeCommandManager<?>, Set<ContextualArgumentTypeProvider<?>>> INSTANCES = new WeakHashMap<>();
 
     private final Function<CommandBuildContext, ArgumentType<V>> provider;
     private volatile ArgumentType<V> provided;
@@ -51,7 +51,7 @@ public final class ContextualArgumentTypeProvider<V> implements Supplier<Argumen
      * @param action         an action to perform while the context is exposed
      */
     public static void withBuildContext(
-        final ForgeCommandManager<?> commandManager,
+        final NeoForgeCommandManager<?> commandManager,
         final CommandBuildContext ctx,
         final boolean resetExisting,
         final Runnable action
@@ -75,7 +75,7 @@ public final class ContextualArgumentTypeProvider<V> implements Supplier<Argumen
     }
 
     private record ThreadLocalContext(
-        ForgeCommandManager<?> commandManager,
+        NeoForgeCommandManager<?> commandManager,
         CommandBuildContext commandBuildContext
     ) {
         private Set<ContextualArgumentTypeProvider<?>> instances() {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.CommandTree;
@@ -42,19 +42,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 
 @DefaultQualifier(NonNull.class)
-public abstract class ForgeCommandManager<C>
+public abstract class NeoForgeCommandManager<C>
     extends CommandManager<C> implements BrigadierManagerHolder<C> {
-    static final Set<ForgeCommandManager<?>> INSTANCES = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
+    static final Set<NeoForgeCommandManager<?>> INSTANCES = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     private final Function<CommandSourceStack, C> commandSourceMapper;
     private final Function<C, CommandSourceStack> backwardsCommandSourceMapper;
     private final CloudBrigadierManager<C, CommandSourceStack> brigadierManager;
 
-    protected ForgeCommandManager(
+    protected NeoForgeCommandManager(
         final Function<CommandTree<C>, CommandExecutionCoordinator<C>> commandExecutionCoordinator,
         final Function<CommandSourceStack, C> commandSourceMapper,
         final Function<C, CommandSourceStack> backwardsCommandSourceMapper,
-        final ForgeCommandRegistrationHandler<C> registrationHandler,
+        final NeoForgeCommandRegistrationHandler<C> registrationHandler,
         final Supplier<CommandSourceStack> dummyCommandSourceProvider
     ) {
         super(commandExecutionCoordinator, registrationHandler);
@@ -67,7 +67,7 @@ public abstract class ForgeCommandManager<C>
         ));
         this.brigadierManager.backwardsBrigadierSenderMapper(this.backwardsCommandSourceMapper);
         this.brigadierManager.brigadierSenderMapper(this.commandSourceMapper);
-        this.registerCommandPreProcessor(new ForgeCommandPreprocessor<>(this));
+        this.registerCommandPreProcessor(new NeoForgeCommandPreprocessor<>(this));
         this.commandSuggestionProcessor(new FilteringCommandSuggestionProcessor<>(
             FilteringCommandSuggestionProcessor.Filter.<C>startsWith(true).andTrimBeforeLastSpace()
         ));

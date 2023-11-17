@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cloud.commandframework.forge;
+package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.StaticArgument;
@@ -47,21 +47,21 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A registration handler for Minecraft Forge.
+ * A registration handler for NeoForge.
  *
  * <p>Subtypes exist for client and server commands.</p>
  *
  * @param <C> command sender type
  */
-abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistrationHandler {
+abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrationHandler {
 
-    private @MonotonicNonNull ForgeCommandManager<C> commandManager;
+    private @MonotonicNonNull NeoForgeCommandManager<C> commandManager;
 
-    void initialize(final ForgeCommandManager<C> manager) {
+    void initialize(final NeoForgeCommandManager<C> manager) {
         this.commandManager = manager;
     }
 
-    ForgeCommandManager<C> commandManager() {
+    NeoForgeCommandManager<C> commandManager() {
         return this.commandManager;
     }
 
@@ -79,7 +79,7 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
                     perm
                 ),
                 true,
-                new ForgeExecutor<>(this.commandManager())
+                new NeoForgeExecutor<>(this.commandManager())
             );
 
         rootNode.addChild(baseNode);
@@ -124,13 +124,13 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
         return builder.build();
     }
 
-    static class Client<C> extends ForgeCommandRegistrationHandler<C> {
+    static class Client<C> extends NeoForgeCommandRegistrationHandler<C> {
 
         private final Set<Command<C>> registeredCommands = ConcurrentHashMap.newKeySet();
         private volatile boolean registerEventFired = false;
 
         @Override
-        void initialize(final ForgeCommandManager<C> manager) {
+        void initialize(final NeoForgeCommandManager<C> manager) {
             super.initialize(manager);
             NeoForge.EVENT_BUS.addListener(this::registerCommands);
             NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> this.registerEventFired = false);
@@ -174,12 +174,12 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
         }
     }
 
-    static class Server<C> extends ForgeCommandRegistrationHandler<C> {
+    static class Server<C> extends NeoForgeCommandRegistrationHandler<C> {
 
         private final Set<Command<C>> registeredCommands = ConcurrentHashMap.newKeySet();
 
         @Override
-        void initialize(final ForgeCommandManager<C> manager) {
+        void initialize(final NeoForgeCommandManager<C> manager) {
             super.initialize(manager);
             NeoForge.EVENT_BUS.addListener(this::registerAllCommands);
         }
@@ -200,7 +200,7 @@ abstract class ForgeCommandRegistrationHandler<C> implements CommandRegistration
                     for (final Command<C> command : this.registeredCommands) {
                         /* Only register commands in the declared environment */
                         final Commands.CommandSelection env = command.getCommandMeta().getOrDefault(
-                            ForgeServerCommandManager.META_REGISTRATION_ENVIRONMENT,
+                            NeoForgeServerCommandManager.META_REGISTRATION_ENVIRONMENT,
                             Commands.CommandSelection.ALL
                         );
 
