@@ -1,5 +1,4 @@
 import net.fabricmc.loom.task.AbstractRunTask
-import org.gradlex.javaecosystem.capabilities.rules.GuavaListenableFutureRule
 
 plugins {
     val indraVer = "3.1.3"
@@ -7,10 +6,12 @@ plugins {
     id("net.kyori.indra.publishing") version indraVer
     id("net.kyori.indra.publishing.sonatype") version indraVer
     id("net.kyori.indra.license-header") version indraVer
-    id("dev.architectury.loom") version "1.4-SNAPSHOT"
+    id("xyz.jpenilla.quiet-architectury-loom") version "1.4-SNAPSHOT"
 }
 
 repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
 }
 
@@ -27,18 +28,7 @@ val transitiveInclude: Configuration by configurations.creating {
     exclude("org.apiguardian")
 }
 
-loom.silentMojangMappingsLicense()
-
 dependencies {
-    components.withModule(GuavaListenableFutureRule.MODULES[0]) {
-        // Ad-hoc rule to revert the effect of 'GuavaListenableFutureRule' (NeoForge has broken dependencies)
-        allVariants {
-            withCapabilities {
-                removeCapability(GuavaListenableFutureRule.CAPABILITY_GROUP, GuavaListenableFutureRule.CAPABILITY_NAME)
-            }
-        }
-    }
-
     minecraft("com.mojang:minecraft:1.20.2")
     mappings(loom.officialMojangMappings())
     neoForge("net.neoforged", "neoforge", "20.2.86")
