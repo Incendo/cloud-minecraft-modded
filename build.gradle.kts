@@ -41,7 +41,7 @@ dependencies {
 
     minecraft("com.mojang:minecraft:1.20.2")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged", "neoforge", "20.2.54-beta")
+    neoForge("net.neoforged", "neoforge", "20.2.86")
 
     listOf("api", transitiveInclude.name, "forgeExtra").forEach { c ->
         c(platform("cloud.commandframework:cloud-bom:1.8.4"))
