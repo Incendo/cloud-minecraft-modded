@@ -40,9 +40,9 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.20.2")
+    minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged:neoforge:20.2.86")
+    neoForge("net.neoforged:neoforge:20.4.43-beta")
 
     api(platform("cloud.commandframework:cloud-bom:1.8.4"))
     api("cloud.commandframework:cloud-core")
