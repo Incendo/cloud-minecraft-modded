@@ -25,30 +25,55 @@ package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.CommandTree;
+import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
+import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.exceptions.*;
+import cloud.commandframework.exceptions.handling.ExceptionContext;
+import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.execution.FilteringCommandSuggestionProcessor;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.logging.LogUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.*;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
+import org.slf4j.Logger;
 
 @DefaultQualifier(NonNull.class)
 public abstract class NeoForgeCommandManager<C>
     extends CommandManager<C> implements BrigadierManagerHolder<C> {
+
     static final Set<NeoForgeCommandManager<?>> INSTANCES = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Component NEWLINE = Component.literal("\n");
+    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
+    private static final String MESSAGE_NO_PERMS =
+        "I'm sorry, but you do not have permission to perform this command. "
+            + "Please contact the server administrators if you believe that this is in error.";
+    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     private final Function<CommandSourceStack, C> commandSourceMapper;
     private final Function<C, CommandSourceStack> backwardsCommandSourceMapper;
     private final CloudBrigadierManager<C, CommandSourceStack> brigadierManager;
+    private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
 
     protected NeoForgeCommandManager(
         final Function<CommandTree<C>, CommandExecutionCoordinator<C>> commandExecutionCoordinator,
@@ -61,16 +86,18 @@ public abstract class NeoForgeCommandManager<C>
         INSTANCES.add(this);
         this.commandSourceMapper = commandSourceMapper;
         this.backwardsCommandSourceMapper = backwardsCommandSourceMapper;
+        this.suggestionFactory = super.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion);
         this.brigadierManager = new CloudBrigadierManager<>(this, () -> new CommandContext<>(
             this.commandSourceMapper.apply(dummyCommandSourceProvider.get()),
             this
-        ));
+        ), this.suggestionFactory);
         this.brigadierManager.backwardsBrigadierSenderMapper(this.backwardsCommandSourceMapper);
         this.brigadierManager.brigadierSenderMapper(this.commandSourceMapper);
         this.registerCommandPreProcessor(new NeoForgeCommandPreprocessor<>(this));
         this.commandSuggestionProcessor(new FilteringCommandSuggestionProcessor<>(
             FilteringCommandSuggestionProcessor.Filter.<C>startsWith(true).andTrimBeforeLastSpace()
         ));
+        this.registerDefaultExceptionHandlers();
         registrationHandler.initialize(this);
     }
 
@@ -97,7 +124,99 @@ public abstract class NeoForgeCommandManager<C>
         return this.brigadierManager;
     }
 
+    @Override
+    public @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory() {
+        return this.suggestionFactory;
+    }
+
     final void registrationCalled() {
         this.lockRegistration();
+    }
+
+    private void registerDefaultExceptionHandlers() {
+        final BiConsumer<CommandSourceStack, Component> sendError = CommandSourceStack::sendFailure;
+        final Function<CommandSourceStack, String> getName = CommandSourceStack::getTextName;
+
+        this.registerHandler(Throwable.class, (source, sender, throwable) -> {
+            sendError.accept(source, this.decorateHoverStacktrace(
+                Component.literal(MESSAGE_INTERNAL_ERROR),
+                throwable,
+                sender
+            ));
+            LOGGER.warn("Error occurred while executing command for user {}:", getName.apply(source), throwable);
+        });
+        this.registerHandler(CommandExecutionException.class, (source, sender, throwable) -> {
+            sendError.accept(source, this.decorateHoverStacktrace(
+                Component.literal(MESSAGE_INTERNAL_ERROR),
+                throwable.getCause(),
+                sender
+            ));
+            LOGGER.warn(
+                "Error occurred while executing command for user {}:",
+                getName.apply(source),
+                throwable.getCause()
+            );
+        });
+        this.registerHandler(ArgumentParseException.class, (source, sender, throwable) -> {
+            if (throwable.getCause() instanceof CommandSyntaxException) {
+                sendError.accept(source, Component.literal("Invalid Command Argument: ")
+                    .append(Component.literal("")
+                        .append(ComponentUtils
+                            .fromMessage(((CommandSyntaxException) throwable.getCause()).getRawMessage()))
+                        .withStyle(ChatFormatting.GRAY)));
+            } else {
+                sendError.accept(source, Component.literal("Invalid Command Argument: ")
+                    .append(Component.literal(throwable.getCause().getMessage())
+                        .withStyle(ChatFormatting.GRAY)));
+            }
+        });
+        this.registerHandler(NoSuchCommandException.class, (source, sender, throwable) ->
+            sendError.accept(source, Component.literal(MESSAGE_UNKNOWN_COMMAND)));
+        this.registerHandler(NoPermissionException.class, (source, sender, throwable) ->
+            sendError.accept(source, Component.literal(MESSAGE_NO_PERMS)));
+        this.registerHandler(InvalidCommandSenderException.class, (source, sender, throwable) ->
+            sendError.accept(source, Component.literal(throwable.getMessage())));
+        this.registerHandler(InvalidSyntaxException.class, (source, sender, throwable) ->
+            sendError.accept(source, Component.literal("Invalid Command Syntax. Correct command syntax is: ")
+                .append(Component.literal(String.format("/%s", throwable.getCorrectSyntax()))
+                    .withStyle(style -> style.withColor(ChatFormatting.GRAY)))));
+    }
+
+    private <T extends Throwable> void registerHandler(final Class<T> exceptionType, final NeoForgeExceptionHandler<C, T> handler) {
+        this.exceptionController().registerHandler(exceptionType, handler);
+    }
+
+    private MutableComponent decorateHoverStacktrace(final MutableComponent input, final Throwable cause, final C sender) {
+        if (!this.hasPermission(sender, "cloud.hover-stacktrace")) {
+            return input;
+        }
+
+        final StringWriter writer = new StringWriter();
+        cause.printStackTrace(new PrintWriter(writer));
+        final String stackTrace = writer.toString().replace("\t", "    ");
+        return input.withStyle(style -> style
+            .withHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                Component.literal(stackTrace)
+                    .append(NEWLINE)
+                    .append(Component.literal("    Click to copy")
+                        .withStyle(s2 -> s2.withColor(ChatFormatting.GRAY).withItalic(true)))
+            ))
+            .withClickEvent(new ClickEvent(
+                ClickEvent.Action.COPY_TO_CLIPBOARD,
+                stackTrace
+            )));
+    }
+
+    @FunctionalInterface
+    private interface NeoForgeExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
+
+        @Override
+        default void handle(final ExceptionContext<C, T> context) throws Throwable {
+            final CommandSourceStack commandSourceStack = context.context().get(NeoForgeCommandContextKeys.NATIVE_COMMAND_SOURCE);
+            this.handle(commandSourceStack, context.context().sender(), context.exception());
+        }
+
+        void handle(CommandSourceStack source, C sender, T throwable);
     }
 }

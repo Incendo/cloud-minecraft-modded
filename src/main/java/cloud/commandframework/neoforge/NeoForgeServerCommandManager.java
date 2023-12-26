@@ -25,7 +25,7 @@ package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.meta.CommandMeta;
+import cloud.commandframework.keys.CloudKey;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
@@ -42,9 +42,9 @@ import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 
 public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManager<C> {
 
-    public static final CommandMeta.Key<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CommandMeta.Key.of(
-        Commands.CommandSelection.class,
-        "cloud:registration-environment"
+    public static final CloudKey<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CloudKey.of(
+        "cloud:registration-environment",
+        Commands.CommandSelection.class
     );
 
     private final Cache<String, PermissionNode<Boolean>> permissionNodeCache = CacheBuilder.newBuilder().maximumSize(100).build();

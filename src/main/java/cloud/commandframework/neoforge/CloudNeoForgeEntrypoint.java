@@ -24,12 +24,9 @@
 package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.arguments.CommandArgument;
-import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.permission.AndPermission;
-import cloud.commandframework.permission.CommandPermission;
 import cloud.commandframework.permission.OrPermission;
 import cloud.commandframework.permission.Permission;
 import cloud.commandframework.permission.PredicatePermission;
@@ -37,6 +34,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +47,8 @@ import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 
 @Mod("cloud")
 public final class CloudNeoForgeEntrypoint {
@@ -82,7 +82,7 @@ public final class CloudNeoForgeEntrypoint {
 
     private static void registerPermissionsForManager(final PermissionGatherEvent.Nodes event, final NeoForgeCommandManager<?> manager) {
         final Set<String> permissions = new HashSet<>();
-        collectPermissions(permissions, manager.commandTree().getRootNodes());
+        collectPermissions(permissions, manager.commandTree().rootNodes());
         permissions.stream()
             .filter(permissionString -> event.getNodes().stream().noneMatch(node -> node.getNodeName().equals(permissionString)))
             .map(permissionString -> {
@@ -99,29 +99,27 @@ public final class CloudNeoForgeEntrypoint {
 
     private static <C> void collectPermissions(
         final Set<String> permissions,
-        final Collection<CommandTree.Node<CommandArgument<C, ?>>> nodes
+        final Collection<CommandNode<C>> nodes
     ) {
-        for (final CommandTree.Node<CommandArgument<C, ?>> node : nodes) {
-            final @Nullable Command<C> owningCommand = node.getValue().getOwningCommand();
+        for (final CommandNode<C> node : nodes) {
+            final @Nullable Command<C> owningCommand = node.component().owningCommand();
             if (owningCommand != null) {
-                recurseCommandPermission(permissions, owningCommand.getCommandPermission());
+                recurseCommandPermission(permissions, owningCommand.commandPermission());
             }
-            collectPermissions(permissions, node.getChildren());
+            collectPermissions(permissions, node.children());
         }
     }
 
-    private static void recurseCommandPermission(final Set<String> permissions, final CommandPermission permission) {
+    private static void recurseCommandPermission(final Set<String> permissions, final Permission permission) {
         if (permission instanceof PredicatePermission<?> || permission == Permission.empty()) {
             return;
         }
         if (permission instanceof OrPermission || permission instanceof AndPermission) {
-            for (final CommandPermission child : permission.getPermissions()) {
+            for (final Permission child : permission.permissions()) {
                 recurseCommandPermission(permissions, child);
             }
-        } else if (permission instanceof Permission p) {
-            permissions.add(p.getPermission());
         } else {
-            throw new IllegalStateException();
+            permissions.add(permission.permissionString());
         }
     }
 
@@ -134,8 +132,8 @@ public final class CloudNeoForgeEntrypoint {
         manager.brigadierManager().setNativeNumberSuggestions(false);
         manager.command(manager.commandBuilder("cloud_client")
             .literal("forge")
-            .argument(StringArgument.greedy("string"))
-            .handler(ctx -> ctx.getSender().sendSystemMessage(Component.literal(ctx.get("string")))));
+            .required("string", greedyStringParser())
+            .handler(ctx -> ctx.sender().sendSystemMessage(Component.literal(ctx.get("string")))));
     }
 
     private static void testServerManager() {
@@ -143,8 +141,8 @@ public final class CloudNeoForgeEntrypoint {
         manager.brigadierManager().setNativeNumberSuggestions(false);
         manager.command(manager.commandBuilder("cloud")
             .literal("forge")
-            .argument(StringArgument.greedy("string"))
+            .required("string", greedyStringParser())
             .permission("cloud.hello")
-            .handler(ctx -> ctx.getSender().sendSystemMessage(Component.literal(ctx.get("string")))));
+            .handler(ctx -> ctx.sender().sendSystemMessage(Component.literal(ctx.get("string")))));
     }
 }

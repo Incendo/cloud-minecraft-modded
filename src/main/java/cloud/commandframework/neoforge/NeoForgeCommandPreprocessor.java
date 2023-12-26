@@ -39,9 +39,9 @@ final class NeoForgeCommandPreprocessor<C> implements CommandPreprocessor<C> {
 
     @Override
     public void accept(final CommandPreprocessingContext<C> context) {
-        context.getCommandContext().store(
+        context.commandContext().store(
             NeoForgeCommandContextKeys.NATIVE_COMMAND_SOURCE,
-            this.manager.backwardsCommandSourceMapper().apply(context.getCommandContext().getSender())
+            this.manager.backwardsCommandSourceMapper().apply(context.commandContext().sender())
         );
     }
 }

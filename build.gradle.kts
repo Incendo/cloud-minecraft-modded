@@ -34,6 +34,7 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
@@ -44,7 +45,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
     neoForge("net.neoforged:neoforge:20.4.43-beta")
 
-    api(platform("cloud.commandframework:cloud-bom:1.8.4"))
+    api(platform("cloud.commandframework:cloud-bom:2.0.0-SNAPSHOT"))
     api("cloud.commandframework:cloud-core")
     api("cloud.commandframework:cloud-brigadier")
 }

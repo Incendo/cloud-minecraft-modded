@@ -24,7 +24,7 @@
 package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.arguments.StaticArgument;
+import cloud.commandframework.CommandComponent;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -53,7 +53,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <C> command sender type
  */
-abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrationHandler {
+abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 
     private @MonotonicNonNull NeoForgeCommandManager<C> commandManager;
 
@@ -68,11 +68,12 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
     @SuppressWarnings("unchecked")
     protected final void registerCommand(final Command<C> command, final CommandDispatcher<CommandSourceStack> dispatcher) {
         final RootCommandNode<CommandSourceStack> rootNode = dispatcher.getRoot();
-        final StaticArgument<C> first = ((StaticArgument<C>) command.getArguments().get(0));
+        final CommandComponent<C> first = command.rootComponent();
         final CommandNode<CommandSourceStack> baseNode = this.commandManager()
             .brigadierManager()
-            .createLiteralCommandNode(
-                first.getName(),
+            .literalBrigadierNodeFactory()
+            .createNode(
+                first.name(),
                 command,
                 (src, perm) -> this.commandManager().hasPermission(
                     this.commandManager().commandSourceMapper().apply(src),
@@ -84,7 +85,7 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
 
         rootNode.addChild(baseNode);
 
-        for (final String alias : first.getAlternativeAliases()) {
+        for (final String alias : first.alternativeAliases()) {
             rootNode.addChild(buildRedirect(alias, baseNode));
         }
     }
@@ -138,8 +139,8 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
 
         @Override
         @SuppressWarnings("unchecked")
-        public boolean registerCommand(final @NonNull Command<?> command) {
-            this.registeredCommands.add((Command<C>) command);
+        public boolean registerCommand(final @NonNull Command<C> command) {
+            this.registeredCommands.add(command);
             if (this.registerEventFired) {
                 final ClientPacketListener connection = Minecraft.getInstance().getConnection();
                 if (connection == null) {
@@ -153,7 +154,7 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
                     this.commandManager(),
                     CommandBuildContext.simple(connection.registryAccess(), connection.enabledFeatures()),
                     false,
-                    () -> this.registerCommand((Command<C>) command, dispatcher)
+                    () -> this.registerCommand(command, dispatcher)
                 );
             }
             return true;
@@ -186,8 +187,8 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
 
         @Override
         @SuppressWarnings("unchecked")
-        public boolean registerCommand(@NonNull final Command<?> command) {
-            return this.registeredCommands.add((Command<C>) command);
+        public boolean registerCommand(@NonNull final Command<C> command) {
+            return this.registeredCommands.add(command);
         }
 
         private void registerAllCommands(final RegisterCommandsEvent event) {
@@ -199,7 +200,7 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
                 () -> {
                     for (final Command<C> command : this.registeredCommands) {
                         /* Only register commands in the declared environment */
-                        final Commands.CommandSelection env = command.getCommandMeta().getOrDefault(
+                        final Commands.CommandSelection env = command.commandMeta().getOrDefault(
                             NeoForgeServerCommandManager.META_REGISTRATION_ENVIRONMENT,
                             Commands.CommandSelection.ALL
                         );
