@@ -25,6 +25,7 @@ package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.CommandComponent;
+import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -75,12 +76,7 @@ abstract class NeoForgeCommandRegistrationHandler<C> implements CommandRegistrat
             .createNode(
                 first.name(),
                 command,
-                (src, perm) -> this.commandManager().hasPermission(
-                    this.commandManager().commandSourceMapper().apply(src),
-                    perm
-                ),
-                true,
-                new NeoForgeExecutor<>(this.commandManager())
+                new CloudBrigadierCommand<>(this.commandManager(), this.commandManager().brigadierManager())
             );
 
         rootNode.addChild(baseNode);

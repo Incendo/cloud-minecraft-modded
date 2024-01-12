@@ -23,11 +23,9 @@
  */
 package cloud.commandframework.neoforge;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.SenderMapper;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.permission.PredicatePermission;
-import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -48,42 +46,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManager<C> {
 
-    /**
-     * Create a command manager using native source types.
-     *
-     * @param execCoordinator Execution coordinator instance.
-     * @return a new command manager
-     * @see #NeoForgeClientCommandManager(Function, Function, Function) for a more thorough explanation
-     */
     public static NeoForgeClientCommandManager<CommandSourceStack> createNative(
-        final Function<CommandTree<CommandSourceStack>, CommandExecutionCoordinator<CommandSourceStack>> execCoordinator
+        final ExecutionCoordinator<CommandSourceStack> executionCoordinator
     ) {
-        return new NeoForgeClientCommandManager<>(execCoordinator, Function.identity(), Function.identity());
+        return new NeoForgeClientCommandManager<>(executionCoordinator, SenderMapper.identity());
     }
 
-    /**
-     * Create a new command manager instance.
-     *
-     * @param commandExecutionCoordinator  Execution coordinator instance. The coordinator is in charge of executing incoming
-     *                                     commands. Some considerations must be made when picking a suitable execution coordinator
-     *                                     for your platform. For example, an entirely asynchronous coordinator is not suitable
-     *                                     when the parsers used in that particular platform are not thread safe. If you have
-     *                                     commands that perform blocking operations, however, it might not be a good idea to
-     *                                     use a synchronous execution coordinator. In most cases you will want to pick between
-     *                                     {@link CommandExecutionCoordinator#simpleCoordinator()} and
-     *                                     {@link AsynchronousCommandExecutionCoordinator}
-     * @param commandSourceMapper          Function that maps {@link CommandSourceStack} to the command sender type
-     * @param backwardsCommandSourceMapper Function that maps the command sender type to {@link CommandSourceStack}
-     */
     public NeoForgeClientCommandManager(
-        final Function<CommandTree<C>, CommandExecutionCoordinator<C>> commandExecutionCoordinator,
-        final Function<CommandSourceStack, C> commandSourceMapper,
-        final Function<C, CommandSourceStack> backwardsCommandSourceMapper
+        final ExecutionCoordinator<C> executionCoordinator,
+        final SenderMapper<CommandSourceStack, C> senderMapper
     ) {
         super(
-            commandExecutionCoordinator,
-            commandSourceMapper,
-            backwardsCommandSourceMapper,
+            executionCoordinator,
+            senderMapper,
             new NeoForgeCommandRegistrationHandler.Client<>(),
             () -> new ClientCommandSourceStack(
                 CommandSource.NULL,

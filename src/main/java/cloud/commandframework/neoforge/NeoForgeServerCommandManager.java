@@ -23,13 +23,12 @@
  */
 package cloud.commandframework.neoforge;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.SenderMapper;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.keys.CloudKey;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -50,22 +49,18 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
     private final Cache<String, PermissionNode<Boolean>> permissionNodeCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
     public static NeoForgeServerCommandManager<CommandSourceStack> createNative(
-        final Function<CommandTree<CommandSourceStack>,
-            CommandExecutionCoordinator<CommandSourceStack>> execCoordinator
+        final ExecutionCoordinator<CommandSourceStack> executionCoordinator
     ) {
-        return new NeoForgeServerCommandManager<>(execCoordinator, Function.identity(), Function.identity());
+        return new NeoForgeServerCommandManager<>(executionCoordinator, SenderMapper.identity());
     }
 
     public NeoForgeServerCommandManager(
-        final Function<CommandTree<C>,
-            CommandExecutionCoordinator<C>> commandExecutionCoordinator,
-        final Function<CommandSourceStack, C> commandSourceMapper,
-        final Function<C, CommandSourceStack> backwardsCommandSourceMapper
+        final ExecutionCoordinator<C> executionCoordinator,
+        final SenderMapper<CommandSourceStack, C> senderMapper
     ) {
         super(
-            commandExecutionCoordinator,
-            commandSourceMapper,
-            backwardsCommandSourceMapper,
+            executionCoordinator,
+            senderMapper,
             new NeoForgeCommandRegistrationHandler.Server<>(),
             () -> new CommandSourceStack(
                 CommandSource.NULL,
@@ -89,7 +84,7 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
     @SuppressWarnings("unchecked")
     @Override
     public boolean hasPermission(final C sender, final String permission) {
-        final CommandSourceStack source = this.backwardsCommandSourceMapper().apply(sender);
+        final CommandSourceStack source = this.senderMapper().reverse(sender);
         if (source.isPlayer()) {
             final PermissionNode<Boolean> node;
             try {

@@ -24,7 +24,7 @@
 package cloud.commandframework.neoforge;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.permission.AndPermission;
 import cloud.commandframework.permission.OrPermission;
@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -128,8 +127,7 @@ public final class CloudNeoForgeEntrypoint {
     }
 
     private static void testClientManager() {
-        final NeoForgeClientCommandManager<CommandSourceStack> manager = NeoForgeClientCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
-        manager.brigadierManager().setNativeNumberSuggestions(false);
+        final NeoForgeClientCommandManager<CommandSourceStack> manager = NeoForgeClientCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
         manager.command(manager.commandBuilder("cloud_client")
             .literal("forge")
             .required("string", greedyStringParser())
@@ -137,8 +135,7 @@ public final class CloudNeoForgeEntrypoint {
     }
 
     private static void testServerManager() {
-        final NeoForgeServerCommandManager<CommandSourceStack> manager = NeoForgeServerCommandManager.createNative(CommandExecutionCoordinator.simpleCoordinator());
-        manager.brigadierManager().setNativeNumberSuggestions(false);
+        final NeoForgeServerCommandManager<CommandSourceStack> manager = NeoForgeServerCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
         manager.command(manager.commandBuilder("cloud")
             .literal("forge")
             .required("string", greedyStringParser())

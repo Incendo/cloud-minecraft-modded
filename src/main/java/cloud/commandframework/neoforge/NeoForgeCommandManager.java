@@ -24,20 +24,26 @@
 package cloud.commandframework.neoforge;
 
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.CommandTree;
+import cloud.commandframework.SenderMapper;
+import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.exceptions.*;
+import cloud.commandframework.exceptions.ArgumentParseException;
+import cloud.commandframework.exceptions.CommandExecutionException;
+import cloud.commandframework.exceptions.InvalidCommandSenderException;
+import cloud.commandframework.exceptions.InvalidSyntaxException;
+import cloud.commandframework.exceptions.NoPermissionException;
+import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.exceptions.handling.ExceptionContext;
 import cloud.commandframework.exceptions.handling.ExceptionHandler;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.execution.FilteringCommandSuggestionProcessor;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
-
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.logging.LogUtils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -46,19 +52,20 @@ import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.slf4j.Logger;
 
 @DefaultQualifier(NonNull.class)
-public abstract class NeoForgeCommandManager<C>
-    extends CommandManager<C> implements BrigadierManagerHolder<C> {
+public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
+    implements BrigadierManagerHolder<C, CommandSourceStack>, SenderMapperHolder<CommandSourceStack, C> {
 
     static final Set<NeoForgeCommandManager<?>> INSTANCES = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
@@ -70,43 +77,32 @@ public abstract class NeoForgeCommandManager<C>
             + "Please contact the server administrators if you believe that this is in error.";
     private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
-    private final Function<CommandSourceStack, C> commandSourceMapper;
-    private final Function<C, CommandSourceStack> backwardsCommandSourceMapper;
+    private final SenderMapper<CommandSourceStack, C> senderMapper;
     private final CloudBrigadierManager<C, CommandSourceStack> brigadierManager;
     private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
 
     protected NeoForgeCommandManager(
-        final Function<CommandTree<C>, CommandExecutionCoordinator<C>> commandExecutionCoordinator,
-        final Function<CommandSourceStack, C> commandSourceMapper,
-        final Function<C, CommandSourceStack> backwardsCommandSourceMapper,
+        final ExecutionCoordinator<C> executionCoordinator,
+        final SenderMapper<CommandSourceStack, C> senderMapper,
         final NeoForgeCommandRegistrationHandler<C> registrationHandler,
         final Supplier<CommandSourceStack> dummyCommandSourceProvider
     ) {
-        super(commandExecutionCoordinator, registrationHandler);
+        super(executionCoordinator, registrationHandler);
         INSTANCES.add(this);
-        this.commandSourceMapper = commandSourceMapper;
-        this.backwardsCommandSourceMapper = backwardsCommandSourceMapper;
+        this.senderMapper = senderMapper;
         this.suggestionFactory = super.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion);
         this.brigadierManager = new CloudBrigadierManager<>(this, () -> new CommandContext<>(
-            this.commandSourceMapper.apply(dummyCommandSourceProvider.get()),
+            this.senderMapper.map(dummyCommandSourceProvider.get()),
             this
-        ), this.suggestionFactory);
-        this.brigadierManager.backwardsBrigadierSenderMapper(this.backwardsCommandSourceMapper);
-        this.brigadierManager.brigadierSenderMapper(this.commandSourceMapper);
+        ), this.suggestionFactory, senderMapper);
         this.registerCommandPreProcessor(new NeoForgeCommandPreprocessor<>(this));
-        this.commandSuggestionProcessor(new FilteringCommandSuggestionProcessor<>(
-            FilteringCommandSuggestionProcessor.Filter.<C>startsWith(true).andTrimBeforeLastSpace()
-        ));
         this.registerDefaultExceptionHandlers();
         registrationHandler.initialize(this);
     }
 
-    Function<C, CommandSourceStack> backwardsCommandSourceMapper() {
-        return this.backwardsCommandSourceMapper;
-    }
-
-    Function<CommandSourceStack, C> commandSourceMapper() {
-        return this.commandSourceMapper;
+    @Override
+    public SenderMapper<CommandSourceStack, C> senderMapper() {
+        return this.senderMapper;
     }
 
     @Override
@@ -120,8 +116,13 @@ public abstract class NeoForgeCommandManager<C>
     }
 
     @Override
-    public CloudBrigadierManager<C, CommandSourceStack> brigadierManager() {
+    public final CloudBrigadierManager<C, CommandSourceStack> brigadierManager() {
         return this.brigadierManager;
+    }
+
+    @Override
+    public final boolean hasBrigadierManager() {
+        return true;
     }
 
     @Override
