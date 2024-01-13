@@ -94,7 +94,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
         this.brigadierManager = new CloudBrigadierManager<>(this, () -> new CommandContext<>(
             this.senderMapper.map(dummyCommandSourceProvider.get()),
             this
-        ), this.suggestionFactory, senderMapper);
+        ), senderMapper);
         this.registerCommandPreProcessor(new NeoForgeCommandPreprocessor<>(this));
         this.registerDefaultExceptionHandlers();
         registrationHandler.initialize(this);
@@ -179,7 +179,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
             sendError.accept(source, Component.literal(throwable.getMessage())));
         this.registerHandler(InvalidSyntaxException.class, (source, sender, throwable) ->
             sendError.accept(source, Component.literal("Invalid Command Syntax. Correct command syntax is: ")
-                .append(Component.literal(String.format("/%s", throwable.getCorrectSyntax()))
+                .append(Component.literal(String.format("/%s", throwable.correctSyntax()))
                     .withStyle(style -> style.withColor(ChatFormatting.GRAY)))));
     }
 
