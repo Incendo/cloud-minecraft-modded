@@ -21,3 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+package cloud.commandframework.neoforge;
+
+import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
+import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.framework.qual.DefaultQualifier;
+
+@DefaultQualifier(NonNull.class)
+final class NeoForgeCommandPreprocessor<C> implements CommandPreprocessor<C> {
+
+    private final NeoForgeCommandManager<C> manager;
+
+    NeoForgeCommandPreprocessor(final NeoForgeCommandManager<C> manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public void accept(final CommandPreprocessingContext<C> context) {
+        context.commandContext().store(
+            NeoForgeCommandContextKeys.NATIVE_COMMAND_SOURCE,
+            this.manager.senderMapper().reverse(context.commandContext().sender())
+        );
+    }
+}

@@ -1,37 +1,59 @@
 import net.fabricmc.loom.task.AbstractRunTask
-import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
-    id("quiet-fabric-loom")
-    id("cloud.base-conventions")
-    id("cloud.publishing-conventions")
+    id("conventions.base")
+    id("conventions.publishing")
+    id("xyz.jpenilla.quiet-architectury-loom")
 }
 
-indra {
-    javaVersions().target(17)
-}
-
-tasks {
-    compileJava {
-        options.errorprone {
-            excludedPaths.set(".*[/\\\\]mixin[/\\\\].*")
+configurations {
+    all {
+        resolutionStrategy {
+            force("net.fabricmc:fabric-loader:${libs.versions.fabricLoader.get()}")
         }
     }
 
-    withType<ProcessResources> {
+    transitiveInclude {
+        extendsFrom(api.get())
+
+        exclude("org.checkerframework")
+        exclude("org.apiguardian")
+    }
+}
+
+dependencies {
+    minecraft(libs.minecraft)
+    mappings(loom.officialMojangMappings())
+    modImplementation(libs.fabricLoader)
+
+    api(platform(libs.cloud.bom))
+    api(libs.cloud.core)
+    api(libs.cloud.brigadier)
+
+    modImplementation(platform(libs.fabricApi.bom))
+    modImplementation(libs.fabricApi.command.api.v2)
+    modImplementation(libs.fabricApi.networking.api.v1)
+    modImplementation(libs.fabricApi.lifecycle.events.v1)
+
+    modApi(libs.fabricPermissionsApi)
+    include(libs.fabricPermissionsApi)
+}
+
+tasks {
+    withType<ProcessResources>().configureEach() {
         inputs.property("version", project.version)
         filesMatching("fabric.mod.json") {
             expand("version" to project.version)
         }
     }
 
-    withType<Javadoc> {
+    withType<Javadoc>().configureEach {
         (options as? StandardJavadocDocletOptions)?.apply {
             // links("https://maven.fabricmc.net/docs/yarn-${Versions.fabricMc}+build.${Versions.fabricYarn}/") // todo
         }
     }
 
-    withType<AbstractRunTask> {
+    withType<AbstractRunTask>().configureEach {
         standardInput = System.`in`
         jvmArgumentProviders += CommandLineArgumentProvider {
             if (System.getProperty("idea.active")?.toBoolean() == true || // IntelliJ
@@ -44,32 +66,6 @@ tasks {
             }
         }
     }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("net.fabricmc:fabric-loader:${libs.versions.fabricLoader.get()}")
-    }
-}
-
-dependencies {
-    minecraft(libs.fabricMinecraft)
-    mappings(loom.officialMojangMappings())
-    modImplementation(libs.fabricLoader)
-    modImplementation(platform(libs.fabricApi.bom))
-    modImplementation(libs.fabricApi.command.api.v2)
-    modImplementation(libs.fabricApi.networking.api.v1)
-    modImplementation(libs.fabricApi.lifecycle.events.v1)
-
-    modApi(libs.fabricPermissionsApi)
-    include(libs.fabricPermissionsApi)
-
-    api(include(projects.cloudCore)!!)
-    api(include(projects.cloudBrigadier)!!)
-    api(include(projects.cloudServices)!!)
-
-    api(libs.geantyref)
-    include(libs.geantyref)
 }
 
 /* set up a testmod source set */

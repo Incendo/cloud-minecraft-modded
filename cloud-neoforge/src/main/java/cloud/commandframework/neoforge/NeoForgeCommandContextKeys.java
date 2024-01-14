@@ -21,3 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+package cloud.commandframework.neoforge;
+
+import cloud.commandframework.keys.CloudKey;
+import io.leangen.geantyref.TypeToken;
+import net.minecraft.commands.CommandSourceStack;
+
+public final class NeoForgeCommandContextKeys {
+
+    private NeoForgeCommandContextKeys() {
+    }
+
+    public static final CloudKey<CommandSourceStack> NATIVE_COMMAND_SOURCE = CloudKey.of(
+        "cloud:forge_command_source",
+        TypeToken.get(CommandSourceStack.class)
+    );
+}
