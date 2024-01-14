@@ -42,6 +42,7 @@ import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
+import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -97,7 +98,6 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
             this.senderMapper.map(dummyCommandSourceProvider.get()),
             this
         ), senderMapper);
-        this.registerCommandPreProcessor(new NeoForgeCommandPreprocessor<>(this));
         this.registerDefaultExceptionHandlers();
         registrationHandler.initialize(this);
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
@@ -214,7 +214,8 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
 
         @Override
         default void handle(final ExceptionContext<C, T> context) throws Throwable {
-            final CommandSourceStack commandSourceStack = context.context().get(NeoForgeCommandContextKeys.NATIVE_COMMAND_SOURCE);
+            final CommandSourceStack commandSourceStack = (CommandSourceStack) context.context()
+                .get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
             this.handle(commandSourceStack, context.context().sender(), context.exception());
         }
 
