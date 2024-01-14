@@ -43,8 +43,6 @@ import cloud.commandframework.fabric.argument.RegistryEntryParser;
 import cloud.commandframework.fabric.argument.TeamParser;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
-import cloud.commandframework.permission.PermissionResult;
-import cloud.commandframework.permission.PredicatePermission;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import io.leangen.geantyref.GenericTypeReflector;
@@ -274,26 +272,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     /* transition state to prevent further registration */
     final void registrationCalled() {
         this.lockRegistration();
-    }
-
-    /**
-     * Get a permission predicate which passes when the sender has the specified permission level.
-     *
-     * @param permissionLevel permission level to require
-     * @return a permission predicate that will provide {@link PermissionLevelResult}s
-     * @since 1.5.0
-     */
-    public @NonNull PredicatePermission<C> permissionLevel(final int permissionLevel) {
-        return new PredicatePermission<C>() {
-            @Override
-            public @NonNull PermissionResult testPermission(final @NonNull C sender) {
-                return PermissionLevelResult.of(
-                        FabricCommandManager.this.senderMapper().reverse(sender).hasPermission(permissionLevel),
-                        this,
-                        permissionLevel
-                );
-            }
-        };
     }
 
     protected final void registerDefaultExceptionHandlers(

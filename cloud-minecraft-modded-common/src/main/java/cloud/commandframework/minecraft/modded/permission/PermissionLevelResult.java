@@ -21,23 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric;
+package cloud.commandframework.minecraft.modded.permission;
 
 import cloud.commandframework.internal.ImmutableImpl;
 import cloud.commandframework.permission.Permission;
 import cloud.commandframework.permission.PermissionResult;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
 
 /**
  * A {@link PermissionResult} that also contains the permission level that was required for the permission check to pass.
- * @since 2.0.0
  */
 @ImmutableImpl
 @Value.Immutable
 @SuppressWarnings("immutables:subtype")
-@API(status = API.Status.STABLE, since = "2.0.0")
 public interface PermissionLevelResult extends PermissionResult {
 
     /**
@@ -49,9 +46,9 @@ public interface PermissionLevelResult extends PermissionResult {
      * @return the created result
      */
     static @NonNull PermissionLevelResult of(
-            final boolean result,
-            final @NonNull Permission permission,
-            final int requiredPermissionLevel
+        final boolean result,
+        final @NonNull Permission permission,
+        final int requiredPermissionLevel
     ) {
         return PermissionLevelResultImpl.of(result, permission, requiredPermissionLevel);
     }
