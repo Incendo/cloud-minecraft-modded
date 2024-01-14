@@ -25,7 +25,7 @@ package cloud.commandframework.fabric.internal;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface EntitySelectorAccess {
+public interface EntitySelectorAccess extends cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess {
 
     /**
      * Get the last parsed input string
