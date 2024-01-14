@@ -25,7 +25,7 @@ package cloud.commandframework.minecraft.modded.parser;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import net.minecraft.ChatFormatting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

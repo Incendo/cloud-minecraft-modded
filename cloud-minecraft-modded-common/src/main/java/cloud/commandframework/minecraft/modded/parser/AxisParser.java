@@ -25,7 +25,7 @@ package cloud.commandframework.minecraft.modded.parser;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import io.leangen.geantyref.TypeToken;
 import java.util.EnumSet;
 import net.minecraft.commands.arguments.coordinates.SwizzleArgument;

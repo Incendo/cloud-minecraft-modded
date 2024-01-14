@@ -29,7 +29,7 @@ import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.ArgumentParseException;

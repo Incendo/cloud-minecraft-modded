@@ -26,7 +26,7 @@ package cloud.commandframework.minecraft.modded.parser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
