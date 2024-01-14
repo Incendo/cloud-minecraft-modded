@@ -35,7 +35,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "cloud-neoforge"
+rootProject.name = "cloud-minecraft-modded"
 
 include(":cloud-fabric")
 include(":cloud-neoforge")
