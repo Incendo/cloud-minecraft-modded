@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.minecraft.modded.annotations.specifier;
+package cloud.commandframework.minecraft.modded.annotation.specifier;
 
 import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import java.lang.annotation.ElementType;

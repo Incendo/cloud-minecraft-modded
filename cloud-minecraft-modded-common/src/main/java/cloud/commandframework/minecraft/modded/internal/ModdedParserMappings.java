@@ -29,7 +29,7 @@ import cloud.commandframework.arguments.standard.UUIDParser;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import cloud.commandframework.minecraft.modded.ModdedParserParameters;
-import cloud.commandframework.minecraft.modded.annotations.specifier.Center;
+import cloud.commandframework.minecraft.modded.annotation.specifier.Center;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
 import cloud.commandframework.minecraft.modded.data.Message;
 import cloud.commandframework.minecraft.modded.data.MinecraftTime;
