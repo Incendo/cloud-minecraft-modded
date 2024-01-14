@@ -30,14 +30,12 @@ import io.leangen.geantyref.TypeToken;
 import java.util.EnumSet;
 import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
 import net.minecraft.core.Direction;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An argument parser for a set of {@link net.minecraft.core.Direction.Axis axes}, described in Vanilla as a "swizzle".
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class AxisParser<C> extends WrappedBrigadierParser<C, EnumSet<Direction.Axis>> {
 
@@ -49,9 +47,7 @@ public final class AxisParser<C> extends WrappedBrigadierParser<C, EnumSet<Direc
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, EnumSet<Direction.Axis>> axisParser() {
         return ParserDescriptor.of(new AxisParser<>(), TYPE);
     }
@@ -61,9 +57,7 @@ public final class AxisParser<C> extends WrappedBrigadierParser<C, EnumSet<Direc
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, EnumSet<Direction.Axis>> axisComponent() {
         return CommandComponent.<C, EnumSet<Direction.Axis>>builder().parser(axisParser());
     }

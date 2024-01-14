@@ -27,14 +27,12 @@ import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.ChatFormatting;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An argument for named colors in the {@link ChatFormatting} enum.
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class NamedColorParser<C> extends WrappedBrigadierParser<C, ChatFormatting> {
 
@@ -43,9 +41,7 @@ public final class NamedColorParser<C> extends WrappedBrigadierParser<C, ChatFor
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, ChatFormatting> namedColorParser() {
         return ParserDescriptor.of(new NamedColorParser<>(), ChatFormatting.class);
     }
@@ -55,9 +51,7 @@ public final class NamedColorParser<C> extends WrappedBrigadierParser<C, ChatFor
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, ChatFormatting> namedColorComponent() {
         return CommandComponent.<C, ChatFormatting>builder().parser(namedColorParser());
     }

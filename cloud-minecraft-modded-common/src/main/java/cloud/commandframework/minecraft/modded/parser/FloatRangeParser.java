@@ -28,7 +28,6 @@ import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.commands.arguments.RangeArgument;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -36,7 +35,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * {@code [min]..[max]}, where both lower and upper bounds are optional.
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class FloatRangeParser<C> extends WrappedBrigadierParser<C, MinMaxBounds.Doubles> {
 
@@ -45,9 +43,7 @@ public final class FloatRangeParser<C> extends WrappedBrigadierParser<C, MinMaxB
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, MinMaxBounds.Doubles> floatRangeParser() {
         return ParserDescriptor.of(new FloatRangeParser<>(), MinMaxBounds.Doubles.class);
     }
@@ -57,9 +53,7 @@ public final class FloatRangeParser<C> extends WrappedBrigadierParser<C, MinMaxB
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, MinMaxBounds.Doubles> floatRangeComponent() {
         return CommandComponent.<C, MinMaxBounds.Doubles>builder().parser(floatRangeParser());
     }

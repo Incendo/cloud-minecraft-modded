@@ -179,7 +179,6 @@ public final class ModdedParserMappings {
      * @param argument a function providing the Brigadier parser given a build context
      * @param <C>      sender type
      * @param <T>      value type
-     * @since 1.7.0
      */
     public static <C, T> void registerContextualNativeParserSupplier(
         final @NonNull CommandManager<C> manager,
@@ -217,7 +216,6 @@ public final class ModdedParserMappings {
      * @param argument the Brigadier parser
      * @param <C>      sender type
      * @param <T>      value type
-     * @since 1.5.0
      */
     public static <C, T> void registerConstantNativeParserSupplier(
         final @NonNull CommandManager<C> manager,

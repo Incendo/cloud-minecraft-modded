@@ -28,7 +28,6 @@ import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.commands.arguments.OperationArgument;
 import net.minecraft.commands.arguments.OperationArgument.Operation;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -37,7 +36,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>These operations can be used to compare scores on a {@link net.minecraft.world.scores.Scoreboard}.</p>
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class ScoreboardOperationParser<C> extends WrappedBrigadierParser<C, Operation> {
 
@@ -46,9 +44,7 @@ public final class ScoreboardOperationParser<C> extends WrappedBrigadierParser<C
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, Operation> scoreboardOperationParser() {
         return ParserDescriptor.of(new ScoreboardOperationParser<>(), Operation.class);
     }
@@ -58,9 +54,7 @@ public final class ScoreboardOperationParser<C> extends WrappedBrigadierParser<C
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, Operation> scoreboardOperationComponent() {
         return CommandComponent.<C, Operation>builder().parser(scoreboardOperationParser());
     }

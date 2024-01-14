@@ -27,14 +27,12 @@ import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An argument for a {@linkplain ObjectiveCriteria criterion} in a scoreboard.
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class ObjectiveCriteriaParser<C> extends WrappedBrigadierParser<C, ObjectiveCriteria> {
 
@@ -44,9 +42,7 @@ public final class ObjectiveCriteriaParser<C> extends WrappedBrigadierParser<C, 
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, ObjectiveCriteria> objectiveCriteriaParser() {
         return ParserDescriptor.of(new ObjectiveCriteriaParser<>(), ObjectiveCriteria.class);
     }
@@ -56,9 +52,7 @@ public final class ObjectiveCriteriaParser<C> extends WrappedBrigadierParser<C, 
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, ObjectiveCriteria> objectiveCriteriaComponent() {
         return CommandComponent.<C, ObjectiveCriteria>builder().parser(objectiveCriteriaParser());
     }

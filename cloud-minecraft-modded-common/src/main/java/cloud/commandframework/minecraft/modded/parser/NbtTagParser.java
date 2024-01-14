@@ -27,14 +27,12 @@ import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.nbt.Tag;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An argument for the string representation of an NBT {@link Tag}.
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class NbtTagParser<C> extends WrappedBrigadierParser<C, Tag> {
 
@@ -43,9 +41,7 @@ public final class NbtTagParser<C> extends WrappedBrigadierParser<C, Tag> {
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, Tag> nbtTagParser() {
         return ParserDescriptor.of(new NbtTagParser<>(), Tag.class);
     }
@@ -55,9 +51,7 @@ public final class NbtTagParser<C> extends WrappedBrigadierParser<C, Tag> {
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, Tag> nbtTagComponent() {
         return CommandComponent.<C, Tag>builder().parser(nbtTagParser());
     }

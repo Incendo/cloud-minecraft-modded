@@ -27,14 +27,12 @@ import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
 import net.minecraft.commands.arguments.AngleArgument.SingleAngle;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An argument for an angle, specified in degrees.
  *
  * @param <C> the sender type
- * @since 2.0.0
  */
 public final class AngleParser<C> extends WrappedBrigadierParser<C, SingleAngle> {
 
@@ -43,9 +41,7 @@ public final class AngleParser<C> extends WrappedBrigadierParser<C, SingleAngle>
      *
      * @param <C> command sender type
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, SingleAngle> angleParser() {
         return ParserDescriptor.of(new AngleParser<>(), SingleAngle.class);
     }
@@ -55,9 +51,7 @@ public final class AngleParser<C> extends WrappedBrigadierParser<C, SingleAngle>
      *
      * @param <C> the command sender type
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> CommandComponent.@NonNull Builder<C, SingleAngle> angleComponent() {
         return CommandComponent.<C, SingleAngle>builder().parser(angleParser());
     }
