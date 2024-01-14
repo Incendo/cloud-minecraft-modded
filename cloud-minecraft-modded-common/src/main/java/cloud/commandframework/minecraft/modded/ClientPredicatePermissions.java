@@ -37,7 +37,6 @@ public final class ClientPredicatePermissions {
      *
      * @param <C> sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> integratedServerRunning() {
         return PredicatePermission.of(
@@ -51,7 +50,6 @@ public final class ClientPredicatePermissions {
      *
      * @param <C> sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> integratedServerNotRunning() {
         return PredicatePermission.of(
@@ -67,7 +65,6 @@ public final class ClientPredicatePermissions {
      *
      * @param <C> sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> cheatsAllowed() {
         return cheatsAllowed(true);
@@ -82,7 +79,6 @@ public final class ClientPredicatePermissions {
      * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
      * @param <C>                sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> cheatsAllowed(final boolean allowOnMultiplayer) {
         return PredicatePermission.of(CloudKey.of("cheats-allowed"), sender -> {
@@ -101,7 +97,6 @@ public final class ClientPredicatePermissions {
      *
      * @param <C> sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> cheatsDisallowed() {
         return cheatsDisallowed(true);
@@ -116,7 +111,6 @@ public final class ClientPredicatePermissions {
      * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
      * @param <C>                sender type
      * @return a predicate permission
-     * @since 1.5.0
      */
     public static <C> @NonNull PredicatePermission<C> cheatsDisallowed(final boolean allowOnMultiplayer) {
         return PredicatePermission.of(CloudKey.of("cheats-disallowed"), sender -> {
