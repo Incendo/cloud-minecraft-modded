@@ -50,9 +50,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 
 @Mod("cloud")
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class CloudNeoForgeEntrypoint {
     private static boolean serverStartingCalled;
 
+    /**
+     * Creates a {@link CloudNeoForgeEntrypoint}.
+     */
     public CloudNeoForgeEntrypoint() {
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> serverStartingCalled = true);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW, CloudNeoForgeEntrypoint::registerPermissions);
@@ -63,6 +67,11 @@ public final class CloudNeoForgeEntrypoint {
         }
     }
 
+    /**
+     * Returns whether {@link ServerStartingEvent} was called already.
+     *
+     * @return whether the server started already
+     */
     public static boolean hasServerAlreadyStarted() {
         return serverStartingCalled;
     }
@@ -122,12 +131,17 @@ public final class CloudNeoForgeEntrypoint {
         }
     }
 
-    private static Boolean defaultPermissionHandler(final @Nullable ServerPlayer player, final UUID uuid, final PermissionDynamicContext<?>... contexts) {
+    private static Boolean defaultPermissionHandler(
+        final @Nullable ServerPlayer player,
+        final UUID uuid,
+        final PermissionDynamicContext<?>... contexts
+    ) {
         return player != null && player.hasPermissions(player.server.getOperatorUserPermissionLevel());
     }
 
     private static void testClientManager() {
-        final NeoForgeClientCommandManager<CommandSourceStack> manager = NeoForgeClientCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
+        final NeoForgeClientCommandManager<CommandSourceStack> manager =
+            NeoForgeClientCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
         manager.command(manager.commandBuilder("cloud_client")
             .literal("forge")
             .required("string", greedyStringParser())
@@ -135,7 +149,8 @@ public final class CloudNeoForgeEntrypoint {
     }
 
     private static void testServerManager() {
-        final NeoForgeServerCommandManager<CommandSourceStack> manager = NeoForgeServerCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
+        final NeoForgeServerCommandManager<CommandSourceStack> manager =
+            NeoForgeServerCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
         manager.command(manager.commandBuilder("cloud")
             .literal("forge")
             .required("string", greedyStringParser())

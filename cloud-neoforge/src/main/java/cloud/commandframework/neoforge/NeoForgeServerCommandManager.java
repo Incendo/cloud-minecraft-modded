@@ -48,12 +48,25 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
 
     private final Cache<String, PermissionNode<Boolean>> permissionNodeCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
+    /**
+     * Create a command manager using native source types.
+     *
+     * @param executionCoordinator Execution coordinator instance.
+     * @return a new command manager
+     * @see #NeoForgeServerCommandManager(ExecutionCoordinator, SenderMapper) for a more thorough explanation
+     */
     public static NeoForgeServerCommandManager<CommandSourceStack> createNative(
         final ExecutionCoordinator<CommandSourceStack> executionCoordinator
     ) {
         return new NeoForgeServerCommandManager<>(executionCoordinator, SenderMapper.identity());
     }
 
+    /**
+     * Create a new command manager instance.
+     *
+     * @param executionCoordinator       Execution coordinator instance.
+     * @param senderMapper               Mapper between Minecraft's {@link CommandSourceStack} and the command sender type {@code C}.
+     */
     public NeoForgeServerCommandManager(
         final ExecutionCoordinator<C> executionCoordinator,
         final SenderMapper<CommandSourceStack, C> senderMapper

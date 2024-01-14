@@ -101,13 +101,8 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
     }
 
     @Override
-    public SenderMapper<CommandSourceStack, C> senderMapper() {
+    public final SenderMapper<CommandSourceStack, C> senderMapper() {
         return this.senderMapper;
-    }
-
-    @Override
-    public boolean hasPermission(final C sender, final String permission) {
-        return false;
     }
 
     @Override
@@ -126,7 +121,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
     }
 
     @Override
-    public @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory() {
+    public final @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory() {
         return this.suggestionFactory;
     }
 
