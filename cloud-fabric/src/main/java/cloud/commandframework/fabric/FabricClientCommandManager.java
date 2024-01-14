@@ -25,8 +25,6 @@ package cloud.commandframework.fabric;
 
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.permission.PredicatePermission;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.Minecraft;
@@ -56,7 +54,7 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static @NonNull FabricClientCommandManager<@NonNull FabricClientCommandSource> createNative(
-            final @NonNull ExecutionCoordinator<FabricClientCommandSource> execCoordinator
+        final @NonNull ExecutionCoordinator<FabricClientCommandSource> execCoordinator
     ) {
         return new FabricClientCommandManager<>(execCoordinator, SenderMapper.identity());
     }
@@ -64,36 +62,36 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
     /**
      * Create a new command manager instance.
      *
-     * @param commandExecutionCoordinator  Execution coordinator instance. The coordinator is in charge of executing incoming
-     *                                     commands. Some considerations must be made when picking a suitable execution coordinator
-     *                                     for your platform. For example, an entirely asynchronous coordinator is not suitable
-     *                                     when the parsers used in that particular platform are not thread safe. If you have
-     *                                     commands that perform blocking operations, however, it might not be a good idea to
-     *                                     use a synchronous execution coordinator. In most cases you will want to pick between
-     *                                     {@link ExecutionCoordinator#simpleCoordinator()} and
-     *                                     {@link ExecutionCoordinator#asyncCoordinator()}
-     * @param senderMapper                 Function that maps {@link FabricClientCommandSource} to the command sender type
+     * @param commandExecutionCoordinator Execution coordinator instance. The coordinator is in charge of executing incoming
+     *                                    commands. Some considerations must be made when picking a suitable execution coordinator
+     *                                    for your platform. For example, an entirely asynchronous coordinator is not suitable
+     *                                    when the parsers used in that particular platform are not thread safe. If you have
+     *                                    commands that perform blocking operations, however, it might not be a good idea to
+     *                                    use a synchronous execution coordinator. In most cases you will want to pick between
+     *                                    {@link ExecutionCoordinator#simpleCoordinator()} and
+     *                                    {@link ExecutionCoordinator#asyncCoordinator()}
+     * @param senderMapper                Function that maps {@link FabricClientCommandSource} to the command sender type
      * @since 1.5.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public FabricClientCommandManager(
-            final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
-            final @NonNull SenderMapper<FabricClientCommandSource, C> senderMapper
+        final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
+        final @NonNull SenderMapper<FabricClientCommandSource, C> senderMapper
     ) {
         super(
-                commandExecutionCoordinator,
-                senderMapper,
-                new FabricCommandRegistrationHandler.Client<>(),
-                () -> (FabricClientCommandSource) new ClientSuggestionProvider(
-                        Minecraft.getInstance().getConnection(),
-                        Minecraft.getInstance()
-                )
+            commandExecutionCoordinator,
+            senderMapper,
+            new FabricCommandRegistrationHandler.Client<>(),
+            () -> (FabricClientCommandSource) new ClientSuggestionProvider(
+                Minecraft.getInstance().getConnection(),
+                Minecraft.getInstance()
+            )
         );
 
         this.registerParsers();
         this.registerDefaultExceptionHandlers(
-                FabricClientCommandSource::sendError,
-                source -> source.getPlayer().getGameProfile().getName()
+            FabricClientCommandSource::sendError,
+            source -> source.getPlayer().getGameProfile().getName()
         );
     }
 
@@ -113,101 +111,5 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
     @Override
     public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
         return true;
-    }
-
-    /**
-     * Get a permission predicate which passes when the integrated server is running.
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> integratedServerRunning() {
-        return PredicatePermission.of(
-                CloudKey.of("integrated-server-running"),
-                sender -> Minecraft.getInstance().hasSingleplayerServer()
-        );
-    }
-
-    /**
-     * Get a permission predicate which passes when the integrated server is not running.
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> integratedServerNotRunning() {
-        return PredicatePermission.of(
-                CloudKey.of("integrated-server-not-running"),
-                sender -> !Minecraft.getInstance().hasSingleplayerServer()
-        );
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
-     *
-     * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsAllowed() {
-        return cheatsAllowed(true);
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
-     *
-     * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
-     * fall back to the provided boolean argument.</p>
-     *
-     * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
-     * @param <C>                sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsAllowed(final boolean allowOnMultiplayer) {
-        return PredicatePermission.of(CloudKey.of("cheats-allowed"), sender -> {
-            if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                return allowOnMultiplayer;
-            }
-            return Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                    || Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
-        });
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
-     *
-     * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsDisallowed() {
-        return cheatsDisallowed(true);
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
-     *
-     * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
-     * fall back to the provided boolean argument.</p>
-     *
-     * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
-     * @param <C>                sender type
-     * @return a predicate permission
-     * @since 1.5.0
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsDisallowed(final boolean allowOnMultiplayer) {
-        return PredicatePermission.of(CloudKey.of("cheats-disallowed"), sender -> {
-            if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                return allowOnMultiplayer;
-            }
-            return !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                    && !Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
-        });
     }
 }

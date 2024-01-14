@@ -18,6 +18,7 @@ configurations {
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
+        exclude("cloud.commandframework", "cloud-minecraft-modded-common")
     }
 }
 
@@ -29,6 +30,8 @@ dependencies {
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
+    api(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    include(project(":cloud-minecraft-modded-common"))
 
     modImplementation(platform(libs.fabricApi.bom))
     modImplementation(libs.fabricApi.command.api.v2)

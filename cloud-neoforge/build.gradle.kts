@@ -10,6 +10,7 @@ configurations {
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
+        exclude("cloud.commandframework", "cloud-minecraft-modded-common")
     }
     forgeExtra {
         extendsFrom(api.get())
@@ -24,6 +25,7 @@ dependencies {
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
+    compileOnlyApi(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
 }
 
 tasks {
@@ -33,6 +35,13 @@ tasks {
         filesMatching("META-INF/mods.toml") {
             expand(props)
         }
+    }
+    jar {
+        from(
+            zipTree(
+                project(":cloud-minecraft-modded-common").tasks.named<AbstractArchiveTask>("jar").flatMap { it.archiveFile }
+            )
+        )
     }
 }
 

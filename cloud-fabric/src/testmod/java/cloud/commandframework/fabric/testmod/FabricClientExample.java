@@ -30,6 +30,7 @@ import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricClientCommandManager;
 import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
 import cloud.commandframework.fabric.testmod.mixin.PauseScreenAccess;
+import cloud.commandframework.minecraft.modded.ClientPredicatePermissions;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
@@ -112,7 +113,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 .handler(ctx -> disconnectClient(Minecraft.getInstance())));
 
         commandManager.command(base.literal("requires_cheats")
-                .permission(FabricClientCommandManager.cheatsAllowed(false))
+                .permission(ClientPredicatePermissions.cheatsAllowed(false))
                 .handler(ctx -> ctx.sender().sendFeedback(Component.literal("Cheats are enabled!"))));
 
         // Test argument which requires CommandBuildContext/RegistryAccess
