@@ -6,7 +6,7 @@ plugins {
 }
 
 indra {
-    github("Incendo", "cloud-neoforge") {
+    github("Incendo", "cloud-minecraft-modded") {
         ci(true)
     }
     mitLicense()
