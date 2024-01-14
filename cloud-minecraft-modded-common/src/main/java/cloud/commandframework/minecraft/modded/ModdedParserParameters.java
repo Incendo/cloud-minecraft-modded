@@ -21,32 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric;
+package cloud.commandframework.minecraft.modded;
 
 import cloud.commandframework.arguments.parser.ParserParameter;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * {@link ParserParameter} keys for cloud-fabric.
- *
- * @since 1.5.0
+ * {@link ParserParameter} keys for modded Minecraft.
  */
-public final class FabricParserParameters {
+public final class ModdedParserParameters {
 
-    private FabricParserParameters() {
+    private ModdedParserParameters() {
     }
 
     /**
      * Indicates that positions should be centered on the middle of blocks, i.e. x.5.
-     *
-     * @since 1.5.0
      */
     public static final ParserParameter<Boolean> CENTER_INTEGERS = create("center_integers", TypeToken.get(Boolean.class));
 
     private static <T> @NonNull ParserParameter<T> create(
-            final @NonNull String key,
-            final @NonNull TypeToken<T> expectedType
+        final @NonNull String key,
+        final @NonNull TypeToken<T> expectedType
     ) {
         return new ParserParameter<>(key, expectedType);
     }

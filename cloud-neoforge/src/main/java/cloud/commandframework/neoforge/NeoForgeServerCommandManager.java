@@ -26,6 +26,7 @@ package cloud.commandframework.neoforge;
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.keys.CloudKey;
+import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
@@ -92,6 +93,8 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
             throw new IllegalStateException(this.getClass().getSimpleName() + " was created too late! Because command registration "
                 + "occurs before the server instance is created, commands should be registered in mod initializers.");
         }
+
+        ModdedParserMappings.registerServer(this);
     }
 
     @SuppressWarnings({"unchecked", "ReferenceEquality"})

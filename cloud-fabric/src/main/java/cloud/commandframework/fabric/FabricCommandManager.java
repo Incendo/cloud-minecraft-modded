@@ -26,7 +26,6 @@ package cloud.commandframework.fabric;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.standard.UUIDParser;
 import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
@@ -42,12 +41,10 @@ import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.argument.RegistryEntryParser;
 import cloud.commandframework.fabric.argument.TeamParser;
-import cloud.commandframework.minecraft.modded.data.MinecraftTime;
+import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
-import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import cloud.commandframework.permission.PermissionResult;
 import cloud.commandframework.permission.PredicatePermission;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import io.leangen.geantyref.GenericTypeReflector;
@@ -59,39 +56,15 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.AngleArgument;
-import net.minecraft.commands.arguments.ColorArgument;
-import net.minecraft.commands.arguments.CompoundTagArgument;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.NbtPathArgument;
-import net.minecraft.commands.arguments.NbtTagArgument;
-import net.minecraft.commands.arguments.ObjectiveCriteriaArgument;
-import net.minecraft.commands.arguments.OperationArgument;
-import net.minecraft.commands.arguments.ParticleArgument;
-import net.minecraft.commands.arguments.RangeArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.commands.arguments.UuidArgument;
-import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
-import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
-import net.minecraft.commands.arguments.item.ItemArgument;
-import net.minecraft.commands.arguments.item.ItemInput;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -100,7 +73,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apiguardian.api.API;
@@ -188,9 +160,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     }
 
     private void registerNativeBrigadierMappings(final @NonNull CloudBrigadierManager<C, S> brigadier) {
-        /* Cloud-native argument types */
-        brigadier.registerMapping(new TypeToken<UUIDParser<C>>() {
-        }, builder -> builder.toConstant(UuidArgument.uuid()));
         this.registerRegistryEntryMappings();
         brigadier.registerMapping(new TypeToken<TeamParser<C>>() {
         }, builder -> builder.toConstant(net.minecraft.commands.arguments.TeamArgument.team()));
@@ -199,30 +168,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
                 params -> new TeamParser<>()
         );
 
-        /* Wrapped/Constant Brigadier types, native value type */
-        this.registerConstantNativeParserSupplier(ChatFormatting.class, ColorArgument.color());
-        this.registerConstantNativeParserSupplier(CompoundTag.class, CompoundTagArgument.compoundTag());
-        this.registerConstantNativeParserSupplier(Tag.class, NbtTagArgument.nbtTag());
-        this.registerConstantNativeParserSupplier(NbtPathArgument.NbtPath.class, NbtPathArgument.nbtPath());
-        this.registerConstantNativeParserSupplier(ObjectiveCriteria.class, ObjectiveCriteriaArgument.criteria());
-        this.registerConstantNativeParserSupplier(OperationArgument.Operation.class, OperationArgument.operation());
-        this.registerConstantNativeParserSupplier(AngleArgument.SingleAngle.class, AngleArgument.angle());
-        this.registerConstantNativeParserSupplier(new TypeToken<EnumSet<Direction.Axis>>() {
-        }, SwizzleArgument.swizzle());
-        this.registerConstantNativeParserSupplier(ResourceLocation.class, ResourceLocationArgument.id());
-        this.registerConstantNativeParserSupplier(EntityAnchorArgument.Anchor.class, EntityAnchorArgument.anchor());
-        this.registerConstantNativeParserSupplier(MinMaxBounds.Ints.class, RangeArgument.intRange());
-        this.registerConstantNativeParserSupplier(MinMaxBounds.Doubles.class, RangeArgument.floatRange());
-        this.registerContextualNativeParserSupplier(ParticleOptions.class, ParticleArgument::particle);
-        this.registerContextualNativeParserSupplier(ItemInput.class, ItemArgument::item);
-        this.registerContextualNativeParserSupplier(BlockPredicateArgument.Result.class, BlockPredicateArgument::blockPredicate);
-
-        /* Wrapped/Constant Brigadier types, mapped value type */
-        this.registerConstantNativeParserSupplier(MessageArgument.Message.class, MessageArgument.message());
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MinecraftTime.class),
-                params -> VanillaArgumentParsers.<C>timeParser().parser()
-        );
+        ModdedParserMappings.register(this, brigadier);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -286,51 +232,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
                     params -> new RegistryEntryParser(key)
             );
         }
-    }
-
-    /**
-     * Register a parser supplier for a brigadier type that has no options and whose output can be directly used.
-     *
-     * @param type     the Java type to map
-     * @param argument a function providing the Brigadier parser given a build context
-     * @param <T>      value type
-     * @since 1.7.0
-     */
-    final <T> void registerContextualNativeParserSupplier(
-            final @NonNull Class<T> type,
-            final @NonNull Function<CommandBuildContext, @NonNull ArgumentType<T>> argument
-    ) {
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(type),
-                params -> VanillaArgumentParsers.<C, T>contextualParser(argument, type).parser()
-        );
-    }
-
-    /**
-     * Register a parser supplier for a brigadier type that has no options and whose output can be directly used.
-     *
-     * @param type     the Java type to map
-     * @param argument the Brigadier parser
-     * @param <T>      value type
-     * @since 1.5.0
-     */
-    final <T> void registerConstantNativeParserSupplier(final @NonNull Class<T> type, final @NonNull ArgumentType<T> argument) {
-        this.registerConstantNativeParserSupplier(TypeToken.get(type), argument);
-    }
-
-    /**
-     * Register a parser supplier for a brigadier type that has no options and whose output can be directly used.
-     *
-     * @param type     the Java type to map
-     * @param argument the Brigadier parser
-     * @param <T>      value type
-     * @since 1.5.0
-     */
-    final <T> void registerConstantNativeParserSupplier(
-            final @NonNull TypeToken<T> type,
-            final @NonNull ArgumentType<T> argument
-    ) {
-        this.parserRegistry().registerParserSupplier(type, params -> new WrappedBrigadierParser<>(argument));
     }
 
     @Override

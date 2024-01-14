@@ -42,6 +42,7 @@ import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
+import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
@@ -100,6 +101,8 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
         this.registerDefaultExceptionHandlers();
         registrationHandler.initialize(this);
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
+
+        ModdedParserMappings.register(this, this.brigadierManager);
     }
 
     @Override

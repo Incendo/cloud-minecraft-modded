@@ -24,19 +24,10 @@
 package cloud.commandframework.fabric;
 
 import cloud.commandframework.SenderMapper;
-import cloud.commandframework.arguments.parser.ParserParameters;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.internal.LateRegistrationCatcher;
 import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.minecraft.modded.annotations.specifier.Center;
-import cloud.commandframework.minecraft.modded.data.Coordinates;
-import cloud.commandframework.minecraft.modded.data.Message;
-import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
-import cloud.commandframework.minecraft.modded.data.MultiplePlayerSelector;
-import cloud.commandframework.minecraft.modded.data.SingleEntitySelector;
-import cloud.commandframework.minecraft.modded.data.SinglePlayerSelector;
-import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
-import io.leangen.geantyref.TypeToken;
+import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSource;
@@ -128,63 +119,10 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
                     + "occurs before the server instance is created, commands should be registered in mod initializers.");
         }
 
-        this.registerParsers();
+        ModdedParserMappings.registerServer(this);
         this.registerDefaultExceptionHandlers(
                 CommandSourceStack::sendFailure,
                 CommandSourceStack::getTextName
-        );
-    }
-
-    private void registerParsers() {
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Message.class),
-                params -> VanillaArgumentParsers.<C>messageParser().parser()
-        );
-
-        // Location arguments
-        this.parserRegistry().registerAnnotationMapper(
-                Center.class,
-                (annotation, type) -> ParserParameters.single(FabricParserParameters.CENTER_INTEGERS, true)
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Coordinates.class),
-                params -> VanillaArgumentParsers.<C>vec3Parser(params.get(
-                        FabricParserParameters.CENTER_INTEGERS,
-                        false
-                )).parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Coordinates.CoordinatesXZ.class),
-                params -> VanillaArgumentParsers.<C>vec2Parser(params.get(
-                        FabricParserParameters.CENTER_INTEGERS,
-                        false
-                )).parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Coordinates.BlockCoordinates.class),
-                params -> VanillaArgumentParsers.<C>blockPosParser().parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Coordinates.ColumnCoordinates.class),
-                params -> VanillaArgumentParsers.<C>columnPosParser().parser()
-        );
-
-        // Entity selectors
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(SinglePlayerSelector.class),
-                params -> VanillaArgumentParsers.<C>singlePlayerSelectorParser().parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultiplePlayerSelector.class),
-                params -> VanillaArgumentParsers.<C>multiplePlayerSelectorParser().parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(SingleEntitySelector.class),
-                params -> VanillaArgumentParsers.<C>singleEntitySelectorParser().parser()
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultipleEntitySelector.class),
-                params -> VanillaArgumentParsers.<C>multipleEntitySelectorParser().parser()
         );
     }
 
