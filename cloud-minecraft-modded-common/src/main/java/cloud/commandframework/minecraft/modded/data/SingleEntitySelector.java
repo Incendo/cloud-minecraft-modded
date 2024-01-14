@@ -21,17 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.mixin;
+package cloud.commandframework.minecraft.modded.data;
 
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import net.minecraft.world.entity.Entity;
 
-@Mixin(MessageArgument.Part.class)
-public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
+/**
+ * A selector for a single entity.
+ */
+public interface SingleEntitySelector extends Selector.Single<Entity> {
 
-    @Accessor("selector")
-    @Override
-    EntitySelector accessor$selector();
 }

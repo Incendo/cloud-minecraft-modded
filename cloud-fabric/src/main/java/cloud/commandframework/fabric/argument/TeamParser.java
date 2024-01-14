@@ -32,7 +32,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import cloud.commandframework.fabric.FabricCaptionKeys;
-import cloud.commandframework.fabric.FabricCommandContextKeys;
+import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -79,7 +79,7 @@ public final class TeamParser<C> extends SidedArgumentParser<C, String, PlayerTe
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
-        return new ArrayList<>(commandContext.get(FabricCommandContextKeys.NATIVE_COMMAND_SOURCE).getAllTeams());
+        return new ArrayList<>(commandContext.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER).getAllTeams());
     }
 
     @Override

@@ -27,6 +27,7 @@ import cloud.commandframework.Command;
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.internal.CommandRegistrationHandler;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;

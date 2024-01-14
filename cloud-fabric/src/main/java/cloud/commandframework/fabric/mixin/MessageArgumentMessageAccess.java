@@ -28,8 +28,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(MessageArgument.Message.class)
-public interface MessageArgumentMessageAccess {
+public interface MessageArgumentMessageAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentMessageAccess {
 
     @Accessor("parts")
+    @Override
     MessageArgument.Part[] accessor$parts();
 }

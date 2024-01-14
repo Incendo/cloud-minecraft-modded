@@ -21,17 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.mixin;
+package cloud.commandframework.minecraft.modded.data;
 
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import java.util.Collection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Mixin(MessageArgument.Part.class)
-public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
+/**
+ * A parsed message.
+ */
+public interface Message {
 
-    @Accessor("selector")
-    @Override
-    EntitySelector accessor$selector();
+    /**
+     * Get the collection of entities mentioned in this message.
+     *
+     * @return the mentioned entities
+     */
+    @NonNull Collection<Entity> mentionedEntities();
+
+    /**
+     * Get the parsed text contents of this message.
+     *
+     * @return the parsed text
+     */
+    @NonNull Component contents();
 }

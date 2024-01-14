@@ -28,9 +28,9 @@ import cloud.commandframework.CommandDescription;
 import cloud.commandframework.arguments.flags.CommandFlag;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricClientCommandManager;
-import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
 import cloud.commandframework.fabric.testmod.mixin.PauseScreenAccess;
 import cloud.commandframework.minecraft.modded.ClientPredicatePermissions;
+import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
@@ -118,7 +118,7 @@ public final class FabricClientExample implements ClientModInitializer {
 
         // Test argument which requires CommandBuildContext/RegistryAccess
         commandManager.command(base.literal("show_item")
-                .required("item", FabricVanillaArgumentParsers.contextualParser(ItemArgument::item, ItemInput.class))
+                .required("item", VanillaArgumentParsers.contextualParser(ItemArgument::item, ItemInput.class))
                 .handler(ctx -> {
                     try {
                         ctx.sender().sendFeedback(

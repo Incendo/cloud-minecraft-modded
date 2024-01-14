@@ -21,17 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.mixin;
+package cloud.commandframework.minecraft.modded;
 
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.keys.CloudKey;
+import io.leangen.geantyref.TypeToken;
+import net.minecraft.commands.SharedSuggestionProvider;
 
-@Mixin(MessageArgument.Part.class)
-public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
+/**
+ * Keys used in {@link CommandContext}s available within a modded Minecraft context.
+ */
+public final class ModdedCommandContextKeys {
+    private ModdedCommandContextKeys() {
+    }
 
-    @Accessor("selector")
-    @Override
-    EntitySelector accessor$selector();
+    /**
+     * Key used to store the native {@link SharedSuggestionProvider} in the command context.
+     */
+    public static final CloudKey<SharedSuggestionProvider> SHARED_SUGGESTION_PROVIDER = CloudKey.of(
+        "cloud:modded_command_source",
+        TypeToken.get(SharedSuggestionProvider.class)
+    );
 }

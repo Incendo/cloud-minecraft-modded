@@ -21,17 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.mixin;
+package cloud.commandframework.minecraft.modded.annotations.specifier;
 
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Mixin(MessageArgument.Part.class)
-public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
+/**
+ * Annotation used to enable coordinate centering for
+ * {@link VanillaArgumentParsers#vec3Parser} and {@link VanillaArgumentParsers#vec2Parser}.
+ */
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Center {
 
-    @Accessor("selector")
-    @Override
-    EntitySelector accessor$selector();
 }

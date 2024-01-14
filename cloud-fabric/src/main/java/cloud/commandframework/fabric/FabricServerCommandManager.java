@@ -26,16 +26,16 @@ package cloud.commandframework.fabric;
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.arguments.parser.ParserParameters;
 import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.fabric.annotations.specifier.Center;
-import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
-import cloud.commandframework.fabric.data.Coordinates;
-import cloud.commandframework.fabric.data.Message;
-import cloud.commandframework.fabric.data.MultipleEntitySelector;
-import cloud.commandframework.fabric.data.MultiplePlayerSelector;
-import cloud.commandframework.fabric.data.SingleEntitySelector;
-import cloud.commandframework.fabric.data.SinglePlayerSelector;
 import cloud.commandframework.fabric.internal.LateRegistrationCatcher;
 import cloud.commandframework.keys.CloudKey;
+import cloud.commandframework.minecraft.modded.annotations.specifier.Center;
+import cloud.commandframework.minecraft.modded.data.Coordinates;
+import cloud.commandframework.minecraft.modded.data.Message;
+import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
+import cloud.commandframework.minecraft.modded.data.MultiplePlayerSelector;
+import cloud.commandframework.minecraft.modded.data.SingleEntitySelector;
+import cloud.commandframework.minecraft.modded.data.SinglePlayerSelector;
+import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import io.leangen.geantyref.TypeToken;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -138,7 +138,7 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
     private void registerParsers() {
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(Message.class),
-                params -> FabricVanillaArgumentParsers.<C>messageParser().parser()
+                params -> VanillaArgumentParsers.<C>messageParser().parser()
         );
 
         // Location arguments
@@ -148,43 +148,43 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(Coordinates.class),
-                params -> FabricVanillaArgumentParsers.<C>vec3Parser(params.get(
+                params -> VanillaArgumentParsers.<C>vec3Parser(params.get(
                         FabricParserParameters.CENTER_INTEGERS,
                         false
                 )).parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(Coordinates.CoordinatesXZ.class),
-                params -> FabricVanillaArgumentParsers.<C>vec2Parser(params.get(
+                params -> VanillaArgumentParsers.<C>vec2Parser(params.get(
                         FabricParserParameters.CENTER_INTEGERS,
                         false
                 )).parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(Coordinates.BlockCoordinates.class),
-                params -> FabricVanillaArgumentParsers.<C>blockPosParser().parser()
+                params -> VanillaArgumentParsers.<C>blockPosParser().parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(Coordinates.ColumnCoordinates.class),
-                params -> FabricVanillaArgumentParsers.<C>columnPosParser().parser()
+                params -> VanillaArgumentParsers.<C>columnPosParser().parser()
         );
 
         // Entity selectors
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(SinglePlayerSelector.class),
-                params -> FabricVanillaArgumentParsers.<C>singlePlayerSelectorParser().parser()
+                params -> VanillaArgumentParsers.<C>singlePlayerSelectorParser().parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(MultiplePlayerSelector.class),
-                params -> FabricVanillaArgumentParsers.<C>multiplePlayerSelectorParser().parser()
+                params -> VanillaArgumentParsers.<C>multiplePlayerSelectorParser().parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(SingleEntitySelector.class),
-                params -> FabricVanillaArgumentParsers.<C>singleEntitySelectorParser().parser()
+                params -> VanillaArgumentParsers.<C>singleEntitySelectorParser().parser()
         );
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(MultipleEntitySelector.class),
-                params -> FabricVanillaArgumentParsers.<C>multipleEntitySelectorParser().parser()
+                params -> VanillaArgumentParsers.<C>multipleEntitySelectorParser().parser()
         );
     }
 

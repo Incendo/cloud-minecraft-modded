@@ -11,6 +11,7 @@ dependencies {
 
     compileOnly(platform(libs.cloud.bom))
     compileOnly(libs.cloud.core)
+    compileOnly(libs.cloud.brigadier)
 }
 
 tasks.jar {

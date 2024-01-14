@@ -40,10 +40,11 @@ import cloud.commandframework.exceptions.InvalidSyntaxException;
 import cloud.commandframework.exceptions.NoPermissionException;
 import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
 import cloud.commandframework.fabric.argument.RegistryEntryParser;
 import cloud.commandframework.fabric.argument.TeamParser;
-import cloud.commandframework.fabric.data.MinecraftTime;
+import cloud.commandframework.minecraft.modded.data.MinecraftTime;
+import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
+import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import cloud.commandframework.permission.PermissionResult;
 import cloud.commandframework.permission.PredicatePermission;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -181,7 +182,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
 
         this.registerNativeBrigadierMappings(this.brigadierManager);
         this.captionRegistry(new FabricCaptionRegistry<>());
-        this.registerCommandPreProcessor(new FabricCommandPreprocessor<>(this));
+        this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
 
         ((FabricCommandRegistrationHandler<C, S>) this.commandRegistrationHandler()).initialize(this);
     }
@@ -220,7 +221,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
         this.registerConstantNativeParserSupplier(MessageArgument.Message.class, MessageArgument.message());
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(MinecraftTime.class),
-                params -> FabricVanillaArgumentParsers.<C>timeParser().parser()
+                params -> VanillaArgumentParsers.<C>timeParser().parser()
         );
     }
 
@@ -301,7 +302,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     ) {
         this.parserRegistry().registerParserSupplier(
                 TypeToken.get(type),
-                params -> FabricVanillaArgumentParsers.<C, T>contextualParser(argument, type).parser()
+                params -> VanillaArgumentParsers.<C, T>contextualParser(argument, type).parser()
         );
     }
 

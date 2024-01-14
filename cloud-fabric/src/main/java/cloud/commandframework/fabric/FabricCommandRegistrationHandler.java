@@ -26,8 +26,8 @@ package cloud.commandframework.fabric;
 import cloud.commandframework.Command;
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.brigadier.CloudBrigadierCommand;
-import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
 import cloud.commandframework.internal.CommandRegistrationHandler;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -93,7 +93,7 @@ abstract class FabricCommandRegistrationHandler<C, S extends SharedSuggestionPro
                 if (dispatcher == null) {
                     throw new IllegalStateException("Expected an active dispatcher!");
                 }
-                FabricVanillaArgumentParsers.ContextualArgumentTypeProvider.withBuildContext(
+                ContextualArgumentTypeProvider.withBuildContext(
                         this.commandManager(),
                         CommandBuildContext.simple(connection.registryAccess(), connection.enabledFeatures()),
                         false,
@@ -108,7 +108,7 @@ abstract class FabricCommandRegistrationHandler<C, S extends SharedSuggestionPro
                 final CommandBuildContext commandBuildContext
         ) {
             this.registerEventFired = true;
-            FabricVanillaArgumentParsers.ContextualArgumentTypeProvider.withBuildContext(
+            ContextualArgumentTypeProvider.withBuildContext(
                     this.commandManager(),
                     commandBuildContext,
                     true,
@@ -164,7 +164,7 @@ abstract class FabricCommandRegistrationHandler<C, S extends SharedSuggestionPro
                 final Commands.CommandSelection side
         ) {
             this.commandManager().registrationCalled();
-            FabricVanillaArgumentParsers.ContextualArgumentTypeProvider.withBuildContext(
+            ContextualArgumentTypeProvider.withBuildContext(
                     this.commandManager(),
                     access,
                     true,

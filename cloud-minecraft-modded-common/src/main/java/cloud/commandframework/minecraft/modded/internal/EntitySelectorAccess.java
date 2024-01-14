@@ -21,17 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.mixin;
+package cloud.commandframework.minecraft.modded.internal;
 
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.apiguardian.api.API;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Mixin(MessageArgument.Part.class)
-public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
+// TODO implement Mixin on NeoForge
+@API(status = API.Status.INTERNAL)
+public interface EntitySelectorAccess {
 
-    @Accessor("selector")
-    @Override
-    EntitySelector accessor$selector();
+    /**
+     * Get the last parsed input string
+     *
+     * @return input string
+     */
+    @NonNull String inputString();
+
+    /**
+     * Set the last parsed input string
+     *
+     * @param inputString input string
+     */
+    void inputString(@NonNull String inputString);
 }

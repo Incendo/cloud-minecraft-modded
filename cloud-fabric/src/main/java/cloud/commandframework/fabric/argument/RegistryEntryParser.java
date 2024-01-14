@@ -33,7 +33,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import cloud.commandframework.fabric.FabricCaptionKeys;
-import cloud.commandframework.fabric.FabricCommandContextKeys;
+import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.leangen.geantyref.TypeToken;
@@ -153,7 +153,7 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
     }
 
     private Registry<V> resolveRegistry(final CommandContext<C> ctx) {
-        final SharedSuggestionProvider reverseMapped = ctx.get(FabricCommandContextKeys.NATIVE_COMMAND_SOURCE);
+        final SharedSuggestionProvider reverseMapped = ctx.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
         return reverseMapped.registryAccess().registry(this.registryIdent).orElse(null);
     }
 

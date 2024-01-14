@@ -27,7 +27,7 @@ import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.fabric.FabricCommandContextKeys;
+import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -49,7 +49,7 @@ abstract class SidedArgumentParser<C, I, R> implements ArgumentParser.FutureArgu
             final @NonNull CommandContext<@NonNull C> commandContext,
             final @NonNull CommandInput commandInput
     ) {
-        final SharedSuggestionProvider source = commandContext.get(FabricCommandContextKeys.NATIVE_COMMAND_SOURCE);
+        final SharedSuggestionProvider source = commandContext.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
         return this.intermediateParser().flatMapSuccess((ctx, result) -> {
             if (source instanceof CommandSourceStack) {
                 return this.resolveServer(commandContext, (CommandSourceStack) source, result);

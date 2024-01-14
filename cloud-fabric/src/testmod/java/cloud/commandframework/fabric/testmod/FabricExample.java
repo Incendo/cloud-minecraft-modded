@@ -32,15 +32,15 @@ import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricServerCommandManager;
-import cloud.commandframework.fabric.argument.FabricVanillaArgumentParsers;
-import cloud.commandframework.fabric.argument.NamedColorParser;
 import cloud.commandframework.fabric.argument.RegistryEntryParser;
-import cloud.commandframework.fabric.data.Coordinates;
-import cloud.commandframework.fabric.data.Coordinates.ColumnCoordinates;
-import cloud.commandframework.fabric.data.MultipleEntitySelector;
-import cloud.commandframework.fabric.data.MultiplePlayerSelector;
 import cloud.commandframework.fabric.testmod.mixin.GiveCommandAccess;
 import cloud.commandframework.keys.CloudKey;
+import cloud.commandframework.minecraft.modded.data.Coordinates;
+import cloud.commandframework.minecraft.modded.data.Coordinates.ColumnCoordinates;
+import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
+import cloud.commandframework.minecraft.modded.data.MultiplePlayerSelector;
+import cloud.commandframework.minecraft.modded.parser.NamedColorParser;
+import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -124,7 +124,7 @@ public final class FabricExample implements ModInitializer {
         final CloudKey<ChatFormatting> textColorKey = CloudKey.of("color", ChatFormatting.class);
 
         manager.command(base.literal("wave")
-                .required(playersKey, FabricVanillaArgumentParsers.multiplePlayerSelectorParser())
+                .required(playersKey, VanillaArgumentParsers.multiplePlayerSelectorParser())
                 .required(textColorKey, NamedColorParser.namedColorParser())
                 .handler(ctx -> {
                     final MultiplePlayerSelector selector = ctx.get(playersKey);
@@ -145,8 +145,8 @@ public final class FabricExample implements ModInitializer {
 
         manager.command(base.literal("give")
                 .permission("cloud.give")
-                .required("targets", FabricVanillaArgumentParsers.multiplePlayerSelectorParser())
-                .required("item", FabricVanillaArgumentParsers.contextualParser(ItemArgument::item, ItemInput.class))
+                .required("targets", VanillaArgumentParsers.multiplePlayerSelectorParser())
+                .required("item", VanillaArgumentParsers.contextualParser(ItemArgument::item, ItemInput.class))
                 .optional("amount", integerParser(1), DefaultValue.constant(1))
                 .handler(ctx -> {
                     final ItemInput item = ctx.get("item");
@@ -255,8 +255,8 @@ public final class FabricExample implements ModInitializer {
 
         manager.command(base.literal("teleport")
                 .permission("cloud.teleport")
-                .required("targets", FabricVanillaArgumentParsers.multiplePlayerSelectorParser())
-                .required("location", FabricVanillaArgumentParsers.vec3Parser(false))
+                .required("targets", VanillaArgumentParsers.multiplePlayerSelectorParser())
+                .required("location", VanillaArgumentParsers.vec3Parser(false))
                 .handler(ctx -> {
                     final MultipleEntitySelector selector = ctx.get("targets");
                     final Vec3 location = ctx.<Coordinates>get("location").position();
@@ -266,7 +266,7 @@ public final class FabricExample implements ModInitializer {
 
         manager.command(base.literal("gotochunk")
                 .permission("cloud.gotochunk")
-                .required("chunk_position", FabricVanillaArgumentParsers.columnPosParser())
+                .required("chunk_position", VanillaArgumentParsers.columnPosParser())
                 .handler(ctx -> {
                     final ServerPlayer player;
                     try {
