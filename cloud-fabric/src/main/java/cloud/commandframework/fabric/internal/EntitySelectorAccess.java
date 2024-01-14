@@ -32,6 +32,7 @@ public interface EntitySelectorAccess extends cloud.commandframework.minecraft.m
      *
      * @return input string
      */
+    @Override
     @NonNull String inputString();
 
     /**
@@ -39,5 +40,6 @@ public interface EntitySelectorAccess extends cloud.commandframework.minecraft.m
      *
      * @param inputString input string
      */
+    @Override
     void inputString(@NonNull String inputString);
 }
