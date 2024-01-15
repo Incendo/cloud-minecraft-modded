@@ -39,38 +39,21 @@ import cloud.commandframework.exceptions.InvalidSyntaxException;
 import cloud.commandframework.exceptions.NoPermissionException;
 import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.fabric.argument.RegistryEntryParser;
-import cloud.commandframework.fabric.argument.TeamParser;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Codec;
-import io.leangen.geantyref.GenericTypeReflector;
-import io.leangen.geantyref.TypeToken;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.scores.PlayerTeam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apiguardian.api.API;
@@ -94,7 +77,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
         BrigadierManagerHolder<C, S>, SenderMapperHolder<S, C> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int MOD_PUBLIC_STATIC_FINAL = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL;
 
     private static final Component NEWLINE = Component.literal("\n");
     private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
@@ -150,86 +132,11 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
                 this.senderMapper
         );
 
-        this.registerNativeBrigadierMappings(this.brigadierManager);
+        ModdedParserMappings.register(this, this.brigadierManager);
         this.captionRegistry(new FabricCaptionRegistry<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
 
         ((FabricCommandRegistrationHandler<C, S>) this.commandRegistrationHandler()).initialize(this);
-    }
-
-    private void registerNativeBrigadierMappings(final @NonNull CloudBrigadierManager<C, S> brigadier) {
-        this.registerRegistryEntryMappings();
-        brigadier.registerMapping(new TypeToken<TeamParser<C>>() {
-        }, builder -> builder.toConstant(net.minecraft.commands.arguments.TeamArgument.team()));
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(PlayerTeam.class),
-                params -> new TeamParser<>()
-        );
-
-        ModdedParserMappings.register(this, brigadier);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private void registerRegistryEntryMappings() {
-        this.brigadierManager.registerMapping(
-                new TypeToken<RegistryEntryParser<C, ?>>() {
-                },
-                builder -> {
-                    builder.to(argument -> ResourceKeyArgument.key((ResourceKey) argument.registryKey()));
-                }
-        );
-
-        /* Find all fields of RegistryKey<? extends Registry<?>> and register those */
-        /* This only works for vanilla registries really, we'll have to do other things for non-vanilla ones */
-        final Set<Class<?>> seenClasses = new HashSet<>();
-        /* Some registries have types that are too generic... we'll skip those for now.
-         * Eventually, these could be resolved by using ParserParameters in some way? */
-        seenClasses.add(ResourceLocation.class);
-        seenClasses.add(Codec.class);
-        seenClasses.add(String.class); // avoid pottery pattern registry overriding default string parser
-        for (final Field field : Registries.class.getDeclaredFields()) {
-            if ((field.getModifiers() & MOD_PUBLIC_STATIC_FINAL) != MOD_PUBLIC_STATIC_FINAL) {
-                continue;
-            }
-            if (!field.getType().equals(ResourceKey.class)) {
-                continue;
-            }
-
-            final Type generic = field.getGenericType(); /* RegistryKey<? extends Registry<?>> */
-            if (!(generic instanceof ParameterizedType)) {
-                continue;
-            }
-
-            Type registryType = ((ParameterizedType) generic).getActualTypeArguments()[0];
-            while (registryType instanceof WildcardType) {
-                registryType = ((WildcardType) registryType).getUpperBounds()[0];
-            }
-
-            if (!(registryType instanceof ParameterizedType)) { /* expected: Registry<V> */
-                continue;
-            }
-
-            final ResourceKey<?> key;
-            try {
-                key = (ResourceKey<?>) field.get(null);
-            } catch (final IllegalAccessException ex) {
-                LOGGER.warn("Failed to access value of registry key in field {} of type {}", field.getName(), generic, ex);
-                continue;
-            }
-
-            final Type valueType = ((ParameterizedType) registryType).getActualTypeArguments()[0];
-            if (seenClasses.contains(GenericTypeReflector.erase(valueType))) {
-                LOGGER.debug("Encountered duplicate type in registry {}: type {}", key, valueType);
-                continue;
-            }
-            seenClasses.add(GenericTypeReflector.erase(valueType));
-
-            /* and now, finally, we can register */
-            this.parserRegistry().registerParserSupplier(
-                    TypeToken.get(valueType),
-                    params -> new RegistryEntryParser(key)
-            );
-        }
     }
 
     @Override

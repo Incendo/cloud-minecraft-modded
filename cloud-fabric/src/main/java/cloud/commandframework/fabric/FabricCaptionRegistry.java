@@ -25,6 +25,7 @@ package cloud.commandframework.fabric;
 
 import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.captions.StandardCaptionRegistry;
+import cloud.commandframework.minecraft.modded.ModdedCaptionKeys;
 
 /**
  * Caption registry that uses bi-functions to produce messages.
@@ -35,7 +36,7 @@ import cloud.commandframework.captions.StandardCaptionRegistry;
 public class FabricCaptionRegistry<C> extends StandardCaptionRegistry<C> {
 
     /**
-     * Default caption for {@link FabricCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
+     * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
      *
      * @since 1.5.0
      */
@@ -43,7 +44,7 @@ public class FabricCaptionRegistry<C> extends StandardCaptionRegistry<C> {
             "Could not find value with key '<id>' in registry '<registry>'.";
 
     /**
-     * Default caption for {@link FabricCaptionKeys#ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN}
+     * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN}
      *
      * @since 1.5.0
      */
@@ -55,10 +56,10 @@ public class FabricCaptionRegistry<C> extends StandardCaptionRegistry<C> {
         this.registerProvider(
                 CaptionProvider.<C>constantProvider()
                         .putCaptions(
-                                FabricCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
+                                ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
                                 ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY
                         ).putCaptions(
-                                FabricCaptionKeys.ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN,
+                                ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN,
                                 ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN
                         )
                         .build()

@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric;
+package cloud.commandframework.minecraft.modded;
 
 import cloud.commandframework.captions.Caption;
 import java.util.Collection;
@@ -31,31 +31,25 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * {@link Caption} instances for messages in cloud-fabric
- *
- * @since 1.5.0
  */
-public final class FabricCaptionKeys {
+public final class ModdedCaptionKeys {
 
     private static final Collection<Caption> RECOGNIZED_CAPTIONS = new HashSet<>();
 
     /**
      * Variables: {@code <id>}, {@code <registry>}
-     *
-     * @since 1.5.0
      */
     public static final Caption ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY = of(
-            "argument.parse.failure.registry_entry.unknown_entry"
+        "argument.parse.failure.registry_entry.unknown_entry"
     );
     /**
      * Variables: {@code <input>}
-     *
-     * @since 1.5.0
      */
     public static final Caption ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN = of(
-            "argument.parse.failure.team.unknown"
+        "argument.parse.failure.team.unknown"
     );
 
-    private FabricCaptionKeys() {
+    private ModdedCaptionKeys() {
     }
 
     private static @NonNull Caption of(final @NonNull String key) {
@@ -70,7 +64,7 @@ public final class FabricCaptionKeys {
      * @return Immutable collection of keys
      * @since 1.5.0
      */
-    public static @NonNull Collection<@NonNull Caption> fabricCaptionKeys() {
+    public static @NonNull Collection<@NonNull Caption> moddedCaptionKeys() {
         return Collections.unmodifiableCollection(RECOGNIZED_CAPTIONS);
     }
 }

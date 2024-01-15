@@ -32,7 +32,6 @@ import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricServerCommandManager;
-import cloud.commandframework.fabric.argument.RegistryEntryParser;
 import cloud.commandframework.fabric.testmod.mixin.GiveCommandAccess;
 import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
@@ -40,6 +39,7 @@ import cloud.commandframework.minecraft.modded.data.Coordinates.ColumnCoordinate
 import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
 import cloud.commandframework.minecraft.modded.data.MultiplePlayerSelector;
 import cloud.commandframework.minecraft.modded.parser.NamedColorParser;
+import cloud.commandframework.minecraft.modded.parser.RegistryEntryParser;
 import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;

@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.argument;
+package cloud.commandframework.minecraft.modded.parser;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
@@ -32,7 +32,7 @@ import cloud.commandframework.captions.CaptionVariable;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.exceptions.parsing.ParserException;
-import cloud.commandframework.fabric.FabricCaptionKeys;
+import cloud.commandframework.minecraft.modded.ModdedCaptionKeys;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -44,7 +44,6 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -54,7 +53,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <C> the command sender type
  * @param <V> the registry entry type
- * @since 2.0.0
  */
 public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, BlockingSuggestionProvider.Strings<C> {
 
@@ -63,17 +61,15 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
     /**
      * Creates a new registry entry parser.
      *
-     * @param <C> command sender type
-     * @param <V> the registry entry type
-     * @param registry the registry key to use
+     * @param <C>       command sender type
+     * @param <V>       the registry entry type
+     * @param registry  the registry key to use
      * @param valueType the value type of output
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C, V> @NonNull ParserDescriptor<C, V> registryEntryParser(
-            final @NonNull ResourceKey<? extends Registry<V>> registry,
-            final @NonNull TypeToken<V> valueType
+        final @NonNull ResourceKey<? extends Registry<V>> registry,
+        final @NonNull TypeToken<V> valueType
     ) {
         return ParserDescriptor.of(new RegistryEntryParser<>(registry), valueType);
     }
@@ -81,17 +77,15 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
     /**
      * Creates a new registry entry parser.
      *
-     * @param <C> command sender type
-     * @param <V> the registry entry type
-     * @param registry the registry key to use
+     * @param <C>       command sender type
+     * @param <V>       the registry entry type
+     * @param registry  the registry key to use
      * @param valueType the value type of output
      * @return the created parser
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C, V> @NonNull ParserDescriptor<C, V> registryEntryParser(
-            final @NonNull ResourceKey<? extends Registry<V>> registry,
-            final @NonNull Class<V> valueType
+        final @NonNull ResourceKey<? extends Registry<V>> registry,
+        final @NonNull Class<V> valueType
     ) {
         return ParserDescriptor.of(new RegistryEntryParser<>(registry), TypeToken.get(valueType));
     }
@@ -99,17 +93,15 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
     /**
      * Returns a {@link CommandComponent.Builder} using {@link #registryEntryParser} as the parser.
      *
-     * @param <C> the command sender type
-     * @param <V> the registry entry type
-     * @param registry the registry key to use
+     * @param <C>       the command sender type
+     * @param <V>       the registry entry type
+     * @param registry  the registry key to use
      * @param valueType the value type of output
      * @return the component builder
-     * @since 2.0.0
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C, V> CommandComponent.@NonNull Builder<C, V> registryEntryComponent(
-            final @NonNull ResourceKey<? extends Registry<V>> registry,
-            final @NonNull TypeToken<V> valueType
+        final @NonNull ResourceKey<? extends Registry<V>> registry,
+        final @NonNull TypeToken<V> valueType
     ) {
         return CommandComponent.<C, V>builder().parser(registryEntryParser(registry, valueType));
     }
@@ -122,15 +114,15 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
      * @param registry registry key to use in parser
      */
     public RegistryEntryParser(
-            final @NonNull ResourceKey<? extends Registry<V>> registry
+        final @NonNull ResourceKey<? extends Registry<V>> registry
     ) {
         this.registryIdent = registry;
     }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull V> parse(
-            final @NonNull CommandContext<@NonNull C> commandContext,
-            final @NonNull CommandInput commandInput
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput commandInput
     ) {
         final ResourceLocation key;
         try {
@@ -159,8 +151,8 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
 
     @Override
     public @NonNull Iterable<@NonNull String> stringSuggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull CommandInput input
+        final @NonNull CommandContext<C> commandContext,
+        final @NonNull CommandInput input
     ) {
         final Set<ResourceLocation> ids = this.resolveRegistry(commandContext).keySet();
         final List<String> results = new ArrayList<>(ids.size());
@@ -185,23 +177,21 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
 
     /**
      * An exception thrown when an entry in a registry could not be found.
-     *
-     * @since 1.5.0
      */
     private static final class UnknownEntryException extends ParserException {
 
 
         UnknownEntryException(
-                final CommandContext<?> context,
-                final ResourceLocation key,
-                final ResourceKey<? extends Registry<?>> registry
+            final CommandContext<?> context,
+            final ResourceLocation key,
+            final ResourceKey<? extends Registry<?>> registry
         ) {
             super(
-                    RegistryEntryParser.class,
-                    context,
-                    FabricCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
-                    CaptionVariable.of("id", key.toString()),
-                    CaptionVariable.of("registry", registry.toString())
+                RegistryEntryParser.class,
+                context,
+                ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
+                CaptionVariable.of("id", key.toString()),
+                CaptionVariable.of("registry", registry.toString())
             );
         }
     }

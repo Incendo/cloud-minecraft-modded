@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.argument;
+package cloud.commandframework.minecraft.modded.parser;
 
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
@@ -29,7 +29,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import java.util.concurrent.CompletableFuture;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -37,59 +37,57 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * An argument parser that is resolved in different ways on the logical server and logical client.
  *
- * @param <C> command sender type
- * @param <I> intermediate type to resolve
- * @param <R> resolved type
- * @since 1.5.0
+ * @param <C>                command sender type
+ * @param <IntermediateType> intermediate type to resolve
+ * @param <T>                resolved type
  */
-abstract class SidedArgumentParser<C, I, R> implements ArgumentParser.FutureArgumentParser<C, R> {
+abstract class SidedArgumentParser<C, IntermediateType, T> implements ArgumentParser.FutureArgumentParser<C, T> {
+
+    private final Predicate<SharedSuggestionProvider> isClient;
+
+    protected SidedArgumentParser() {
+        // NeoForge extends CommandSourceStack with ClientCommandSourceStack; Fabric has its own SharedSuggestionProvider impl
+        this.isClient = sharedSuggestionProvider -> !sharedSuggestionProvider.getClass().equals(CommandSourceStack.class);
+    }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull ArgumentParseResult<R>> parseFuture(
-            final @NonNull CommandContext<@NonNull C> commandContext,
-            final @NonNull CommandInput commandInput
+    public @NonNull CompletableFuture<@NonNull ArgumentParseResult<T>> parseFuture(
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput commandInput
     ) {
         final SharedSuggestionProvider source = commandContext.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
         return this.intermediateParser().flatMapSuccess((ctx, result) -> {
-            if (source instanceof CommandSourceStack) {
-                return this.resolveServer(commandContext, (CommandSourceStack) source, result);
-            } else if (source instanceof FabricClientCommandSource) {
-                return this.resolveClient(commandContext, (FabricClientCommandSource) source, result);
+            if (this.isClient.test(source)) {
+                return this.resolveClient(commandContext, result);
             } else {
-                throw new IllegalStateException("Cannot have non-server command source when not on client");
+                return this.resolveServer(commandContext, result);
             }
         }).parseFuture(commandContext, commandInput);
     }
 
-    protected abstract @NonNull FutureArgumentParser<C, I> intermediateParser();
+    protected abstract @NonNull FutureArgumentParser<C, IntermediateType> intermediateParser();
 
     /**
      * Resolve the final value for this argument when running on the client.
      *
      * @param context Command context
-     * @param source  The command source
      * @param value   parsed intermediate value
      * @return a resolved value
-     * @since 1.5.0
      */
-    protected abstract @NonNull CompletableFuture<@NonNull ArgumentParseResult<@NonNull R>> resolveClient(
-            @NonNull CommandContext<@NonNull C> context,
-            @NonNull FabricClientCommandSource source,
-            @NonNull I value
+    protected abstract @NonNull CompletableFuture<@NonNull ArgumentParseResult<@NonNull T>> resolveClient(
+        @NonNull CommandContext<@NonNull C> context,
+        @NonNull IntermediateType value
     );
 
     /**
      * Resolve the final value for this argument when running on the server.
      *
      * @param context Command context
-     * @param source  The command source
      * @param value   Parsed intermediate value
      * @return a resolved value
-     * @since 1.5.0
      */
-    protected abstract @NonNull CompletableFuture<@NonNull ArgumentParseResult<@NonNull R>> resolveServer(
-            @NonNull CommandContext<@NonNull C> context,
-            @NonNull CommandSourceStack source,
-            @NonNull I value
+    protected abstract @NonNull CompletableFuture<@NonNull ArgumentParseResult<@NonNull T>> resolveServer(
+        @NonNull CommandContext<@NonNull C> context,
+        @NonNull IntermediateType value
     );
 }

@@ -37,9 +37,21 @@ import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
 import cloud.commandframework.minecraft.modded.data.MultiplePlayerSelector;
 import cloud.commandframework.minecraft.modded.data.SingleEntitySelector;
 import cloud.commandframework.minecraft.modded.data.SinglePlayerSelector;
+import cloud.commandframework.minecraft.modded.parser.RegistryEntryParser;
+import cloud.commandframework.minecraft.modded.parser.TeamParser;
 import cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -55,6 +67,7 @@ import net.minecraft.commands.arguments.ObjectiveCriteriaArgument;
 import net.minecraft.commands.arguments.OperationArgument;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.RangeArgument;
+import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
@@ -62,15 +75,23 @@ import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
 @API(status = API.Status.INTERNAL)
 public final class ModdedParserMappings {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int MOD_PUBLIC_STATIC_FINAL = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL;
+
     private ModdedParserMappings() {
     }
 
@@ -82,7 +103,19 @@ public final class ModdedParserMappings {
      * @param <C>       sender type
      * @param <S>       source type
      */
-    public static <C, S> void register(final CommandManager<C> manager, final @NonNull CloudBrigadierManager<C, S> brigadier) {
+    public static <C, S> void register(
+        final @NonNull CommandManager<C> manager,
+        final @NonNull CloudBrigadierManager<C, S> brigadier
+    ) {
+        registerRegistryEntryMappings(manager, brigadier);
+
+        brigadier.registerMapping(new TypeToken<TeamParser<C>>() {
+        }, builder -> builder.toConstant(net.minecraft.commands.arguments.TeamArgument.team()));
+        manager.parserRegistry().registerParserSupplier(
+            TypeToken.get(PlayerTeam.class),
+            params -> new TeamParser<>()
+        );
+
         /* Cloud-native argument types */
         brigadier.registerMapping(new TypeToken<UUIDParser<C>>() {
         }, builder -> builder.toConstant(UuidArgument.uuid()));
@@ -169,6 +202,72 @@ public final class ModdedParserMappings {
             TypeToken.get(MultipleEntitySelector.class),
             params -> VanillaArgumentParsers.<C>multipleEntitySelectorParser().parser()
         );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <C, S> void registerRegistryEntryMappings(
+        final @NonNull CommandManager<C> manager,
+        final @NonNull CloudBrigadierManager<C, S> brigadier
+    ) {
+        brigadier.registerMapping(
+            new TypeToken<RegistryEntryParser<C, ?>>() {
+            },
+            builder -> {
+                builder.to(argument -> ResourceKeyArgument.key((ResourceKey) argument.registryKey()));
+            }
+        );
+
+        /* Find all fields of RegistryKey<? extends Registry<?>> and register those */
+        /* This only works for vanilla registries really, we'll have to do other things for non-vanilla ones */
+        final Set<Class<?>> seenClasses = new HashSet<>();
+        /* Some registries have types that are too generic... we'll skip those for now.
+         * Eventually, these could be resolved by using ParserParameters in some way? */
+        seenClasses.add(ResourceLocation.class);
+        seenClasses.add(Codec.class);
+        seenClasses.add(String.class); // avoid pottery pattern registry overriding default string parser
+        for (final Field field : Registries.class.getDeclaredFields()) {
+            if ((field.getModifiers() & MOD_PUBLIC_STATIC_FINAL) != MOD_PUBLIC_STATIC_FINAL) {
+                continue;
+            }
+            if (!field.getType().equals(ResourceKey.class)) {
+                continue;
+            }
+
+            final Type generic = field.getGenericType(); /* RegistryKey<? extends Registry<?>> */
+            if (!(generic instanceof ParameterizedType)) {
+                continue;
+            }
+
+            Type registryType = ((ParameterizedType) generic).getActualTypeArguments()[0];
+            while (registryType instanceof WildcardType) {
+                registryType = ((WildcardType) registryType).getUpperBounds()[0];
+            }
+
+            if (!(registryType instanceof ParameterizedType)) { /* expected: Registry<V> */
+                continue;
+            }
+
+            final ResourceKey<?> key;
+            try {
+                key = (ResourceKey<?>) field.get(null);
+            } catch (final IllegalAccessException ex) {
+                LOGGER.warn("Failed to access value of registry key in field {} of type {}", field.getName(), generic, ex);
+                continue;
+            }
+
+            final Type valueType = ((ParameterizedType) registryType).getActualTypeArguments()[0];
+            if (seenClasses.contains(GenericTypeReflector.erase(valueType))) {
+                LOGGER.debug("Encountered duplicate type in registry {}: type {}", key, valueType);
+                continue;
+            }
+            seenClasses.add(GenericTypeReflector.erase(valueType));
+
+            /* and now, finally, we can register */
+            manager.parserRegistry().registerParserSupplier(
+                TypeToken.get(valueType),
+                params -> new RegistryEntryParser(key)
+            );
+        }
     }
 
     /**
