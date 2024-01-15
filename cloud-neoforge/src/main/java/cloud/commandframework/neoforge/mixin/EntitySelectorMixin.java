@@ -21,19 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.minecraft.modded.internal;
+package cloud.commandframework.neoforge.mixin;
 
+import cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess;
 import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.apiguardian.api.API;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
-@API(status = API.Status.INTERNAL)
-public interface MessageArgumentPartAccess {
+@Mixin(EntitySelector.class)
+@Implements({@Interface(iface = EntitySelectorAccess.class, prefix = "cloud$", unique = true)})
+abstract class EntitySelectorMixin {
 
-    /**
-     * Returns the selector.
-     *
-     * @return selector
-     */
-    @SuppressWarnings("checkstyle:MethodName")
-    EntitySelector accessor$selector();
+    @Unique
+    private String inputString;
+
+    public @NonNull String cloud$inputString() {
+        return this.inputString;
+    }
+
+    public void cloud$inputString(final @NonNull String inputString) {
+        this.inputString = inputString;
+    }
 }

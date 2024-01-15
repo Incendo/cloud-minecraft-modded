@@ -21,25 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric.internal;
+package cloud.commandframework.neoforge.mixin;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import net.minecraft.commands.arguments.MessageArgument;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public interface EntitySelectorAccess extends cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess {
+@Mixin(MessageArgument.Part.class)
+public interface MessageArgumentPartAccess extends cloud.commandframework.minecraft.modded.internal.MessageArgumentPartAccess {
 
-    /**
-     * Get the last parsed input string
-     *
-     * @return input string
-     */
+    @Accessor("selector")
     @Override
-    @NonNull String inputString();
-
-    /**
-     * Set the last parsed input string
-     *
-     * @param inputString input string
-     */
-    @Override
-    void inputString(@NonNull String inputString);
+    EntitySelector accessor$selector();
 }

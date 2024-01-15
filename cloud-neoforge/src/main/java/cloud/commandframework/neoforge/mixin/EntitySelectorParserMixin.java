@@ -21,19 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.minecraft.modded.internal;
+package cloud.commandframework.neoforge.mixin;
 
+import cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess;
+import com.mojang.brigadier.StringReader;
 import net.minecraft.commands.arguments.selector.EntitySelector;
-import org.apiguardian.api.API;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@API(status = API.Status.INTERNAL)
-public interface MessageArgumentPartAccess {
+@Mixin(EntitySelectorParser.class)
+abstract class EntitySelectorParserMixin {
 
-    /**
-     * Returns the selector.
-     *
-     * @return selector
-     */
-    @SuppressWarnings("checkstyle:MethodName")
-    EntitySelector accessor$selector();
+    @Shadow
+    private int startPosition;
+
+    @Shadow
+    @Final
+    private StringReader reader;
+
+    @Inject(method = "parse", at = @At("RETURN"))
+    public void setInputString(final @NonNull CallbackInfoReturnable<EntitySelector> cir) {
+        final EntitySelector selector = cir.getReturnValue();
+        final String inputString = this.reader.getString().substring(this.startPosition, this.reader.getCursor());
+        ((EntitySelectorAccess) selector).inputString(inputString);
+    }
 }

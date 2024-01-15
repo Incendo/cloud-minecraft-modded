@@ -26,7 +26,6 @@ package cloud.commandframework.minecraft.modded.internal;
 import net.minecraft.commands.arguments.MessageArgument;
 import org.apiguardian.api.API;
 
-// TODO implement Mixin on NeoForge
 @API(status = API.Status.INTERNAL)
 public interface MessageArgumentMessageAccess {
 

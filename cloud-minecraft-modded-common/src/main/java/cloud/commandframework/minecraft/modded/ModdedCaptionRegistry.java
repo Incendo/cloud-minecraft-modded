@@ -44,6 +44,9 @@ public class ModdedCaptionRegistry<C> extends StandardCaptionRegistry<C> {
      */
     public static final String ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN = "Could not find any team named '<input>'!";
 
+    /**
+     * Creates a new {@link ModdedCaptionRegistry}.
+     */
     public ModdedCaptionRegistry() {
         super();
 

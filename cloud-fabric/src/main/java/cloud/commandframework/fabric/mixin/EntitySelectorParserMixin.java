@@ -23,7 +23,7 @@
 //
 package cloud.commandframework.fabric.mixin;
 
-import cloud.commandframework.fabric.internal.EntitySelectorAccess;
+import cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;

@@ -26,7 +26,6 @@ package cloud.commandframework.minecraft.modded.internal;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-// TODO implement Mixin on NeoForge
 @API(status = API.Status.INTERNAL)
 public interface EntitySelectorAccess {
 

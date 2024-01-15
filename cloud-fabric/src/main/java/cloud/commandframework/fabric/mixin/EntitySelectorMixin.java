@@ -23,7 +23,7 @@
 //
 package cloud.commandframework.fabric.mixin;
 
-import cloud.commandframework.fabric.internal.EntitySelectorAccess;
+import cloud.commandframework.minecraft.modded.internal.EntitySelectorAccess;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.asm.mixin.Implements;
