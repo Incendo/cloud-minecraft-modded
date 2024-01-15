@@ -21,36 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.fabric;
+package cloud.commandframework.minecraft.modded;
 
 import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.captions.StandardCaptionRegistry;
-import cloud.commandframework.minecraft.modded.ModdedCaptionKeys;
 
 /**
  * Caption registry that uses bi-functions to produce messages.
  *
- * @param <C> Command sender type
- * @since 1.5.0
+ * @param <C> command sender type
  */
-public class FabricCaptionRegistry<C> extends StandardCaptionRegistry<C> {
+public class ModdedCaptionRegistry<C> extends StandardCaptionRegistry<C> {
 
     /**
      * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
-     *
-     * @since 1.5.0
      */
     public static final String ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY =
             "Could not find value with key '<id>' in registry '<registry>'.";
 
     /**
      * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN}
-     *
-     * @since 1.5.0
      */
     public static final String ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN = "Could not find any team named '<input>'!";
 
-    protected FabricCaptionRegistry() {
+    public ModdedCaptionRegistry() {
         super();
 
         this.registerProvider(

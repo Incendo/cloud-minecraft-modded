@@ -30,7 +30,7 @@ import java.util.HashSet;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * {@link Caption} instances for messages in cloud-fabric
+ * {@link Caption} instances for messages in cloud-modded-minecraft-common
  */
 public final class ModdedCaptionKeys {
 
@@ -62,7 +62,6 @@ public final class ModdedCaptionKeys {
      * Get an immutable collection containing all standard caption keys
      *
      * @return Immutable collection of keys
-     * @since 1.5.0
      */
     public static @NonNull Collection<@NonNull Caption> moddedCaptionKeys() {
         return Collections.unmodifiableCollection(RECOGNIZED_CAPTIONS);

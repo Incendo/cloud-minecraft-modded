@@ -39,6 +39,7 @@ import cloud.commandframework.exceptions.InvalidSyntaxException;
 import cloud.commandframework.exceptions.NoPermissionException;
 import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.execution.ExecutionCoordinator;
+import cloud.commandframework.minecraft.modded.ModdedCaptionRegistry;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -133,7 +134,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
         );
 
         ModdedParserMappings.register(this, this.brigadierManager);
-        this.captionRegistry(new FabricCaptionRegistry<>());
+        this.captionRegistry(new ModdedCaptionRegistry<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
 
         ((FabricCommandRegistrationHandler<C, S>) this.commandRegistrationHandler()).initialize(this);
