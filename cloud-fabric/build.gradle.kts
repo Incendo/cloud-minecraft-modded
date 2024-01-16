@@ -12,13 +12,18 @@ configurations {
             force("net.fabricmc:fabric-loader:${libs.versions.fabricLoader.get()}")
         }
     }
-
     transitiveInclude {
         extendsFrom(api.get())
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
-        exclude("cloud.commandframework", "cloud-minecraft-modded-common")
+        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
+    }
+    runtimeClasspath {
+        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
+    }
+    compileClasspath {
+        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
     }
 }
 
@@ -30,8 +35,11 @@ dependencies {
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
-    api(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
-    include(project(":cloud-minecraft-modded-common"))
+
+    runtimeOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    compileOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
+    include(project(":cloud-minecraft-modded-common-fabric-repack"))
 
     modImplementation(platform(libs.fabricApi.bom))
     modImplementation(libs.fabricApi.command.api.v2)

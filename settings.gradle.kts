@@ -33,4 +33,6 @@ rootProject.name = "cloud-minecraft-modded"
 
 include("cloud-minecraft-modded-common")
 include("cloud-fabric")
+include("cloud-fabric/common-repack")
+findProject(":cloud-fabric/common-repack")?.name = "cloud-minecraft-modded-common-fabric-repack"
 include("cloud-neoforge")

@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.AbstractRemapJarTask
+
 plugins {
     id("conventions.base")
     id("conventions.publishing")
@@ -14,8 +16,6 @@ dependencies {
     compileOnly(libs.cloud.brigadier)
 }
 
-tasks.jar {
-    manifest {
-        attributes("Fabric-Loom-Remap" to true)
-    }
+tasks.withType(AbstractRemapJarTask::class).configureEach {
+    targetNamespace = "named"
 }
