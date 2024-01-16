@@ -36,7 +36,7 @@ dependencies {
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
 
-    runtimeOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    localRuntime(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
     compileOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
     api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
     include(project(":cloud-minecraft-modded-common-fabric-repack"))
