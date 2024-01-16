@@ -137,10 +137,9 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
         ctx.registerHandler(NoPermissionException.class, (source, sender, throwable) -> {
             sendError.accept(source, Component.literal(MESSAGE_NO_PERMS));
         });
-        ctx.registerHandler(InvalidCommandSenderException.class,
-            (S source, C sender, InvalidCommandSenderException throwable) -> {
-                sendError.accept(source, Component.literal(throwable.getMessage()));
-            });
+        ctx.registerHandler(InvalidCommandSenderException.class, (source, sender, throwable) -> {
+            sendError.accept(source, Component.literal(throwable.getMessage()));
+        });
         ctx.registerHandler(InvalidSyntaxException.class, (source, sender, throwable) -> {
             sendError.accept(source, Component.literal("Invalid Command Syntax. Correct command syntax is: ")
                 .append(Component.literal(String.format("/%s", throwable.correctSyntax()))
