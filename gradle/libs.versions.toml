@@ -34,7 +34,7 @@ fabricApi-networking-api-v1 = { module = "net.fabricmc.fabric-api:fabric-network
 fabricApi-lifecycle-events-v1 = { module = "net.fabricmc.fabric-api:fabric-lifecycle-events-v1" }
 fabricPermissionsApi = { group = "me.lucko", name = "fabric-permissions-api", version.ref = "fabricPermissionsApi" }
 
-neoForge = "net.neoforged:neoforge:20.4.43-beta"
+neoForge = "net.neoforged:neoforge:20.4.108-beta"
 
 [plugins]
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }
