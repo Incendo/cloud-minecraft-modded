@@ -63,6 +63,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -166,7 +167,7 @@ public final class VanillaArgumentParsers {
         final @NonNull CommandContext<C> ctx,
         final net.minecraft.commands.arguments.coordinates.@NonNull Coordinates posArgument
     ) {
-        return requireCommandSourceStack(
+        return requireServer(
             ctx,
             serverCommandSource -> ArgumentParseResult.successFuture((O) new CoordinatesImpl(
                 serverCommandSource,
@@ -183,7 +184,7 @@ public final class VanillaArgumentParsers {
      */
     public static <C> @NonNull ParserDescriptor<C, SinglePlayerSelector> singlePlayerSelectorParser() {
         ArgumentParser<C, SinglePlayerSelector> parser = new WrappedBrigadierParser<C, EntitySelector>(EntityArgument.player())
-            .flatMapSuccess((ctx, entitySelector) -> requireCommandSourceStack(
+            .flatMapSuccess((ctx, entitySelector) -> requireServer(
                 ctx,
                 serverCommandSource -> handleCommandSyntaxExceptionAsFailure(
                     () -> ArgumentParseResult.success(new SinglePlayerSelectorImpl(
@@ -205,7 +206,7 @@ public final class VanillaArgumentParsers {
      */
     public static <C> @NonNull ParserDescriptor<C, MultiplePlayerSelector> multiplePlayerSelectorParser() {
         ArgumentParser<C, MultiplePlayerSelector> parser = new WrappedBrigadierParser<C, EntitySelector>(EntityArgument.players())
-            .flatMapSuccess((ctx, entitySelector) -> requireCommandSourceStack(
+            .flatMapSuccess((ctx, entitySelector) -> requireServer(
                 ctx,
                 serverCommandSource -> handleCommandSyntaxExceptionAsFailure(
                     () -> ArgumentParseResult.success(new MultiplePlayerSelectorImpl(
@@ -227,7 +228,7 @@ public final class VanillaArgumentParsers {
      */
     public static <C> @NonNull ParserDescriptor<C, SingleEntitySelector> singleEntitySelectorParser() {
         ArgumentParser<C, SingleEntitySelector> parser = new WrappedBrigadierParser<C, EntitySelector>(EntityArgument.entity())
-            .flatMapSuccess((ctx, entitySelector) -> requireCommandSourceStack(
+            .flatMapSuccess((ctx, entitySelector) -> requireServer(
                 ctx,
                 serverCommandSource -> handleCommandSyntaxExceptionAsFailure(
                     () -> ArgumentParseResult.success(new SingleEntitySelectorImpl(
@@ -249,7 +250,7 @@ public final class VanillaArgumentParsers {
      */
     public static <C> @NonNull ParserDescriptor<C, MultipleEntitySelector> multipleEntitySelectorParser() {
         ArgumentParser<C, MultipleEntitySelector> parser = new WrappedBrigadierParser<C, EntitySelector>(EntityArgument.entities())
-            .flatMapSuccess((ctx, entitySelector) -> requireCommandSourceStack(
+            .flatMapSuccess((ctx, entitySelector) -> requireServer(
                 ctx,
                 serverCommandSource -> handleCommandSyntaxExceptionAsFailure(
                     () -> ArgumentParseResult.success(new MultipleEntitySelectorImpl(
@@ -271,7 +272,7 @@ public final class VanillaArgumentParsers {
      */
     public static <C> @NonNull ParserDescriptor<C, Message> messageParser() {
         ArgumentParser<C, Message> parser = new WrappedBrigadierParser<C, MessageArgument.Message>(MessageArgument.message())
-            .flatMapSuccess((ctx, format) -> requireCommandSourceStack(
+            .flatMapSuccess((ctx, format) -> requireServer(
                 ctx,
                 serverCommandSource -> handleCommandSyntaxExceptionAsFailure(
                     () -> ArgumentParseResult.success(MessageImpl.from(
@@ -294,35 +295,41 @@ public final class VanillaArgumentParsers {
     private static <O> @NonNull CompletableFuture<ArgumentParseResult<O>> handleCommandSyntaxExceptionAsFailure(
         final @NonNull CommandSyntaxExceptionThrowingParseResultSupplier<O> resultSupplier
     ) {
-        final CompletableFuture<ArgumentParseResult<O>> future = new CompletableFuture<>();
         try {
-            future.complete(resultSupplier.result());
+            return CompletableFuture.completedFuture(resultSupplier.result());
         } catch (final CommandSyntaxException ex) {
-            future.completeExceptionally(ex);
+            return ArgumentParseResult.failureFuture(ex);
         }
-        return future;
     }
 
     private static @NonNull IllegalStateException serverOnly() {
         return new IllegalStateException("This command argument type is server-only.");
     }
 
-    private static <C, O> @NonNull CompletableFuture<ArgumentParseResult<O>> requireCommandSourceStack(
+    private static <C, O> @NonNull CompletableFuture<ArgumentParseResult<O>> requireServer(
         final @NonNull CommandContext<C> context,
         final @NonNull Function<CommandSourceStack, CompletableFuture<ArgumentParseResult<O>>> resultFunction
     ) {
         final SharedSuggestionProvider nativeSource = context.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
-        if (!(nativeSource instanceof CommandSourceStack)) {
+        if (!(nativeSource instanceof CommandSourceStack) || isClientSource(nativeSource)) {
             return ArgumentParseResult.failureFuture(serverOnly());
         }
         return resultFunction.apply((CommandSourceStack) nativeSource);
     }
 
-    static final class MessageImpl implements Message {
+    /**
+     * Checks whether a source is from client commands.
+     *
+     * @param sharedSuggestionProvider source
+     * @return whether the source is from client commands
+     */
+    @API(status = API.Status.INTERNAL)
+    public static boolean isClientSource(final SharedSuggestionProvider sharedSuggestionProvider) {
+        // NeoForge extends CommandSourceStack with ClientCommandSourceStack; Fabric has its own SharedSuggestionProvider impl
+        return !sharedSuggestionProvider.getClass().equals(CommandSourceStack.class);
+    }
 
-        private final Collection<Entity> mentionedEntities;
-        private final Component contents;
-
+    private record MessageImpl(Collection<Entity> mentionedEntities, Component contents) implements Message {
         static MessageImpl from(
             final @NonNull CommandSourceStack source,
             final MessageArgument.@NonNull Message message,
@@ -345,42 +352,17 @@ public final class VanillaArgumentParsers {
 
             return new MessageImpl(entities, contents);
         }
-
-        MessageImpl(final Collection<Entity> mentionedEntities, final Component contents) {
-            this.mentionedEntities = mentionedEntities;
-            this.contents = contents;
-        }
-
-        @Override
-        public @NonNull Collection<Entity> mentionedEntities() {
-            return this.mentionedEntities;
-        }
-
-        @Override
-        public @NonNull Component contents() {
-            return this.contents;
-        }
     }
 
-    static final class CoordinatesImpl implements Coordinates,
+    private record CoordinatesImpl(CommandSourceStack source, net.minecraft.commands.arguments.coordinates.Coordinates wrappedCoordinates)
+        implements Coordinates,
         Coordinates.CoordinatesXZ,
         Coordinates.BlockCoordinates,
         Coordinates.ColumnCoordinates {
 
-        private final CommandSourceStack source;
-        private final net.minecraft.commands.arguments.coordinates.Coordinates posArgument;
-
-        CoordinatesImpl(
-            final @NonNull CommandSourceStack source,
-            final net.minecraft.commands.arguments.coordinates.@NonNull Coordinates posArgument
-        ) {
-            this.source = source;
-            this.posArgument = posArgument;
-        }
-
         @Override
         public @NonNull Vec3 position() {
-            return this.posArgument.getPosition(this.source);
+            return this.wrappedCoordinates.getPosition(this.source);
         }
 
         @Override
@@ -390,151 +372,34 @@ public final class VanillaArgumentParsers {
 
         @Override
         public boolean isXRelative() {
-            return this.posArgument.isXRelative();
+            return this.wrappedCoordinates.isXRelative();
         }
 
         @Override
         public boolean isYRelative() {
-            return this.posArgument.isYRelative();
+            return this.wrappedCoordinates.isYRelative();
         }
 
         @Override
         public boolean isZRelative() {
-            return this.posArgument.isZRelative();
-        }
-
-        @Override
-        public net.minecraft.commands.arguments.coordinates.@NonNull Coordinates wrappedCoordinates() {
-            return this.posArgument;
+            return this.wrappedCoordinates.isZRelative();
         }
     }
 
-    static final class SingleEntitySelectorImpl implements SingleEntitySelector {
+    private record SingleEntitySelectorImpl(
+        String inputString, EntitySelector selector, Entity single
+    ) implements SingleEntitySelector {}
 
-        private final String inputString;
-        private final EntitySelector entitySelector;
-        private final Entity selectedEntity;
+    private record MultipleEntitySelectorImpl(
+        String inputString, EntitySelector selector, Collection<Entity> values
+    ) implements MultipleEntitySelector {}
 
-        SingleEntitySelectorImpl(
-            final @NonNull String inputString,
-            final @NonNull EntitySelector entitySelector,
-            final @NonNull Entity selectedEntity
-        ) {
-            this.inputString = inputString;
-            this.entitySelector = entitySelector;
-            this.selectedEntity = selectedEntity;
-        }
+    private record SinglePlayerSelectorImpl(
+        String inputString, EntitySelector selector, ServerPlayer single
+    ) implements SinglePlayerSelector {}
 
-        @Override
-        public @NonNull String inputString() {
-            return this.inputString;
-        }
-
-        @Override
-        public @NonNull EntitySelector selector() {
-            return this.entitySelector;
-        }
-
-        @Override
-        public @NonNull Entity single() {
-            return this.selectedEntity;
-        }
-    }
-
-    static final class MultipleEntitySelectorImpl implements MultipleEntitySelector {
-
-        private final String inputString;
-        private final EntitySelector entitySelector;
-        private final Collection<Entity> selectedEntities;
-
-        MultipleEntitySelectorImpl(
-            final @NonNull String inputString,
-            final @NonNull EntitySelector entitySelector,
-            final @NonNull Collection<Entity> selectedEntities
-        ) {
-            this.inputString = inputString;
-            this.entitySelector = entitySelector;
-            this.selectedEntities = selectedEntities;
-        }
-
-        @Override
-        public @NonNull String inputString() {
-            return this.inputString;
-        }
-
-        @Override
-        public @NonNull EntitySelector selector() {
-            return this.entitySelector;
-        }
-
-        @Override
-        public @NonNull Collection<Entity> values() {
-            return this.selectedEntities;
-        }
-    }
-
-    static final class SinglePlayerSelectorImpl implements SinglePlayerSelector {
-
-        private final String inputString;
-        private final EntitySelector entitySelector;
-        private final ServerPlayer selectedPlayer;
-
-        SinglePlayerSelectorImpl(
-            final @NonNull String inputString,
-            final @NonNull EntitySelector entitySelector,
-            final @NonNull ServerPlayer selectedPlayer
-        ) {
-            this.inputString = inputString;
-            this.entitySelector = entitySelector;
-            this.selectedPlayer = selectedPlayer;
-        }
-
-        @Override
-        public @NonNull String inputString() {
-            return this.inputString;
-        }
-
-        @Override
-        public @NonNull EntitySelector selector() {
-            return this.entitySelector;
-        }
-
-        @Override
-        public @NonNull ServerPlayer single() {
-            return this.selectedPlayer;
-        }
-    }
-
-    static final class MultiplePlayerSelectorImpl implements MultiplePlayerSelector {
-
-        private final String inputString;
-        private final EntitySelector entitySelector;
-        private final Collection<ServerPlayer> selectedPlayers;
-
-        MultiplePlayerSelectorImpl(
-            final @NonNull String inputString,
-            final @NonNull EntitySelector entitySelector,
-            final @NonNull Collection<ServerPlayer> selectedPlayers
-        ) {
-            this.inputString = inputString;
-            this.entitySelector = entitySelector;
-            this.selectedPlayers = selectedPlayers;
-        }
-
-        @Override
-        public @NonNull String inputString() {
-            return this.inputString;
-        }
-
-        @Override
-        public @NonNull EntitySelector selector() {
-            return this.entitySelector;
-        }
-
-        @Override
-        public @NonNull Collection<ServerPlayer> values() {
-            return this.selectedPlayers;
-        }
-    }
+    private record MultiplePlayerSelectorImpl(
+        String inputString, EntitySelector selector, Collection<ServerPlayer> values
+    ) implements MultiplePlayerSelector {}
 
 }

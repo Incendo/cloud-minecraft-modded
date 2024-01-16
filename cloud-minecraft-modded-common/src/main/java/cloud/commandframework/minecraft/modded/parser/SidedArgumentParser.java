@@ -30,7 +30,6 @@ import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -46,8 +45,7 @@ abstract class SidedArgumentParser<C, IntermediateType, T> implements ArgumentPa
     private final Predicate<SharedSuggestionProvider> isClient;
 
     protected SidedArgumentParser() {
-        // NeoForge extends CommandSourceStack with ClientCommandSourceStack; Fabric has its own SharedSuggestionProvider impl
-        this.isClient = sharedSuggestionProvider -> !sharedSuggestionProvider.getClass().equals(CommandSourceStack.class);
+        this.isClient = VanillaArgumentParsers::isClientSource;
     }
 
     @Override
