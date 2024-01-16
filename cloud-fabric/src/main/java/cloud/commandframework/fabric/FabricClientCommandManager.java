@@ -25,6 +25,7 @@ package cloud.commandframework.fabric;
 
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.execution.ExecutionCoordinator;
+import cloud.commandframework.minecraft.modded.internal.ModdedExceptionHandler;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.Minecraft;
@@ -89,7 +90,8 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
         );
 
         this.registerParsers();
-        this.registerDefaultExceptionHandlers(
+        ModdedExceptionHandler.registerDefaults(
+            this,
             FabricClientCommandSource::sendError,
             source -> source.getPlayer().getGameProfile().getName()
         );

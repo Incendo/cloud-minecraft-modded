@@ -32,31 +32,12 @@ import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.minecraft.modded.ModdedCaptionRegistry;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -75,47 +56,36 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.5.0
  */
 public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider> extends CommandManager<C> implements
-        BrigadierManagerHolder<C, S>, SenderMapperHolder<S, C> {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Component NEWLINE = Component.literal("\n");
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS =
-            "I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
-
+    BrigadierManagerHolder<C, S>, SenderMapperHolder<S, C> {
 
     private final SenderMapper<S, C> senderMapper;
     private final CloudBrigadierManager<C, S> brigadierManager;
     private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
-    private final FabricExceptionHandlerFactory<C, S> exceptionHandlerFactory = new FabricExceptionHandlerFactory<>(this);
 
 
     /**
      * Create a new command manager instance.
      *
-     * @param commandExecutionCoordinator  Execution coordinator instance. The coordinator is in charge of executing incoming
-     *                                     commands. Some considerations must be made when picking a suitable execution coordinator
-     *                                     for your platform. For example, an entirely asynchronous coordinator is not suitable
-     *                                     when the parsers used in that particular platform are not thread safe. If you have
-     *                                     commands that perform blocking operations, however, it might not be a good idea to
-     *                                     use a synchronous execution coordinator. In most cases you will want to pick between
-     *                                     {@link ExecutionCoordinator#simpleCoordinator()} and
-     *                                     {@link ExecutionCoordinator#asyncCoordinator()}
-     * @param senderMapper                 Function that maps {@link SharedSuggestionProvider} to the command sender type
-     * @param registrationHandler          the handler accepting command registrations
-     * @param dummyCommandSourceProvider   a provider of a dummy command source, for use with brigadier registration
+     * @param commandExecutionCoordinator Execution coordinator instance. The coordinator is in charge of executing incoming
+     *                                    commands. Some considerations must be made when picking a suitable execution coordinator
+     *                                    for your platform. For example, an entirely asynchronous coordinator is not suitable
+     *                                    when the parsers used in that particular platform are not thread safe. If you have
+     *                                    commands that perform blocking operations, however, it might not be a good idea to
+     *                                    use a synchronous execution coordinator. In most cases you will want to pick between
+     *                                    {@link ExecutionCoordinator#simpleCoordinator()} and
+     *                                    {@link ExecutionCoordinator#asyncCoordinator()}
+     * @param senderMapper                Function that maps {@link SharedSuggestionProvider} to the command sender type
+     * @param registrationHandler         the handler accepting command registrations
+     * @param dummyCommandSourceProvider  a provider of a dummy command source, for use with brigadier registration
      * @since 1.5.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     @SuppressWarnings("unchecked")
     FabricCommandManager(
-            final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
-            final @NonNull SenderMapper<S, C> senderMapper,
-            final @NonNull FabricCommandRegistrationHandler<C, S> registrationHandler,
-            final @NonNull Supplier<S> dummyCommandSourceProvider
+        final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
+        final @NonNull SenderMapper<S, C> senderMapper,
+        final @NonNull FabricCommandRegistrationHandler<C, S> registrationHandler,
+        final @NonNull Supplier<S> dummyCommandSourceProvider
     ) {
         super(commandExecutionCoordinator, registrationHandler);
         this.senderMapper = senderMapper;
@@ -123,14 +93,14 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
 
         // We're always brigadier
         this.brigadierManager = new CloudBrigadierManager<>(
-                this,
-                () -> new CommandContext<>(
-                        // This looks ugly, but it's what the server does when loading datapack functions in 1.16+
-                        // See net.minecraft.server.function.FunctionLoader.reload for reference
-                        this.senderMapper.map(dummyCommandSourceProvider.get()),
-                        this
-                ),
-                this.senderMapper
+            this,
+            () -> new CommandContext<>(
+                // This looks ugly, but it's what the server does when loading datapack functions in 1.16+
+                // See net.minecraft.server.function.FunctionLoader.reload for reference
+                this.senderMapper.map(dummyCommandSourceProvider.get()),
+                this
+            ),
+            this.senderMapper
         );
 
         ModdedParserMappings.register(this, this.brigadierManager);
@@ -180,92 +150,5 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     /* transition state to prevent further registration */
     final void registrationCalled() {
         this.lockRegistration();
-    }
-
-    protected final void registerDefaultExceptionHandlers(
-            final @NonNull BiConsumer<@NonNull S, @NonNull Component> sendError,
-            final @NonNull Function<@NonNull S, @NonNull String> getName
-    ) {
-        this.exceptionController().registerHandler(
-                Throwable.class,
-                this.exceptionHandlerFactory.createHandler((source, sender, throwable) -> {
-                    sendError.accept(
-                            source,
-                            this.decorateHoverStacktrace(
-                                    Component.literal(MESSAGE_INTERNAL_ERROR),
-                                    throwable,
-                                    sender
-                            )
-                    );
-                    LOGGER.warn("Error occurred while executing command for user {}:", getName.apply(source), throwable);
-                })
-        ).registerHandler(
-                CommandExecutionException.class,
-                this.exceptionHandlerFactory.createHandler((source, sender, throwable) -> {
-                    sendError.accept(
-                            source,
-                            this.decorateHoverStacktrace(
-                                    Component.literal(MESSAGE_INTERNAL_ERROR),
-                                    throwable.getCause(),
-                                    sender
-                            )
-                    );
-                    LOGGER.warn("Error occurred while executing command for user {}:", getName.apply(source), throwable);
-                })
-        ).registerHandler(
-                ArgumentParseException.class,
-                this.exceptionHandlerFactory.createHandler((source, sender, throwable) -> {
-                    if (throwable.getCause() instanceof CommandSyntaxException) {
-                        sendError.accept(source, Component.literal("Invalid Command Argument: ")
-                                .append(Component.literal("")
-                                        .append(ComponentUtils
-                                                .fromMessage(((CommandSyntaxException) throwable.getCause()).getRawMessage()))
-                                        .withStyle(ChatFormatting.GRAY)));
-                    } else {
-                        sendError.accept(source, Component.literal("Invalid Command Argument: ")
-                                .append(Component.literal(throwable.getCause().getMessage())
-                                        .withStyle(ChatFormatting.GRAY)));
-                    }
-                })
-        ).registerHandler(NoSuchCommandException.class, this.exceptionHandlerFactory.createHandler(
-                (source, sender, throwable) -> sendError.accept(source, Component.literal(MESSAGE_UNKNOWN_COMMAND))
-        )).registerHandler(NoPermissionException.class, this.exceptionHandlerFactory.createHandler(
-                (source, sender, throwable) -> sendError.accept(source, Component.literal(MESSAGE_NO_PERMS))
-        )).registerHandler(InvalidCommandSenderException.class, this.exceptionHandlerFactory.createHandler(
-                (source, sender, throwable) -> sendError.accept(source, Component.literal(throwable.getMessage()))
-        )).registerHandler(InvalidSyntaxException.class, this.exceptionHandlerFactory.createHandler(
-                (source, sender, throwable) -> sendError.accept(
-                        source,
-                        Component.literal("Invalid Command Syntax. Correct command syntax is: ")
-                                .append(Component.literal(String.format("/%s", throwable.correctSyntax()))
-                                        .withStyle(style -> style.withColor(ChatFormatting.GRAY)))
-                )
-        ));
-    }
-
-    private @NonNull MutableComponent decorateHoverStacktrace(
-            final @NonNull MutableComponent input,
-            final @NonNull Throwable cause,
-            final @NonNull C sender
-    ) {
-        if (!this.hasPermission(sender, "cloud.hover-stacktrace")) {
-            return input;
-        }
-
-        final StringWriter writer = new StringWriter();
-        cause.printStackTrace(new PrintWriter(writer));
-        final String stackTrace = writer.toString().replace("\t", "    ");
-        return input.withStyle(style -> style
-                .withHoverEvent(new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        Component.literal(stackTrace)
-                                .append(NEWLINE)
-                                .append(Component.literal("    Click to copy")
-                                        .withStyle(s2 -> s2.withColor(ChatFormatting.GRAY).withItalic(true)))
-                ))
-                .withClickEvent(new ClickEvent(
-                        ClickEvent.Action.COPY_TO_CLIPBOARD,
-                        stackTrace
-                )));
     }
 }

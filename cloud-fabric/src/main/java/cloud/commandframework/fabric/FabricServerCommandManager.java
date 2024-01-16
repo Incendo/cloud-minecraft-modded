@@ -27,6 +27,7 @@ import cloud.commandframework.SenderMapper;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.internal.LateRegistrationCatcher;
 import cloud.commandframework.keys.CloudKey;
+import cloud.commandframework.minecraft.modded.internal.ModdedExceptionHandler;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -59,8 +60,8 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
      * @since 1.5.0
      */
     public static final CloudKey<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CloudKey.of(
-            "cloud:registration-environment",
-            Commands.CommandSelection.class
+        "cloud:registration-environment",
+        Commands.CommandSelection.class
     );
 
     /**
@@ -73,7 +74,7 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static @NonNull FabricServerCommandManager<@NonNull CommandSourceStack> createNative(
-            final @NonNull ExecutionCoordinator<CommandSourceStack> execCoordinator
+        final @NonNull ExecutionCoordinator<CommandSourceStack> execCoordinator
     ) {
         return new FabricServerCommandManager<>(execCoordinator, SenderMapper.identity());
     }
@@ -81,48 +82,49 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
     /**
      * Create a new command manager instance.
      *
-     * @param commandExecutionCoordinator  Execution coordinator instance. The coordinator is in charge of executing incoming
-     *                                     commands. Some considerations must be made when picking a suitable execution coordinator
-     *                                     for your platform. For example, an entirely asynchronous coordinator is not suitable
-     *                                     when the parsers used in that particular platform are not thread safe. If you have
-     *                                     commands that perform blocking operations, however, it might not be a good idea to
-     *                                     use a synchronous execution coordinator. In most cases you will want to pick between
-     *                                     {@link ExecutionCoordinator#simpleCoordinator()} and
-     *                                     {@link ExecutionCoordinator#asyncCoordinator()}
-     * @param senderMapper                 Function that maps {@link CommandSourceStack} to the command sender type
+     * @param commandExecutionCoordinator Execution coordinator instance. The coordinator is in charge of executing incoming
+     *                                    commands. Some considerations must be made when picking a suitable execution coordinator
+     *                                    for your platform. For example, an entirely asynchronous coordinator is not suitable
+     *                                    when the parsers used in that particular platform are not thread safe. If you have
+     *                                    commands that perform blocking operations, however, it might not be a good idea to
+     *                                    use a synchronous execution coordinator. In most cases you will want to pick between
+     *                                    {@link ExecutionCoordinator#simpleCoordinator()} and
+     *                                    {@link ExecutionCoordinator#asyncCoordinator()}
+     * @param senderMapper                Function that maps {@link CommandSourceStack} to the command sender type
      * @since 1.5.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public FabricServerCommandManager(
-            final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
-            final @NonNull SenderMapper<CommandSourceStack, C> senderMapper
+        final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
+        final @NonNull SenderMapper<CommandSourceStack, C> senderMapper
     ) {
         super(
-                commandExecutionCoordinator,
-                senderMapper,
-                new FabricCommandRegistrationHandler.Server<>(),
-                () -> new CommandSourceStack(
-                        CommandSource.NULL,
-                        Vec3.ZERO,
-                        Vec2.ZERO,
-                        null,
-                        4,
-                        "",
-                        Component.empty(),
-                        null,
-                        null
-                )
+            commandExecutionCoordinator,
+            senderMapper,
+            new FabricCommandRegistrationHandler.Server<>(),
+            () -> new CommandSourceStack(
+                CommandSource.NULL,
+                Vec3.ZERO,
+                Vec2.ZERO,
+                null,
+                4,
+                "",
+                Component.empty(),
+                null,
+                null
+            )
         );
 
         if (LateRegistrationCatcher.hasServerAlreadyStarted()) {
             throw new IllegalStateException("FabricServerCommandManager was created too late! Because command registration "
-                    + "occurs before the server instance is created, commands should be registered in mod initializers.");
+                + "occurs before the server instance is created, commands should be registered in mod initializers.");
         }
 
         ModdedParserMappings.registerServer(this);
-        this.registerDefaultExceptionHandlers(
-                CommandSourceStack::sendFailure,
-                CommandSourceStack::getTextName
+        ModdedExceptionHandler.registerDefaults(
+            this,
+            CommandSourceStack::sendFailure,
+            CommandSourceStack::getTextName
         );
     }
 
