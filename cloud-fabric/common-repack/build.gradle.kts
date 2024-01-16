@@ -13,7 +13,12 @@ dependencies {
 tasks {
     val common = project(":cloud-minecraft-modded-common")
     jar {
-        from(zipTree(common.tasks.jar.flatMap { it.archiveFile }))
+        from(zipTree(common.tasks.jar.flatMap { it.archiveFile })) {
+            exclude("META-INF/MANIFEST.MF")
+        }
+        manifest {
+            attributes("Fabric-Loom-Remap" to true)
+        }
     }
     sourcesJar {
         from(zipTree(common.tasks.sourcesJar.flatMap { it.archiveFile }))
