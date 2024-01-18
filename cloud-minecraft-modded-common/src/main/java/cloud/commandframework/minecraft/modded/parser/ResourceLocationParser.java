@@ -34,7 +34,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <C> the sender type
  */
-public final class ResourceLocationArgument<C> extends WrappedBrigadierParser<C, ResourceLocation> {
+public final class ResourceLocationParser<C> extends WrappedBrigadierParser<C, ResourceLocation> {
 
     /**
      * Creates a new resource location parser.
@@ -43,7 +43,7 @@ public final class ResourceLocationArgument<C> extends WrappedBrigadierParser<C,
      * @return the created parser
      */
     public static <C> @NonNull ParserDescriptor<C, ResourceLocation> resourceLocationParser() {
-        return ParserDescriptor.of(new ResourceLocationArgument<>(), ResourceLocation.class);
+        return ParserDescriptor.of(new ResourceLocationParser<>(), ResourceLocation.class);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class ResourceLocationArgument<C> extends WrappedBrigadierParser<C,
         return CommandComponent.<C, ResourceLocation>builder().parser(resourceLocationParser());
     }
 
-    ResourceLocationArgument() {
+    ResourceLocationParser() {
         super(net.minecraft.commands.arguments.ResourceLocationArgument.id());
     }
 

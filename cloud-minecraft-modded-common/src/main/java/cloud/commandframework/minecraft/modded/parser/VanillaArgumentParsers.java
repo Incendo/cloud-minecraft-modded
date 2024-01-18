@@ -57,6 +57,8 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.commands.arguments.coordinates.Vec2Argument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.item.ItemArgument;
+import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -88,6 +90,16 @@ public final class VanillaArgumentParsers {
         final @NonNull Class<V> valueType
     ) {
         return ParserDescriptor.of(new WrappedBrigadierParser<>(new ContextualArgumentTypeProvider<>(factory)), valueType);
+    }
+
+    /**
+     * A parser for {@link ItemInput}.
+     *
+     * @param <C> command sender type
+     * @return the parser
+     */
+    public static <C> @NonNull ParserDescriptor<C, ItemInput> itemInput() {
+        return contextualParser(ItemArgument::item, ItemInput.class);
     }
 
     /**
