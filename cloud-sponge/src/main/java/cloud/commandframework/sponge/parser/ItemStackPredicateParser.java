@@ -66,7 +66,8 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
 
     private final ArgumentParser<C, ItemStackPredicate> mappedParser =
         new WrappedBrigadierParser<C, ItemPredicateArgument.Result>(
-            ItemPredicateArgument.itemPredicate()
+            // TODO
+            () -> ItemPredicateArgument.itemPredicate()
         ).flatMapSuccess((ctx, result) -> {
             final CommandSourceStack commandSourceStack =
                 (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE);
