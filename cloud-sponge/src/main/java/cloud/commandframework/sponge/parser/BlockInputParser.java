@@ -31,6 +31,7 @@ import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import cloud.commandframework.sponge.NodeSource;
 import cloud.commandframework.sponge.data.BlockInput;
 import java.lang.reflect.Field;
@@ -78,9 +79,10 @@ public final class BlockInputParser<C> implements NodeSource, ArgumentParser.Fut
     }
 
     private final ArgumentParser<C, BlockInput> mappedParser =
-        // todo
-        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(() -> BlockStateArgument.block())
-            .flatMapSuccess((ctx, blockInput) -> ArgumentParseResult.successFuture(new BlockInputImpl(blockInput)));
+        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(
+            new ContextualArgumentTypeProvider<>(BlockStateArgument::block)
+        ).flatMapSuccess((ctx, blockInput) ->
+            ArgumentParseResult.successFuture(new BlockInputImpl(blockInput)));
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull BlockInput>> parseFuture(

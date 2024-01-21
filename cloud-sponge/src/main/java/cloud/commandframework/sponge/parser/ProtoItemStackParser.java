@@ -31,6 +31,7 @@ import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import cloud.commandframework.sponge.NodeSource;
 import cloud.commandframework.sponge.data.ProtoItemStack;
 import cloud.commandframework.sponge.exception.ComponentMessageRuntimeException;
@@ -79,8 +80,7 @@ public final class ProtoItemStackParser<C> implements NodeSource,
     }
 
     private final ArgumentParser<C, ProtoItemStack> mappedParser =
-        // todo
-        new WrappedBrigadierParser<C, ItemInput>(() -> ItemArgument.item())
+        new WrappedBrigadierParser<C, ItemInput>(new ContextualArgumentTypeProvider<>(ItemArgument::item))
             .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(new ProtoItemStackImpl(itemInput)));
 
     @Override

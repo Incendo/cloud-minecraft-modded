@@ -7,10 +7,6 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
-indra {
-    javaVersions().target(17)
-}
-
 dependencies {
     implementation(project(":cloud-sponge"))
     implementation(libs.cloud.minecraft.extras)

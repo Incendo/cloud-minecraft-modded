@@ -216,16 +216,17 @@ public final class RegistryEntryParser<C, V> implements NodeSource,
         if (this.registryType.equals(RegistryTypes.SOUND_TYPE)) {
             return CommandTreeNodeTypes.RESOURCE_LOCATION.get().createNode()
                 .completions(CommandCompletionProviders.AVAILABLE_SOUNDS);
-        } else if (this.registryType.equals(RegistryTypes.BIOME)) {
-            return CommandTreeNodeTypes.RESOURCE_LOCATION.get().createNode()
-                .completions(CommandCompletionProviders.AVAILABLE_BIOMES);
+        //} else if (this.registryType.equals(RegistryTypes.BIOME)) {
+        //    return CommandTreeNodeTypes.RESOURCE_LOCATION.get().createNode()
+        //        .completions(CommandCompletionProviders.AVAILABLE_BIOMES);
         } else if (this.registryType.equals(RegistryTypes.ENTITY_TYPE)) {
-            return CommandTreeNodeTypes.ENTITY_SUMMON.get().createNode()
+            // return CommandTreeNodeTypes.ENTITY_SUMMON.get().createNode()
+            return CommandTreeNodeTypes.RESOURCE_LOCATION.get().createNode()
                 .completions(CommandCompletionProviders.SUMMONABLE_ENTITIES);
-        } else if (this.registryType.equals(RegistryTypes.ENCHANTMENT_TYPE)) {
-            return CommandTreeNodeTypes.ITEM_ENCHANTMENT.get().createNode();
-        } else if (this.registryType.equals(RegistryTypes.POTION_EFFECT_TYPE)) {
-            return CommandTreeNodeTypes.MOB_EFFECT.get().createNode();
+        //} else if (this.registryType.equals(RegistryTypes.ENCHANTMENT_TYPE)) {
+        //    return CommandTreeNodeTypes.ITEM_ENCHANTMENT.get().createNode();
+        //} else if (this.registryType.equals(RegistryTypes.POTION_EFFECT_TYPE)) {
+        //    return CommandTreeNodeTypes.MOB_EFFECT.get().createNode();
         } else if (this.registryType.equals(RegistryTypes.WORLD_TYPE)) {
             return CommandTreeNodeTypes.DIMENSION.get().createNode()
                 .customCompletions(); // Sponge adds custom types (?)

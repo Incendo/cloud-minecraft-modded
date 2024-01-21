@@ -31,15 +31,11 @@ import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import cloud.commandframework.sponge.NodeSource;
-import cloud.commandframework.sponge.SpongeCommandContextKeys;
 import cloud.commandframework.sponge.data.ItemStackPredicate;
-import com.mojang.brigadier.context.StringRange;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
@@ -66,19 +62,8 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
 
     private final ArgumentParser<C, ItemStackPredicate> mappedParser =
         new WrappedBrigadierParser<C, ItemPredicateArgument.Result>(
-            // TODO
-            () -> ItemPredicateArgument.itemPredicate()
-        ).flatMapSuccess((ctx, result) -> {
-            final CommandSourceStack commandSourceStack =
-                (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE);
-            try {
-                final com.mojang.brigadier.context.CommandContext<CommandSourceStack> dummyContext =
-                    createDummyContext(ctx, commandSourceStack);
-                return ArgumentParseResult.successFuture(new ItemStackPredicateImpl(result.create(dummyContext)));
-            } catch (final CommandSyntaxException ex) {
-                return ArgumentParseResult.failureFuture(ex);
-            }
-        });
+            new ContextualArgumentTypeProvider<>(ItemPredicateArgument::itemPredicate)
+        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new ItemStackPredicateImpl(result)));
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ItemStackPredicate>> parseFuture(
@@ -101,11 +86,9 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
         return CommandTreeNodeTypes.ITEM_PREDICATE.get().createNode();
     }
 
-    private static final class ItemStackPredicateImpl implements ItemStackPredicate {
+    private record ItemStackPredicateImpl(Predicate<net.minecraft.world.item.ItemStack> predicate) implements ItemStackPredicate {
 
-        private final Predicate<net.minecraft.world.item.ItemStack> predicate;
-
-        ItemStackPredicateImpl(final @NonNull Predicate<net.minecraft.world.item.ItemStack> predicate) {
+        private ItemStackPredicateImpl(final @NonNull Predicate<net.minecraft.world.item.ItemStack> predicate) {
             this.predicate = predicate;
         }
 
@@ -115,24 +98,6 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
             return this.predicate.test((net.minecraft.world.item.ItemStack) (Object) itemStack);
         }
 
-    }
-
-    private static <C> com.mojang.brigadier.context.@NonNull CommandContext<CommandSourceStack> createDummyContext(
-        final @NonNull CommandContext<C> ctx,
-        final @NonNull CommandSourceStack commandSourceStack
-    ) {
-        return new com.mojang.brigadier.context.CommandContext<>(
-            commandSourceStack,
-            ctx.rawInput().input(),
-            Collections.emptyMap(),
-            null,
-            null,
-            Collections.emptyList(),
-            StringRange.at(0),
-            null,
-            null,
-            false
-        );
     }
 
 }
