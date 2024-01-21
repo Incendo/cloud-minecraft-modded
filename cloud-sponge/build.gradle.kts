@@ -9,7 +9,7 @@ java.disableAutoTargetJvm()
 
 dependencies {
     api(libs.cloud.core)
-    implementation(project(":cloud-brigadier"))
+    implementation(libs.cloud.brigadier)
     compileOnly("org.spongepowered:spongeapi:11.0.0-SNAPSHOT")
     compileOnly("org.spongepowered:sponge:1.20.2-11.0.0-SNAPSHOT")
 }
