@@ -27,6 +27,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.SenderMapper;
 import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.arguments.parser.ParserParameters;
+import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
@@ -34,6 +35,7 @@ import cloud.commandframework.sponge.annotation.specifier.Center;
 import cloud.commandframework.sponge.parser.RegistryEntryParser;
 import cloud.commandframework.sponge.parser.Vector2dParser;
 import cloud.commandframework.sponge.parser.Vector3dParser;
+import cloud.commandframework.sponge.suggestion.SpongeSuggestion;
 import cloud.commandframework.state.RegistrationState;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
@@ -91,6 +93,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
     private final PluginContainer pluginContainer;
     private final SenderMapper<CommandCause, C> senderMapper;
     private final SpongeParserMapper<C> parserMapper;
+    private final SuggestionFactory<C, SpongeSuggestion> suggestionFactory;
 
     /**
      * Create a new command manager instance
@@ -115,8 +118,14 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
         this.registerCommandPreProcessor(new SpongeCommandPreprocessor<>(this));
         this.registerParsers();
         this.captionRegistry(new SpongeCaptionRegistry<>());
+        this.suggestionFactory = super.suggestionFactory().mapped(SpongeSuggestion::spongeSuggestion);
 
-        CloudSpongeCommand.registerExceptionHandlers(this);
+        SpongeDefaultExceptionHandlers.register(this);
+    }
+
+    @Override
+    public @NonNull SuggestionFactory<C, SpongeSuggestion> suggestionFactory() {
+        return this.suggestionFactory;
     }
 
     private void checkLateCreation() {
