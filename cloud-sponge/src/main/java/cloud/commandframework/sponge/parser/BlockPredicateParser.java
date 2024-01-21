@@ -66,7 +66,8 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
 
     private final ArgumentParser<C, BlockPredicate> mappedParser =
         new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockPredicateArgument.Result>(
-            net.minecraft.commands.arguments.blocks.BlockPredicateArgument.blockPredicate()
+            // todo
+            () -> net.minecraft.commands.arguments.blocks.BlockPredicateArgument.blockPredicate()
         ).flatMapSuccess((ctx, result) -> {
             final CommandSourceStack commandSourceStack =
                 (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE);

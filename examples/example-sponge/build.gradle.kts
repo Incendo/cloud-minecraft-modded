@@ -3,7 +3,12 @@ import org.spongepowered.plugin.metadata.model.PluginDependency
 
 plugins {
     id("org.spongepowered.gradle.plugin") version "2.2.0"
+    id("conventions.base")
     alias(libs.plugins.shadow)
+}
+
+indra {
+    javaVersions().target(17)
 }
 
 dependencies {
@@ -13,7 +18,7 @@ dependencies {
 
 sponge {
     injectRepositories(false)
-    apiVersion("8.0.0")
+    apiVersion("11.0.0-SNAPSHOT")
     plugin("cloud-example-sponge") {
         loader {
             name(PluginLoaders.JAVA_PLAIN)
@@ -38,6 +43,13 @@ tasks {
 
 configurations {
     spongeRuntime {
-        resolutionStrategy.cacheChangingModulesFor(1, "MINUTES")
+        resolutionStrategy {
+            cacheChangingModulesFor(1, "MINUTES")
+            eachDependency {
+                if (target.name == "spongevanilla") {
+                    useVersion("1.20.+")
+                }
+            }
+        }
     }
 }
