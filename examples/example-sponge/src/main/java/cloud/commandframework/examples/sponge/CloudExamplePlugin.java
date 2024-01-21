@@ -40,12 +40,12 @@ import cloud.commandframework.sponge.data.MultipleEntitySelector;
 import cloud.commandframework.sponge.data.ProtoItemStack;
 import cloud.commandframework.sponge.data.SinglePlayerSelector;
 import cloud.commandframework.types.tuples.Pair;
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import io.leangen.geantyref.TypeToken;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
@@ -74,6 +74,7 @@ import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.registry.RegistryTypes;
+import org.spongepowered.api.world.DefaultWorldKeys;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.biome.Biome;
 import org.spongepowered.api.world.schematic.PaletteTypes;
@@ -200,7 +201,7 @@ public final class CloudExamplePlugin {
                 }
                 final ItemStack modified = ItemStack.builder()
                     .fromItemStack(result.polledItem().createStack())
-                    .add(Keys.APPLIED_ENCHANTMENTS, ImmutableList.of(
+                    .add(Keys.APPLIED_ENCHANTMENTS, List.of(
                         Enchantment.of(
                             ctx.<EnchantmentType>get("enchantment_type"),
                             ctx.<Integer>get("level")
@@ -307,7 +308,7 @@ public final class CloudExamplePlugin {
         final Function<CommandContext<CommandCause>, RegistryHolder> holderFunction = ctx -> ctx.sender()
             .location()
             .map(Location::world)
-            .orElse(Sponge.server().worldManager().defaultWorld());
+            .orElseGet(() -> Sponge.server().worldManager().world(DefaultWorldKeys.DEFAULT).orElseThrow());
         this.commandManager.command(cloud.literal("test_biomes")
             .required("biome", registryEntryParser(Biome.class, RegistryTypes.BIOME, holderFunction))
             .handler(ctx -> {

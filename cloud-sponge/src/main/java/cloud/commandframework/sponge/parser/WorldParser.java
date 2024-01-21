@@ -30,11 +30,13 @@ import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.sponge.NodeSource;
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.commands.arguments.DimensionArgument;
@@ -63,9 +65,7 @@ public final class WorldParser<C> implements ArgumentParser<C, ServerWorld>, Nod
         return ParserDescriptor.of(new WorldParser<>(), ServerWorld.class);
     }
 
-    private static final DynamicCommandExceptionType ERROR_INVALID_VALUE;
-
-    static {
+    private static final Supplier<DynamicCommandExceptionType> ERROR_INVALID_VALUE = Suppliers.memoize(() -> {
         try {
             // ERROR_INVALID_VALUE (todo: use accessor)
             final Field errorInvalidValueField = Arrays.stream(DimensionArgument.class.getDeclaredFields())
@@ -73,11 +73,11 @@ public final class WorldParser<C> implements ArgumentParser<C, ServerWorld>, Nod
                 .findFirst()
                 .orElseThrow(IllegalStateException::new);
             errorInvalidValueField.setAccessible(true);
-            ERROR_INVALID_VALUE = (DynamicCommandExceptionType) errorInvalidValueField.get(null);
+            return (DynamicCommandExceptionType) errorInvalidValueField.get(null);
         } catch (final Exception ex) {
             throw new RuntimeException("Couldn't access ERROR_INVALID_VALUE command exception type.", ex);
         }
-    }
+    });
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull ServerWorld> parse(
@@ -93,7 +93,7 @@ public final class WorldParser<C> implements ArgumentParser<C, ServerWorld>, Nod
         if (entry.isPresent()) {
             return ArgumentParseResult.success(entry.get());
         }
-        return ArgumentParseResult.failure(ERROR_INVALID_VALUE.create(key));
+        return ArgumentParseResult.failure(ERROR_INVALID_VALUE.get().create(key));
     }
 
     @Override

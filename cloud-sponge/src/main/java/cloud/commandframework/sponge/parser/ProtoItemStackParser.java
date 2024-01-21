@@ -79,7 +79,8 @@ public final class ProtoItemStackParser<C> implements NodeSource,
     }
 
     private final ArgumentParser<C, ProtoItemStack> mappedParser =
-        new WrappedBrigadierParser<C, ItemInput>(ItemArgument.item())
+        // todo
+        new WrappedBrigadierParser<C, ItemInput>(() -> ItemArgument.item())
             .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(new ProtoItemStackImpl(itemInput)));
 
     @Override

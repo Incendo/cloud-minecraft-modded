@@ -183,7 +183,7 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
         final CommandNode<C> cloud = this.namedNode();
 
-        if (cloud.isLeaf() || cloud.command() != null) {
+        if (canExecute(cloud)) {
             root.executable();
         }
 
