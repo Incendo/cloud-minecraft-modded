@@ -52,5 +52,5 @@ include("cloud-fabric/common-repack")
 findProject(":cloud-fabric/common-repack")?.name = "cloud-minecraft-modded-common-fabric-repack"
 include("cloud-neoforge")
 include("cloud-sponge")
-include("examples/cloud-sponge")
-findProject(":examples/cloud-sponge")?.name = "cloud-sponge"
+include("examples/example-sponge")
+findProject(":examples/example-sponge")?.name = "example-sponge"
