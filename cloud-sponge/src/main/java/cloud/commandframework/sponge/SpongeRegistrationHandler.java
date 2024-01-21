@@ -24,6 +24,7 @@
 package cloud.commandframework.sponge;
 
 import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.EitherParser;
 import cloud.commandframework.arguments.parser.MappedArgumentParser;
@@ -138,6 +139,12 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
         if (parser instanceof EitherParser<?, ?, ?> eitherParser) {
             unwrap(parsers, eitherParser.primary().parser());
             unwrap(parsers, eitherParser.fallback().parser());
+            return;
+        }
+        if (parser instanceof AggregateCommandParser<?, ?> aggregateParser) {
+            for (final CommandComponent<?> component : aggregateParser.components()) {
+                unwrap(parsers, component.parser());
+            }
             return;
         }
         parsers.add(parser);
