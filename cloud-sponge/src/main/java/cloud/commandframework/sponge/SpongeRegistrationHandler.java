@@ -24,17 +24,26 @@
 package cloud.commandframework.sponge;
 
 import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.parser.ArgumentParser;
+import cloud.commandframework.arguments.parser.EitherParser;
+import cloud.commandframework.arguments.parser.MappedArgumentParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.internal.CommandRegistrationHandler;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.server.MinecraftServer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 
 import static java.util.Objects.requireNonNull;
 
@@ -56,21 +65,53 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
     private void registerCommand(final RegisterCommandEvent<Command.Raw> event, final CommandComponent<C> rootLiteral) {
         final String label = rootLiteral.name();
         event.register(
-                this.commandManager.owningPluginContainer(),
-                new CloudSpongeCommand<>(label, this.commandManager),
-                label,
-                rootLiteral.alternativeAliases().toArray(new String[0])
+            this.commandManager.owningPluginContainer(),
+            new CloudSpongeCommand<>(label, this.commandManager),
+            label,
+            rootLiteral.alternativeAliases().toArray(new String[0])
+        );
+    }
+
+    private void startedEngine(final StartedEngineEvent<Server> serverStartedEngineEvent) {
+        final MinecraftServer engine = (MinecraftServer) serverStartedEngineEvent.engine();
+        ContextualArgumentTypeProvider.withBuildContext(
+            this.commandManager,
+            CommandBuildContext.configurable(engine.registryAccess(), engine.getWorldData().enabledFeatures()),
+            true,
+            () -> {
+                for (final cloud.commandframework.Command<C> registeredCommand : this.registeredCommands) {
+                    for (final CommandComponent<C> component : registeredCommand.components()) {
+                        if (component.type() == CommandComponent.ComponentType.LITERAL
+                            || component.type() == CommandComponent.ComponentType.FLAG) {
+                            continue;
+                        }
+
+                        for (final ArgumentParser<?, ?> parser : unwrap(component.parser())) {
+                            if (parser instanceof WrappedBrigadierParser<?, ?> wrappedBrigadierParser) {
+                                wrappedBrigadierParser.nativeArgumentType();
+                            }
+                        }
+                    }
+                }
+            }
         );
     }
 
     void initialize(final @NonNull SpongeCommandManager<C> commandManager) {
         this.commandManager = commandManager;
         Sponge.eventManager().registerListener(
-                EventListenerRegistration.builder(new TypeToken<RegisterCommandEvent<Command.Raw>>() {})
-                        .plugin(this.commandManager.owningPluginContainer())
-                        .listener(this::handleRegistrationEvent)
-                        .order(Order.DEFAULT)
-                        .build()
+            EventListenerRegistration.builder(new TypeToken<RegisterCommandEvent<Command.Raw>>() {})
+                .plugin(this.commandManager.owningPluginContainer())
+                .listener(this::handleRegistrationEvent)
+                .order(Order.DEFAULT)
+                .build()
+        );
+        Sponge.eventManager().registerListener(
+            EventListenerRegistration.builder(new TypeToken<StartedEngineEvent<Server>>() {})
+                .plugin(this.commandManager.owningPluginContainer())
+                .listener(this::startedEngine)
+                .order(Order.DEFAULT)
+                .build()
         );
     }
 
@@ -78,5 +119,27 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
     public boolean registerCommand(final cloud.commandframework.@NonNull Command<C> command) {
         this.registeredCommands.add(command);
         return true;
+    }
+
+    private static Set<ArgumentParser<?, ?>> unwrap(final ArgumentParser<?, ?> parser) {
+        final HashSet<ArgumentParser<?, ?>> parsers = new HashSet<>();
+        unwrap(parsers, parser);
+        return parsers;
+    }
+
+    private static void unwrap(
+        final Set<ArgumentParser<?, ?>> parsers,
+        final ArgumentParser<?, ?> parser
+    ) {
+        if (parser instanceof MappedArgumentParser<?, ?, ?> mapped) {
+            unwrap(parsers, mapped);
+            return;
+        }
+        if (parser instanceof EitherParser<?, ?, ?> eitherParser) {
+            unwrap(parsers, eitherParser.primary().parser());
+            unwrap(parsers, eitherParser.fallback().parser());
+            return;
+        }
+        parsers.add(parser);
     }
 }
