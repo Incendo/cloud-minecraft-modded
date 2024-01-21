@@ -13,7 +13,7 @@ indra {
 
 dependencies {
     implementation(project(":cloud-sponge"))
-    implementation(project(":cloud-minecraft-extras"))
+    implementation(libs.cloud.minecraft.extras)
 }
 
 sponge {
