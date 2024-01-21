@@ -138,10 +138,7 @@ public final class CloudExamplePlugin {
         );
 
         // Get command manager instance
-        this.commandManager = childInjector.getInstance(Key.get(new TypeLiteral<SpongeCommandManager<CommandCause>>() {}));
-
-        // Use Cloud's enhanced number suggestions
-        this.commandManager.parserMapper().cloudNumberSuggestions(true);
+        this.commandManager = childInjector.getInstance(Key.get(new TypeLiteral<>() {}));
 
         // Register minecraft-extras exception handlers
         MinecraftExceptionHandler.create(CommandCause::audience)

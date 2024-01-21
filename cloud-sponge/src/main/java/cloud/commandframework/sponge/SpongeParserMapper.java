@@ -239,18 +239,12 @@ public final class SpongeParserMapper<C> {
      * @param cloudNumberSuggestions whether to use Cloud number suggestions
      */
     public void cloudNumberSuggestions(final boolean cloudNumberSuggestions) {
-        this.cloudSuggestions(new TypeToken<ByteParser<C>>() {
-        }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<ShortParser<C>>() {
-        }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<IntegerParser<C>>() {
-        }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<FloatParser<C>>() {
-        }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<DoubleParser<C>>() {
-        }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<LongParser<C>>() {
-        }, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<ByteParser<C>>() {}, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<ShortParser<C>>() {}, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<IntegerParser<C>>() {}, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<FloatParser<C>>() {}, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<DoubleParser<C>>() {}, cloudNumberSuggestions);
+        this.cloudSuggestions(new TypeToken<LongParser<C>>() {}, cloudNumberSuggestions);
     }
 
     /**
