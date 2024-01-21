@@ -78,7 +78,8 @@ public final class BlockInputParser<C> implements NodeSource, ArgumentParser.Fut
     }
 
     private final ArgumentParser<C, BlockInput> mappedParser =
-        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(BlockStateArgument.block())
+        // todo
+        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(() -> BlockStateArgument.block())
             .flatMapSuccess((ctx, blockInput) -> ArgumentParseResult.successFuture(new BlockInputImpl(blockInput)));
 
     @Override
