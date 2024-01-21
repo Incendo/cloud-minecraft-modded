@@ -26,12 +26,6 @@ package cloud.commandframework.sponge;
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.LiteralParser;
 import cloud.commandframework.arguments.compound.CompoundParser;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.NoSuchCommandException;
 import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.permission.Permission;
 import cloud.commandframework.types.tuples.Pair;
@@ -41,9 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.util.ComponentMessageThrowable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
@@ -53,18 +45,8 @@ import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 final class CloudSpongeCommand<C> implements Command.Raw {
-
-    private static final Component NULL = text("null");
-    private static final Component MESSAGE_INTERNAL_ERROR =
-        text("An internal error occurred while attempting to perform this command.", RED);
-    private static final Component MESSAGE_NO_PERMS =
-        text("I'm sorry, but you do not have permission to perform this command. "
-            + "Please contact the server administrators if you believe that this is in error.", RED);
-    private static final Component MESSAGE_UNKNOWN_COMMAND = text("Unknown command. Type \"/help\" for help.");
 
     private final SpongeCommandManager<C> commandManager;
     private final String label;
@@ -85,63 +67,18 @@ final class CloudSpongeCommand<C> implements Command.Raw {
         return CommandResult.success();
     }
 
-    // todo
-    public static <C> void registerExceptionHandlers(final SpongeCommandManager<C> mgr) {
-        mgr.exceptionController().registerHandler(InvalidSyntaxException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(text().append(
-                text("Invalid Command Syntax. Correct command syntax is: ", RED),
-                text("/" + ctx.exception().correctSyntax(), GRAY)
-            ).build());
-        });
-        mgr.exceptionController().registerHandler(InvalidCommandSenderException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(text(ctx.exception().getMessage(), RED));
-        });
-        mgr.exceptionController().registerHandler(NoPermissionException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(MESSAGE_NO_PERMS);
-        });
-        mgr.exceptionController().registerHandler(NoSuchCommandException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(MESSAGE_UNKNOWN_COMMAND);
-        });
-        mgr.exceptionController().registerHandler(ArgumentParseException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(text().append(
-                text("Invalid Command Argument: ", RED),
-                getMessage(ctx.exception().getCause()).colorIfAbsent(GRAY)
-            ).build());
-        });
-        mgr.exceptionController().registerHandler(CommandExecutionException.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(MESSAGE_INTERNAL_ERROR);
-            mgr.owningPluginContainer().logger()
-                .error("Exception executing command handler", ctx.exception().getCause());
-        });
-        mgr.exceptionController().registerHandler(Throwable.class, ctx -> {
-            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
-            audience.sendMessage(MESSAGE_INTERNAL_ERROR);
-            mgr.owningPluginContainer().logger()
-                .error("An unhandled exception was thrown during command execution", ctx.exception());
-        });
-    }
-
-    private static Component getMessage(final Throwable throwable) {
-        final Component msg = ComponentMessageThrowable.getOrConvertMessage(throwable);
-        return msg == null ? NULL : msg;
-    }
-
     @Override
     public List<CommandCompletion> complete(
         final @NonNull CommandCause cause,
         final ArgumentReader.@NonNull Mutable arguments
     ) {
-        return this.commandManager.suggestionFactory().suggestImmediately(
-            this.commandManager.senderMapper().map(cause),
-            this.formatCommandForSuggestions(arguments.input())
-            // todo
-        ).list().stream().map(s -> CommandCompletion.of(s.suggestion())).collect(Collectors.toList());
+        return this.commandManager.suggestionFactory()
+            .suggestImmediately(this.commandManager.senderMapper().map(cause),
+                this.formatCommandForSuggestions(arguments.input()))
+            .list()
+            .stream()
+            .map(s -> CommandCompletion.of(s.suggestion(), s.tooltip()))
+            .collect(Collectors.toList());
     }
 
     @Override
