@@ -31,13 +31,11 @@ import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
+import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import cloud.commandframework.sponge.NodeSource;
-import cloud.commandframework.sponge.SpongeCommandContextKeys;
 import cloud.commandframework.sponge.data.BlockPredicate;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -66,19 +64,8 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
 
     private final ArgumentParser<C, BlockPredicate> mappedParser =
         new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockPredicateArgument.Result>(
-            // todo
-            () -> net.minecraft.commands.arguments.blocks.BlockPredicateArgument.blockPredicate()
-        ).flatMapSuccess((ctx, result) -> {
-            final CommandSourceStack commandSourceStack =
-                (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE);
-            try {
-                return ArgumentParseResult.successFuture(
-                    new BlockPredicateImpl(result.create(commandSourceStack.getLevel().getTagManager()))
-                );
-            } catch (final CommandSyntaxException ex) {
-                return ArgumentParseResult.failureFuture(ex);
-            }
-        });
+            new ContextualArgumentTypeProvider<>(net.minecraft.commands.arguments.blocks.BlockPredicateArgument::blockPredicate)
+        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result)));
 
     @Override
     public @NonNull CompletableFuture<@NonNull ArgumentParseResult<BlockPredicate>> parseFuture(
@@ -101,11 +88,9 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
         return CommandTreeNodeTypes.BLOCK_PREDICATE.get().createNode();
     }
 
-    private static final class BlockPredicateImpl implements BlockPredicate {
+    private record BlockPredicateImpl(Predicate<BlockInWorld> predicate) implements BlockPredicate {
 
-        private final Predicate<BlockInWorld> predicate;
-
-        BlockPredicateImpl(final @NonNull Predicate<BlockInWorld> predicate) {
+        private BlockPredicateImpl(final @NonNull Predicate<BlockInWorld> predicate) {
             this.predicate = predicate;
         }
 
