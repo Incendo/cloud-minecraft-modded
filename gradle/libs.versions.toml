@@ -49,6 +49,7 @@ zNeoForge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-publishing = { id = "org.incendo.cloud-build-logic.publishing.root-project", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.spotless.root-project", version.ref = "cloud-build-logic" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]
