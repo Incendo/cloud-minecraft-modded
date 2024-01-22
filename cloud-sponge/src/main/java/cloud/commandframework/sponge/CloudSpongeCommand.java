@@ -25,7 +25,7 @@ package cloud.commandframework.sponge;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.arguments.LiteralParser;
-import cloud.commandframework.arguments.compound.CompoundParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.permission.Permission;
 import cloud.commandframework.types.tuples.Pair;
@@ -136,9 +136,8 @@ final class CloudSpongeCommand<C> implements Command.Raw {
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
             if (value.parser() instanceof LiteralParser) {
                 treeNode = (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) CommandTreeNode.literal();
-            } else if (value.parser() instanceof CompoundParser) {
-                final CompoundParser<?, C, ?> compound = (CompoundParser<?, C, ?>) value.parser();
-                this.handleCompoundArgument(node, child, compound);
+            } else if (value.parser() instanceof AggregateParser<C, ?> aggregate) {
+                this.handleAggregate(node, child, aggregate);
                 continue;
             } else {
                 treeNode = this.commandManager.parserMapper().mapComponent(value);
@@ -152,10 +151,10 @@ final class CloudSpongeCommand<C> implements Command.Raw {
         }
     }
 
-    private void handleCompoundArgument(
+    private void handleAggregate(
         final CommandTreeNode<?> node,
         final CommandNode<C> child,
-        final CompoundParser<?, C, ?> compound
+        final AggregateParser<C, ?> compound
     ) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
         final ArrayDeque<Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>>> nodes = new ArrayDeque<>();
