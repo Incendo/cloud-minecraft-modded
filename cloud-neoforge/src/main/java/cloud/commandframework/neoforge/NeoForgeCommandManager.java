@@ -34,7 +34,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
-import cloud.commandframework.minecraft.modded.ModdedCaptionRegistry;
+import cloud.commandframework.minecraft.modded.ModdedDefaultCaptionsProvider;
 import cloud.commandframework.minecraft.modded.internal.ModdedExceptionHandler;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
@@ -72,7 +72,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
         ), senderMapper);
         ModdedExceptionHandler.registerDefaults(this, CommandSourceStack::sendFailure, CommandSourceStack::getTextName);
         registrationHandler.initialize(this);
-        this.captionRegistry(new ModdedCaptionRegistry<>());
+        this.captionRegistry().registerProvider(new ModdedDefaultCaptionsProvider<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
 
         ModdedParserMappings.register(this, this.brigadierManager);

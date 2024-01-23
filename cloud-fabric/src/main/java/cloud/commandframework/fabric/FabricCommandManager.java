@@ -33,7 +33,7 @@ import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.minecraft.modded.ModdedCaptionRegistry;
+import cloud.commandframework.minecraft.modded.ModdedDefaultCaptionsProvider;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
 import java.util.function.Supplier;
@@ -104,7 +104,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
         );
 
         ModdedParserMappings.register(this, this.brigadierManager);
-        this.captionRegistry(new ModdedCaptionRegistry<>());
+        this.captionRegistry().registerProvider(new ModdedDefaultCaptionsProvider<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
 
         ((FabricCommandRegistrationHandler<C, S>) this.commandRegistrationHandler()).initialize(this);

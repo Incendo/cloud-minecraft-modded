@@ -24,42 +24,40 @@
 package cloud.commandframework.minecraft.modded;
 
 import cloud.commandframework.captions.CaptionProvider;
-import cloud.commandframework.captions.StandardCaptionRegistry;
+import cloud.commandframework.captions.DelegatingCaptionProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Caption registry that uses bi-functions to produce messages.
+ * Provides the default captions for messages in cloud-minecraft-modded-common.
  *
  * @param <C> command sender type
  */
-public class ModdedCaptionRegistry<C> extends StandardCaptionRegistry<C> {
+public final class ModdedDefaultCaptionsProvider<C> extends DelegatingCaptionProvider<C> {
 
     /**
      * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
      */
     public static final String ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY =
-            "Could not find value with key '<id>' in registry '<registry>'.";
+        "Could not find value with key '<id>' in registry '<registry>'.";
 
     /**
      * Default caption for {@link ModdedCaptionKeys#ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN}
      */
     public static final String ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN = "Could not find any team named '<input>'!";
 
-    /**
-     * Creates a new {@link ModdedCaptionRegistry}.
-     */
-    public ModdedCaptionRegistry() {
-        super();
+    private static final CaptionProvider<?> PROVIDER = CaptionProvider.constantProvider()
+        .putCaption(
+            ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
+            ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY
+        ).putCaption(
+            ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN,
+            ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN
+        )
+        .build();
 
-        this.registerProvider(
-                CaptionProvider.<C>constantProvider()
-                        .putCaptions(
-                                ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
-                                ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY
-                        ).putCaptions(
-                                ModdedCaptionKeys.ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN,
-                                ARGUMENT_PARSE_FAILURE_TEAM_UNKNOWN
-                        )
-                        .build()
-        );
+    @SuppressWarnings("unchecked")
+    @Override
+    public @NonNull CaptionProvider<C> delegate() {
+        return (CaptionProvider<C>) PROVIDER;
     }
 }
