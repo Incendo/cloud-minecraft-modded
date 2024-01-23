@@ -24,14 +24,15 @@
 package cloud.commandframework.sponge;
 
 import cloud.commandframework.captions.CaptionProvider;
-import cloud.commandframework.captions.StandardCaptionRegistry;
+import cloud.commandframework.captions.DelegatingCaptionProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Caption registry that uses bi-functions to produce messages.
+ * Provides the default captions for messages in cloud-sponge.
  *
  * @param <C> command sender type
  */
-public class SpongeCaptionRegistry<C> extends StandardCaptionRegistry<C> {
+public final class SpongeDefaultCaptionsProvider<C> extends DelegatingCaptionProvider<C> {
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
@@ -63,26 +64,27 @@ public class SpongeCaptionRegistry<C> extends StandardCaptionRegistry<C> {
     public static final String ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED =
         "The provided selector matched multiple game profiles, but only one is allowed.";
 
-    protected SpongeCaptionRegistry() {
-        super();
+    private static final CaptionProvider<?> PROVIDER = CaptionProvider.constantProvider()
+        .putCaption(
+            SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
+            ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY)
+        .putCaption(
+            SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME,
+            ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME)
+        .putCaption(
+            SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID,
+            ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID)
+        .putCaption(
+            SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT,
+            ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT)
+        .putCaption(
+            SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED,
+            ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED)
+        .build();
 
-        this.registerProvider(CaptionProvider.<C>constantProvider()
-            .putCaptions(
-                SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
-                ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY)
-            .putCaptions(
-                SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME,
-                ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME)
-            .putCaptions(
-                SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID,
-                ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID)
-            .putCaptions(
-                SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT,
-                ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT)
-            .putCaptions(
-                SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED,
-                ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED)
-            .build());
+    @SuppressWarnings("unchecked")
+    @Override
+    public @NonNull CaptionProvider<C> delegate() {
+        return (CaptionProvider<C>) PROVIDER;
     }
-
 }

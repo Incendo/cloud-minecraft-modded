@@ -301,19 +301,9 @@ public final class SpongeParserMapper<C> {
 
     }
 
-    private static final class Mapping<C, A extends ArgumentParser<C, ?>> {
-
-        private final Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper;
-        private final boolean cloudSuggestions;
-
-        private Mapping(
-            final Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
-            final boolean cloudSuggestions
-        ) {
-            this.mapper = mapper;
-            this.cloudSuggestions = cloudSuggestions;
-        }
-
-    }
+    private record Mapping<C, A extends ArgumentParser<C, ?>>(
+        Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
+        boolean cloudSuggestions
+    ) {}
 
 }

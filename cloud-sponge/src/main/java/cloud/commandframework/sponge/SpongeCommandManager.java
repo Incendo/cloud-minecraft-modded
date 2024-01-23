@@ -117,7 +117,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
         this.parserMapper = new SpongeParserMapper<>();
         this.registerCommandPreProcessor(new SpongeCommandPreprocessor<>(this));
         this.registerParsers();
-        this.captionRegistry(new SpongeCaptionRegistry<>());
+        this.captionRegistry().registerProvider(new SpongeDefaultCaptionsProvider<>());
         this.suggestionFactory = super.suggestionFactory().mapped(SpongeSuggestion::spongeSuggestion);
 
         SpongeDefaultExceptionHandlers.register(this);
