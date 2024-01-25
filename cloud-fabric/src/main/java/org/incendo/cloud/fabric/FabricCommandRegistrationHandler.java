@@ -45,6 +45,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
+import org.incendo.cloud.minecraft.modded.ModdedCommandMetaKeys;
 import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 
 import static org.incendo.cloud.brigadier.util.BrigadierUtil.buildRedirect;
@@ -172,7 +173,7 @@ abstract class FabricCommandRegistrationHandler<C, S extends SharedSuggestionPro
                         for (final Command<C> command : this.registeredCommands) {
                             /* Only register commands in the declared environment */
                             final Commands.CommandSelection env = command.commandMeta().getOrDefault(
-                                    FabricServerCommandManager.META_REGISTRATION_ENVIRONMENT,
+                                    ModdedCommandMetaKeys.REGISTRATION_ENVIRONMENT,
                                     Commands.CommandSelection.ALL
                             );
 

@@ -27,7 +27,6 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +35,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.internal.LateRegistrationCatcher;
-import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.minecraft.modded.internal.ModdedExceptionHandler;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 
@@ -51,18 +49,6 @@ import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
  * @since 1.5.0
  */
 public final class FabricServerCommandManager<C> extends FabricCommandManager<C, CommandSourceStack> {
-
-    /**
-     * A meta attribute specifying which environments a command should be registered in.
-     *
-     * <p>The default value is {@link Commands.CommandSelection#ALL}.</p>
-     *
-     * @since 1.5.0
-     */
-    public static final CloudKey<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CloudKey.of(
-        "cloud:registration-environment",
-        Commands.CommandSelection.class
-    );
 
     /**
      * Create a command manager using native source types.

@@ -28,7 +28,6 @@ import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -37,15 +36,9 @@ import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 
 public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManager<C> {
-
-    public static final CloudKey<Commands.CommandSelection> META_REGISTRATION_ENVIRONMENT = CloudKey.of(
-        "cloud:registration-environment",
-        Commands.CommandSelection.class
-    );
 
     private final Cache<String, PermissionNode<Boolean>> permissionNodeCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
