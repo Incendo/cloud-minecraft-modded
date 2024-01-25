@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
 import org.spongepowered.api.command.CommandCause;
 
 /**
- * Command preprocessor which decorates incoming {@link cloud.commandframework.context.CommandContext}
+ * Command preprocessor which decorates incoming {@link org.incendo.cloud.context.CommandContext}
  * with Sponge specific objects
  *
  * @param <C> Command sender type
