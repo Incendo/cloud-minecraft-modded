@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.sponge.suggestion;
 
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
+import org.incendo.cloud.suggestion.Suggestion;
 import org.spongepowered.common.adventure.SpongeAdventure;
 
 /**

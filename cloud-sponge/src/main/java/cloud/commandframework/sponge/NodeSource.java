@@ -23,12 +23,11 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 
 /**
- * Implemented by {@link ArgumentParser} which also supply a special {@link CommandTreeNode.Argument}.
+ * Implemented by {@link org.incendo.cloud.parser.ArgumentParser} which also supply a special {@link CommandTreeNode.Argument}.
  */
 public interface NodeSource {
 

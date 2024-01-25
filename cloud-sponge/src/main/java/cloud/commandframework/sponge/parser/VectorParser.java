@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.sponge.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.sponge.NodeSource;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
 /**
  * Parent of {@link Vector3dParser} and {@link Vector2dParser} containing shared methods.

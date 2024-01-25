@@ -23,12 +23,6 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.LiteralParser;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.permission.Permission;
-import cloud.commandframework.types.tuples.Pair;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +31,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.parser.standard.LiteralParser;
+import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.type.tuple.Pair;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;
