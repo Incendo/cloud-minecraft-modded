@@ -23,17 +23,17 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.keys.CloudKey;
 import io.leangen.geantyref.TypeToken;
+import org.incendo.cloud.key.CloudKey;
 import org.spongepowered.api.command.CommandCause;
 
 /**
- * Sponge related {@link cloud.commandframework.context.CommandContext} keys.
+ * Sponge related {@link org.incendo.cloud.context.CommandContext} keys.
  */
 public final class SpongeCommandContextKeys {
 
     /**
-     * The Sponge native {@link org.spongepowered.api.command.CommandCause} instance is stored in the {@link cloud.commandframework.context.CommandContext}
+     * The Sponge native {@link org.spongepowered.api.command.CommandCause} instance is stored in the {@link org.incendo.cloud.context.CommandContext}
      * by {@link SpongeCommandPreprocessor}
      */
     public static final CloudKey<CommandCause> COMMAND_CAUSE = CloudKey.of(

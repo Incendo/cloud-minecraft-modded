@@ -23,22 +23,23 @@
 //
 package cloud.commandframework.sponge.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import cloud.commandframework.sponge.NodeSource;
 import cloud.commandframework.sponge.data.BlockPredicate;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.world.server.ServerLocation;
@@ -63,7 +64,7 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
     }
 
     private final ArgumentParser<C, BlockPredicate> mappedParser =
-        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockPredicateArgument.Result>(
+        new WrappedBrigadierParser<C, BlockPredicateArgument.Result>(
             new ContextualArgumentTypeProvider<>(net.minecraft.commands.arguments.blocks.BlockPredicateArgument::blockPredicate)
         ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result)));
 

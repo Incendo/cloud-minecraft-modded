@@ -23,20 +23,11 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.parser.ParserParameters;
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.meta.CommandMeta;
-import cloud.commandframework.meta.SimpleCommandMeta;
 import cloud.commandframework.sponge.annotation.specifier.Center;
 import cloud.commandframework.sponge.parser.RegistryEntryParser;
 import cloud.commandframework.sponge.parser.Vector2dParser;
 import cloud.commandframework.sponge.parser.Vector3dParser;
 import cloud.commandframework.sponge.suggestion.SpongeSuggestion;
-import cloud.commandframework.state.RegistrationState;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -48,6 +39,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.meta.CommandMeta;
+import org.incendo.cloud.meta.SimpleCommandMeta;
+import org.incendo.cloud.parser.ParserParameters;
+import org.incendo.cloud.state.RegistrationState;
+import org.incendo.cloud.suggestion.SuggestionFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -231,7 +231,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
 
     /**
      * Get the {@link SpongeParserMapper}, responsible for mapping Cloud
-     * {@link cloud.commandframework.arguments.parser.ArgumentParser ArgumentParser} to Sponge
+     * {@link org.incendo.cloud.parser.ArgumentParser ArgumentParser} to Sponge
      * {@link org.spongepowered.api.command.registrar.tree.CommandTreeNode.Argument CommandTreeNode.Arguments}.
      *
      * @return the parser mapper
