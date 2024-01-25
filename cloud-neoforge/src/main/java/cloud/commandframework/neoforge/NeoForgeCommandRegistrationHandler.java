@@ -23,10 +23,6 @@
 //
 package cloud.commandframework.neoforge;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.brigadier.CloudBrigadierCommand;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
@@ -45,8 +41,12 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.brigadier.CloudBrigadierCommand;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
-import static cloud.commandframework.brigadier.util.BrigadierUtil.buildRedirect;
+import static org.incendo.cloud.brigadier.util.BrigadierUtil.buildRedirect;
 
 /**
  * A registration handler for NeoForge.

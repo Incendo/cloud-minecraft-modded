@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.minecraft.modded.permission;
 
-import cloud.commandframework.internal.ImmutableImpl;
-import cloud.commandframework.permission.Permission;
-import cloud.commandframework.permission.PermissionResult;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.internal.ImmutableImpl;
+import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.permission.PermissionResult;
 
 /**
  * A {@link PermissionResult} that also contains the permission level that was required for the permission check to pass.

@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.minecraft.modded;
 
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.minecraft.modded.permission.PermissionLevelResult;
-import cloud.commandframework.permission.PermissionResult;
-import cloud.commandframework.permission.PredicatePermission;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.permission.PermissionResult;
+import org.incendo.cloud.permission.PredicatePermission;
 
 public final class ModdedPredicatePermissions {
     private ModdedPredicatePermissions() {

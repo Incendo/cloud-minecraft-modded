@@ -23,16 +23,6 @@
 //
 package cloud.commandframework.fabric;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
-import cloud.commandframework.brigadier.BrigadierManagerHolder;
-import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.minecraft.modded.ModdedDefaultCaptionsProvider;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import cloud.commandframework.minecraft.modded.internal.ModdedPreprocessor;
@@ -40,6 +30,15 @@ import java.util.function.Supplier;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.suggestion.SuggestionFactory;
 
 /**
  * A command manager for either the server or client on Fabric.
@@ -48,7 +47,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * <p>Where possible, Vanilla argument types are made available in a cloud-friendly format. In some cases, these argument
  * types may only be available for server commands. Mod-provided argument types can be exposed to Cloud as well, by using
- * {@link WrappedBrigadierParser}.</p>
+ * {@link org.incendo.cloud.brigadier.parser.WrappedBrigadierParser}.</p>
  *
  * @param <C> the manager's sender type
  * @param <S> the platform sender type

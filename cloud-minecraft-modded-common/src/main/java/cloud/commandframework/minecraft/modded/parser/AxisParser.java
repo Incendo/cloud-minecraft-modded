@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.minecraft.modded.parser;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import io.leangen.geantyref.TypeToken;
 import java.util.EnumSet;
 import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
 import net.minecraft.core.Direction;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * An argument parser for a set of {@link net.minecraft.core.Direction.Axis axes}, described in Vanilla as a "swizzle".

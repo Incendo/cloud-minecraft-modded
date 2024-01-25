@@ -23,17 +23,6 @@
 //
 package cloud.commandframework.neoforge;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
-import cloud.commandframework.brigadier.BrigadierManagerHolder;
-import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.meta.CommandMeta;
-import cloud.commandframework.meta.SimpleCommandMeta;
 import cloud.commandframework.minecraft.modded.ModdedDefaultCaptionsProvider;
 import cloud.commandframework.minecraft.modded.internal.ModdedExceptionHandler;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
@@ -45,6 +34,17 @@ import java.util.function.Supplier;
 import net.minecraft.commands.CommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.meta.CommandMeta;
+import org.incendo.cloud.meta.SimpleCommandMeta;
+import org.incendo.cloud.suggestion.SuggestionFactory;
 
 @DefaultQualifier(NonNull.class)
 public abstract class NeoForgeCommandManager<C> extends CommandManager<C>

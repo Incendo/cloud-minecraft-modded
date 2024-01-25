@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.minecraft.modded.internal;
 
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
 
 @API(status = API.Status.INTERNAL)
 public final class ModdedPreprocessor<C> implements CommandPreprocessor<C> {

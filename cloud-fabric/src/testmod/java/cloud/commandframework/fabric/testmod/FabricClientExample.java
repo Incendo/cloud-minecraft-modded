@@ -23,10 +23,6 @@
 //
 package cloud.commandframework.fabric.testmod;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandDescription;
-import cloud.commandframework.arguments.flags.CommandFlag;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricClientCommandManager;
 import cloud.commandframework.fabric.testmod.mixin.PauseScreenAccess;
 import cloud.commandframework.minecraft.modded.ModdedPredicatePermissions;
@@ -54,9 +50,13 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.description.CommandDescription;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.parser.flag.CommandFlag;
 
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 public final class FabricClientExample implements ClientModInitializer {
 

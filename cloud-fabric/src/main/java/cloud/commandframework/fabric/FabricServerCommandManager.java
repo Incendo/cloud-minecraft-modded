@@ -23,10 +23,7 @@
 //
 package cloud.commandframework.fabric;
 
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.internal.LateRegistrationCatcher;
-import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.minecraft.modded.internal.ModdedExceptionHandler;
 import cloud.commandframework.minecraft.modded.internal.ModdedParserMappings;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -39,6 +36,9 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.key.CloudKey;
 
 /**
  * A command manager for registering server-side commands.

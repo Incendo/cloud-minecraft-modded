@@ -23,7 +23,6 @@
 //
 package cloud.commandframework.minecraft.modded.internal;
 
-import cloud.commandframework.CommandManager;
 import com.mojang.brigadier.arguments.ArgumentType;
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +33,7 @@ import java.util.function.Supplier;
 import net.minecraft.commands.CommandBuildContext;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
 
 @API(status = API.Status.INTERNAL, consumers = "cloud.commandframework.*")
 public final class ContextualArgumentTypeProvider<V> implements Supplier<ArgumentType<V>> {

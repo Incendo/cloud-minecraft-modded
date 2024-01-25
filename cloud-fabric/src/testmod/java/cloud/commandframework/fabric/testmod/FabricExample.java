@@ -23,17 +23,8 @@
 //
 package cloud.commandframework.fabric.testmod;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.TypedCommandComponent;
-import cloud.commandframework.arguments.DefaultValue;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.fabric.FabricServerCommandManager;
 import cloud.commandframework.fabric.testmod.mixin.GiveCommandAccess;
-import cloud.commandframework.keys.CloudKey;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
 import cloud.commandframework.minecraft.modded.data.Coordinates.ColumnCoordinates;
 import cloud.commandframework.minecraft.modded.data.MultipleEntitySelector;
@@ -64,13 +55,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.component.TypedCommandComponent;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
 import static cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers.columnPosParser;
 import static cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers.itemInput;
 import static cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers.multiplePlayerSelectorParser;
 import static cloud.commandframework.minecraft.modded.parser.VanillaArgumentParsers.vec3Parser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 public final class FabricExample implements ModInitializer {
 

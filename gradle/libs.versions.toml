@@ -5,7 +5,8 @@ stylecheck = "0.2.1"
 ktlint = "0.50.0"
 errorprone = "2.24.1"
 
-cloud = "2.0.0-SNAPSHOT"
+cloud = "2.0.0-beta.1"
+cloudMinecraft = "2.0.0-SNAPSHOT"
 
 immutables = "2.10.0"
 
@@ -19,9 +20,9 @@ cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "c
 stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck" }
 errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone" }
 
-cloud-bom = { module = "cloud.commandframework:cloud-bom", version.ref = "cloud" }
-cloud-core = { module = "cloud.commandframework:cloud-core", version.ref = "cloud" }
-cloud-brigadier = { module = "cloud.commandframework:cloud-brigadier", version.ref = "cloud" }
+cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloud" }
+cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
+cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }

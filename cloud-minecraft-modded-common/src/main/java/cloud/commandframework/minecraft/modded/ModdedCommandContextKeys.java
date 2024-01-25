@@ -23,13 +23,12 @@
 //
 package cloud.commandframework.minecraft.modded;
 
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.keys.CloudKey;
 import io.leangen.geantyref.TypeToken;
 import net.minecraft.commands.SharedSuggestionProvider;
+import org.incendo.cloud.key.CloudKey;
 
 /**
- * Keys used in {@link CommandContext}s available within a modded Minecraft context.
+ * Keys used in {@link org.incendo.cloud.context.CommandContext}s available within a modded Minecraft context.
  */
 public final class ModdedCommandContextKeys {
     private ModdedCommandContextKeys() {

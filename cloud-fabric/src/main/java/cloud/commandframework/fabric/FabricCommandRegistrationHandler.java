@@ -23,10 +23,6 @@
 //
 package cloud.commandframework.fabric;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.brigadier.CloudBrigadierCommand;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
@@ -46,8 +42,12 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.brigadier.CloudBrigadierCommand;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
-import static cloud.commandframework.brigadier.util.BrigadierUtil.buildRedirect;
+import static org.incendo.cloud.brigadier.util.BrigadierUtil.buildRedirect;
 
 /**
  * A registration handler for Fabric API.

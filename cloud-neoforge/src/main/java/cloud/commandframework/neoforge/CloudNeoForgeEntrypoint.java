@@ -23,13 +23,6 @@
 //
 package cloud.commandframework.neoforge;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.permission.AndPermission;
-import cloud.commandframework.permission.OrPermission;
-import cloud.commandframework.permission.Permission;
-import cloud.commandframework.permission.PredicatePermission;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,8 +39,15 @@ import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.permission.AndPermission;
+import org.incendo.cloud.permission.OrPermission;
+import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.permission.PredicatePermission;
 
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
 @Mod("cloud")
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")

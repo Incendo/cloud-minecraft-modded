@@ -23,11 +23,6 @@
 //
 package cloud.commandframework.minecraft.modded.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.minecraft.modded.ModdedCommandContextKeys;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
 import cloud.commandframework.minecraft.modded.data.Message;
@@ -67,6 +62,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Parsers for Vanilla command argument types.

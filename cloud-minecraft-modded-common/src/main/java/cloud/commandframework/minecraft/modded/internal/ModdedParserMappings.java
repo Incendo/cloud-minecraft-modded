@@ -23,11 +23,6 @@
 //
 package cloud.commandframework.minecraft.modded.internal;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.parser.ParserParameters;
-import cloud.commandframework.arguments.standard.UUIDParser;
-import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.minecraft.modded.ModdedParserParameters;
 import cloud.commandframework.minecraft.modded.annotation.specifier.Center;
 import cloud.commandframework.minecraft.modded.data.Coordinates;
@@ -84,6 +79,11 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.parser.ParserParameters;
+import org.incendo.cloud.parser.standard.UUIDParser;
 import org.slf4j.Logger;
 
 @API(status = API.Status.INTERNAL)

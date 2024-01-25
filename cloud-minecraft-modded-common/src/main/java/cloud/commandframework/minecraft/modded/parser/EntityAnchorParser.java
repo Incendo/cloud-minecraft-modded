@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.minecraft.modded.parser;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * An argument parsing an {@link Anchor}.
