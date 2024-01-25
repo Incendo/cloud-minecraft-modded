@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.arguments.parser.ParserParameter;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.parser.ParserParameter;
 
 /**
  * {@link ParserParameter} keys for cloud-sponge.

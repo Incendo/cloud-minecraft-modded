@@ -23,21 +23,21 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.EitherParser;
-import cloud.commandframework.arguments.parser.MappedArgumentParser;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.internal.CommandRegistrationHandler;
-import cloud.commandframework.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.server.MinecraftServer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.parser.standard.EitherParser;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
@@ -51,7 +51,7 @@ import static java.util.Objects.requireNonNull;
 final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 
     private SpongeCommandManager<C> commandManager;
-    private final Set<cloud.commandframework.Command<C>> registeredCommands = new HashSet<>();
+    private final Set<org.incendo.cloud.Command<C>> registeredCommands = new HashSet<>();
 
     SpongeRegistrationHandler() {
     }
@@ -80,7 +80,7 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
             CommandBuildContext.configurable(engine.registryAccess(), engine.getWorldData().enabledFeatures()),
             true,
             () -> {
-                for (final cloud.commandframework.Command<C> registeredCommand : this.registeredCommands) {
+                for (final org.incendo.cloud.Command<C> registeredCommand : this.registeredCommands) {
                     for (final CommandComponent<C> component : registeredCommand.components()) {
                         if (component.type() == CommandComponent.ComponentType.LITERAL
                             || component.type() == CommandComponent.ComponentType.FLAG) {
@@ -117,7 +117,7 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
     }
 
     @Override
-    public boolean registerCommand(final cloud.commandframework.@NonNull Command<C> command) {
+    public boolean registerCommand(final org.incendo.cloud.@NonNull Command<C> command) {
         this.registeredCommands.add(command);
         return true;
     }
