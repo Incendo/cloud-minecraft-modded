@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.sponge.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.spongepowered.api.ResourceKey;
 
 /**

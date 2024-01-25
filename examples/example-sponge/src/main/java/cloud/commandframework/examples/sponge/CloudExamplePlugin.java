@@ -23,14 +23,6 @@
 //
 package cloud.commandframework.examples.sponge;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.Description;
-import cloud.commandframework.arguments.DefaultValue;
-import cloud.commandframework.arguments.standard.StringParser;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler;
-import cloud.commandframework.permission.PredicatePermission;
 import cloud.commandframework.sponge.CloudInjectionModule;
 import cloud.commandframework.sponge.SpongeCommandManager;
 import cloud.commandframework.sponge.data.BlockInput;
@@ -39,7 +31,6 @@ import cloud.commandframework.sponge.data.ItemStackPredicate;
 import cloud.commandframework.sponge.data.MultipleEntitySelector;
 import cloud.commandframework.sponge.data.ProtoItemStack;
 import cloud.commandframework.sponge.data.SinglePlayerSelector;
-import cloud.commandframework.types.tuples.Pair;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -51,6 +42,15 @@ import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.description.Description;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
+import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.permission.PredicatePermission;
+import org.incendo.cloud.type.tuple.Pair;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
@@ -84,10 +84,6 @@ import org.spongepowered.math.vector.Vector3d;
 import org.spongepowered.math.vector.Vector3i;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
-import static cloud.commandframework.arguments.standard.DoubleParser.doubleParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
 import static cloud.commandframework.sponge.parser.BlockInputParser.blockInputParser;
 import static cloud.commandframework.sponge.parser.BlockPredicateParser.blockPredicateParser;
 import static cloud.commandframework.sponge.parser.DataContainerParser.dataContainerParser;
@@ -112,6 +108,10 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextColor.color;
+import static org.incendo.cloud.parser.standard.DoubleParser.doubleParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 @Plugin("cloud-example-sponge")
 public final class CloudExamplePlugin {

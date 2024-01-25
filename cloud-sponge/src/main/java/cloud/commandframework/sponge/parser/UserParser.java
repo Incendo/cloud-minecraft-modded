@@ -23,17 +23,6 @@
 //
 package cloud.commandframework.sponge.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
-import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionVariable;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import cloud.commandframework.sponge.NodeSource;
 import cloud.commandframework.sponge.SpongeCaptionKeys;
 import cloud.commandframework.sponge.SpongeCommandContextKeys;
@@ -49,6 +38,17 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;

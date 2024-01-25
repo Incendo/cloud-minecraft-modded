@@ -23,20 +23,6 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.flags.CommandFlagParser;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.MappedArgumentParser;
-import cloud.commandframework.arguments.standard.BooleanParser;
-import cloud.commandframework.arguments.standard.ByteParser;
-import cloud.commandframework.arguments.standard.DoubleParser;
-import cloud.commandframework.arguments.standard.FloatParser;
-import cloud.commandframework.arguments.standard.IntegerParser;
-import cloud.commandframework.arguments.standard.LongParser;
-import cloud.commandframework.arguments.standard.ShortParser;
-import cloud.commandframework.arguments.standard.StringArrayParser;
-import cloud.commandframework.arguments.standard.StringParser;
-import cloud.commandframework.arguments.standard.UUIDParser;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashMap;
@@ -44,13 +30,27 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
+import org.incendo.cloud.parser.flag.CommandFlagParser;
+import org.incendo.cloud.parser.standard.BooleanParser;
+import org.incendo.cloud.parser.standard.ByteParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.FloatParser;
+import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.parser.standard.LongParser;
+import org.incendo.cloud.parser.standard.ShortParser;
+import org.incendo.cloud.parser.standard.StringArrayParser;
+import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.parser.standard.UUIDParser;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * Class responsible for mapping Cloud {@link ArgumentParser ArgumentParsers} to Sponge
+ * Class responsible for mapping Cloud {@link org.incendo.cloud.parser.ArgumentParser ArgumentParsers} to Sponge
  * {@link CommandTreeNode.Argument CommandTreeNode.Arguments}.
  *
  * @param <C> command sender type
