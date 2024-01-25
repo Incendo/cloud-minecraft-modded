@@ -1,5 +1,5 @@
 {
-  "package": "cloud.commandframework.neoforge.mixin",
+  "package": "org.incendo.cloud.neoforge.mixin",
   "compatibilityLevel": "JAVA_8",
   "required": true,
   "mixins": [

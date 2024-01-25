@@ -10,7 +10,7 @@ configurations {
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
-        exclude("cloud.commandframework", "cloud-minecraft-modded-common")
+        exclude("org.incendo", "cloud-minecraft-modded-common")
     }
     forgeExtra {
         extendsFrom(api.get())

@@ -15,7 +15,7 @@
 
   "entrypoints": {
     "main": [
-      "cloud.commandframework.fabric.internal.LateRegistrationCatcher"
+      "org.incendo.cloud.fabric.internal.LateRegistrationCatcher"
     ]
   },
 
