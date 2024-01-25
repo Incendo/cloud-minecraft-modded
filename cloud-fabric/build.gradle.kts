@@ -17,13 +17,13 @@ configurations {
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
-        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
+        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
     runtimeClasspath {
-        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
+        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
     compileClasspath {
-        exclude("cloud.commandframework", "cloud-minecraft-modded-common-fabric-repack")
+        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
 }
 

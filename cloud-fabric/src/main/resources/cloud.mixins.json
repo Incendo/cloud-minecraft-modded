@@ -1,5 +1,5 @@
 {
-  "package": "cloud.commandframework.fabric.mixin",
+  "package": "org.incendo.cloud.fabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "required": true,
   "mixins": [

@@ -15,10 +15,10 @@
 
   "entrypoints": {
     "main": [
-      "cloud.commandframework.fabric.testmod.FabricExample"
+      "org.incendo.cloud.fabric.testmod.FabricExample"
     ],
     "client": [
-      "cloud.commandframework.fabric.testmod.FabricClientExample"
+      "org.incendo.cloud.fabric.testmod.FabricClientExample"
     ]
   },
 
