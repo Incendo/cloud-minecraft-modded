@@ -38,6 +38,7 @@ import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -49,6 +50,7 @@ import org.incendo.cloud.permission.PredicatePermission;
 
 import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
+@API(status = API.Status.INTERNAL)
 @Mod("cloud")
 @SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class CloudNeoForgeEntrypoint {

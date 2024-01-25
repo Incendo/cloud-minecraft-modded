@@ -25,11 +25,13 @@ package org.incendo.cloud.fabric.internal;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import org.apiguardian.api.API;
 
 /**
  * Capture server starting events to provide more useful error
  * checking on late command registration.
  */
+@API(status = API.Status.INTERNAL)
 public final class LateRegistrationCatcher implements ModInitializer {
 
     private static boolean serverStartingCalled;
