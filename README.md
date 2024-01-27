@@ -11,7 +11,7 @@
 ## links
 
 - JavaDoc: https://javadoc.io/doc/org.incendo
-- Docs: https://cloud.incendo.org/discord
+- Docs: https://cloud.incendo.org/minecraft/modded
 - Incendo Discord: https://discord.gg/aykZu32
 
 ## modules
