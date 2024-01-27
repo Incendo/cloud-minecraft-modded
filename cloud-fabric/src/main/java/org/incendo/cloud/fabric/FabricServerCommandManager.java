@@ -107,11 +107,7 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
         }
 
         ModdedParserMappings.registerServer(this);
-        ModdedExceptionHandler.registerDefaults(
-            this,
-            CommandSourceStack::sendFailure,
-            CommandSourceStack::getTextName
-        );
+        ModdedExceptionHandler.registerDefaults(this);
     }
 
     /**

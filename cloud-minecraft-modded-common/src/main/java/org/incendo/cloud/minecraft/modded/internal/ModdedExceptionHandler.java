@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -40,6 +41,7 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.exception.ArgumentParseException;
 import org.incendo.cloud.exception.CommandExecutionException;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
@@ -85,13 +87,28 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
      * Registers the default handlers.
      *
      * @param commandManager the command manager
+     * @param <M>            command manager type
+     * @param <C>            command sender type
+     */
+    static <C, M extends CommandManager<C> & BrigadierManagerHolder<C, CommandSourceStack>> void registerDefaults(
+            final M commandManager
+    ) {
+        registerDefaults(commandManager, CommandSourceStack::sendFailure, CommandSourceStack::getTextName);
+    }
+
+    /**
+     * Registers the default handlers.
+     *
+     * @param commandManager the command manager
      * @param sendError      error message sender
      * @param getName        name getter
+     * @param <M>            command manager type
      * @param <C>            command sender type
      * @param <S>            command source type
      */
-    static <C, S extends SharedSuggestionProvider> void registerDefaults(
-        final CommandManager<C> commandManager,
+    static <C, S extends SharedSuggestionProvider,
+            M extends CommandManager<C> & BrigadierManagerHolder<C, S>> void registerDefaults(
+            final M commandManager,
         final BiConsumer<S, Component> sendError,
         final Function<S, String> getName
     ) {

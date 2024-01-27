@@ -70,7 +70,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
             this.senderMapper.map(dummyCommandSourceProvider.get()),
             this
         ), senderMapper);
-        ModdedExceptionHandler.registerDefaults(this, CommandSourceStack::sendFailure, CommandSourceStack::getTextName);
+        ModdedExceptionHandler.registerDefaults(this);
         registrationHandler.initialize(this);
         this.captionRegistry().registerProvider(new ModdedDefaultCaptionsProvider<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));
