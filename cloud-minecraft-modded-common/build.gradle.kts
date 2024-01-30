@@ -11,9 +11,9 @@ dependencies {
     mappings(loom.officialMojangMappings())
     compileOnly(libs.fabricLoader)
 
-    compileOnly(platform(libs.cloud.bom))
-    compileOnly(libs.cloud.core)
-    compileOnly(libs.cloud.brigadier)
+    api(platform(libs.cloud.bom))
+    api(libs.cloud.core)
+    api(libs.cloud.brigadier)
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {

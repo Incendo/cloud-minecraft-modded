@@ -36,6 +36,7 @@ dependencies {
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
 
+    offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
     localRuntime(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
     compileOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
     api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
