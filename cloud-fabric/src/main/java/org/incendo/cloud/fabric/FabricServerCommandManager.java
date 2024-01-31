@@ -35,6 +35,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.internal.LateRegistrationCatcher;
+import org.incendo.cloud.minecraft.modded.caption.MinecraftCaptionFormatter;
 import org.incendo.cloud.minecraft.modded.internal.ModdedExceptionHandler;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 
@@ -107,7 +108,7 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
         }
 
         ModdedParserMappings.registerServer(this);
-        ModdedExceptionHandler.registerDefaults(this);
+        ModdedExceptionHandler.registerDefaults(this, new MinecraftCaptionFormatter<>());
     }
 
     /**

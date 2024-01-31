@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.minecraft.modded;
+package org.incendo.cloud.minecraft.modded.caption;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -35,7 +35,7 @@ import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.minecraft.modded.ModdedDefaultCaptionsProvider;
+import org.incendo.cloud.minecraft.modded.caption.ModdedDefaultCaptionsProvider;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 import org.incendo.cloud.minecraft.modded.internal.ModdedPreprocessor;
 import org.incendo.cloud.suggestion.SuggestionFactory;
