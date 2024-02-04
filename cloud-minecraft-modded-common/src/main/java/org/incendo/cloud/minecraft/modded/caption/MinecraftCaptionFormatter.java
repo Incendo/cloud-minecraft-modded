@@ -51,10 +51,10 @@ public final class MinecraftCaptionFormatter<C> implements CaptionFormatter<C, C
     }
 
     /**
-     * Creates a new {@link MinecraftCaptionFormatter} with the default {@code <(\S+)>} pattern.
+     * Creates a new {@link MinecraftCaptionFormatter} with the default {@link CaptionFormatter#placeholderPattern()} pattern.
      */
     public MinecraftCaptionFormatter() {
-        this(Pattern.compile("<(\\S+)>"));
+        this(CaptionFormatter.placeholderPattern());
     }
 
     @Override
