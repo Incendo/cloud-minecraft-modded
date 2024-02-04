@@ -53,6 +53,7 @@ import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
+import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.minecraft.modded.ModdedCommandContextKeys;
 import org.incendo.cloud.minecraft.modded.caption.MinecraftVariable;
 import org.incendo.cloud.util.TypeUtils;
@@ -142,6 +143,8 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
             final Component msg;
             if (exceptionContext.exception().getCause() instanceof CommandSyntaxException cse) {
                 msg = ComponentUtils.fromMessage(cse.getRawMessage());
+            } else if (exceptionContext.exception().getCause() instanceof ParserException parserException) {
+                msg = parserException.formatCaption(captionFormatter);
             } else {
                 msg = Component.literal(exceptionContext.exception().getCause().getMessage());
             }
