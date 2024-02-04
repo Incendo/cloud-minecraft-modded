@@ -40,7 +40,8 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.meta.CommandMeta;
 import org.incendo.cloud.meta.SimpleCommandMeta;
-import org.incendo.cloud.minecraft.modded.ModdedDefaultCaptionsProvider;
+import org.incendo.cloud.minecraft.modded.caption.MinecraftCaptionFormatter;
+import org.incendo.cloud.minecraft.modded.caption.ModdedDefaultCaptionsProvider;
 import org.incendo.cloud.minecraft.modded.internal.ModdedExceptionHandler;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 import org.incendo.cloud.minecraft.modded.internal.ModdedPreprocessor;
@@ -70,7 +71,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
             this.senderMapper.map(dummyCommandSourceProvider.get()),
             this
         ), senderMapper);
-        ModdedExceptionHandler.registerDefaults(this);
+        ModdedExceptionHandler.registerDefaults(this, new MinecraftCaptionFormatter<>());
         registrationHandler.initialize(this);
         this.captionRegistry().registerProvider(new ModdedDefaultCaptionsProvider<>());
         this.registerCommandPreProcessor(new ModdedPreprocessor<>(senderMapper));

@@ -42,6 +42,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.caption.CaptionFormatter;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.exception.ArgumentParseException;
 import org.incendo.cloud.exception.CommandExecutionException;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
@@ -50,7 +53,10 @@ import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
+import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.minecraft.modded.ModdedCommandContextKeys;
+import org.incendo.cloud.minecraft.modded.caption.MinecraftVariable;
+import org.incendo.cloud.util.TypeUtils;
 import org.slf4j.Logger;
 
 @API(status = API.Status.INTERNAL)
@@ -60,107 +66,123 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
 
     Logger LOGGER = LogUtils.getLogger();
     Component NEWLINE = Component.literal("\n");
-    String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    String MESSAGE_NO_PERMS =
-        "I'm sorry, but you do not have permission to perform this command. "
-            + "Please contact the server administrators if you believe that this is in error.";
-    String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     @SuppressWarnings("unchecked")
     @Override
     default void handle(final ExceptionContext<C, T> context) throws Throwable {
         final S source = (S) context.context().get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
-        this.handle(source, context.context().sender(), context.exception());
+        this.handle(source, context);
     }
 
     /**
      * Handles the exception.
      *
-     * @param source    source
-     * @param sender    sender
-     * @param throwable throwable
+     * @param source source
+     * @param ctx    context
      * @throws Throwable new throwable
      */
-    void handle(S source, C sender, T throwable) throws Throwable;
+    void handle(S source, ExceptionContext<C, T> ctx) throws Throwable;
 
     /**
      * Registers the default handlers.
      *
-     * @param commandManager the command manager
+     * @param commandManager   the command manager
+     * @param captionFormatter caption formatter
      * @param <M>            command manager type
      * @param <C>            command sender type
      */
     static <C, M extends CommandManager<C> & BrigadierManagerHolder<C, CommandSourceStack>> void registerDefaults(
-            final M commandManager
+        final M commandManager,
+        final CaptionFormatter<C, Component> captionFormatter
     ) {
-        registerDefaults(commandManager, CommandSourceStack::sendFailure, CommandSourceStack::getTextName);
+        registerDefaults(commandManager, CommandSourceStack::sendFailure, CommandSourceStack::getTextName, captionFormatter);
     }
 
     /**
      * Registers the default handlers.
      *
-     * @param commandManager the command manager
-     * @param sendError      error message sender
-     * @param getName        name getter
-     * @param <M>            command manager type
-     * @param <C>            command sender type
-     * @param <S>            command source type
+     * @param commandManager   the command manager
+     * @param sendError        error message sender
+     * @param getName          name getter
+     * @param captionFormatter caption formatter
+     * @param <M>              command manager type
+     * @param <C>              command sender type
+     * @param <S>              command source type
      */
     static <C, S extends SharedSuggestionProvider,
             M extends CommandManager<C> & BrigadierManagerHolder<C, S>> void registerDefaults(
             final M commandManager,
         final BiConsumer<S, Component> sendError,
-        final Function<S, String> getName
+        final Function<S, String> getName,
+        final CaptionFormatter<C, Component> captionFormatter
     ) {
         final RegisterContext<C, S> ctx = new RegisterContext<>(commandManager);
-        ctx.registerHandler(Throwable.class, (source, sender, throwable) -> {
+        ctx.registerHandler(Throwable.class, (source, exceptionContext) -> {
             sendError.accept(source, decorateHoverStacktrace(
                 commandManager,
-                Component.literal(MESSAGE_INTERNAL_ERROR),
-                throwable,
-                sender
+                exceptionContext.context().formatCaption(captionFormatter, StandardCaptionKeys.EXCEPTION_UNEXPECTED),
+                exceptionContext.exception(),
+                exceptionContext.context().sender()
             ));
-            LOGGER.warn("Error occurred while executing command for user {}:", getName.apply(source), throwable);
+            LOGGER.warn("Error occurred while executing command for user {}", getName.apply(source), exceptionContext.exception());
         });
-        ctx.registerHandler(CommandExecutionException.class, (source, sender, throwable) -> {
+        ctx.registerHandler(CommandExecutionException.class, (source, exceptionContext) -> {
             sendError.accept(source, decorateHoverStacktrace(
                 commandManager,
-                Component.literal(MESSAGE_INTERNAL_ERROR),
-                throwable.getCause(),
-                sender
+                exceptionContext.context().formatCaption(captionFormatter, StandardCaptionKeys.EXCEPTION_UNEXPECTED),
+                exceptionContext.exception().getCause(),
+                exceptionContext.context().sender()
             ));
             LOGGER.warn(
-                "Error occurred while executing command for user {}:",
+                "Error occurred while executing command for user {}",
                 getName.apply(source),
-                throwable.getCause()
+                exceptionContext.exception().getCause()
             );
         });
-        ctx.registerHandler(ArgumentParseException.class, (source, sender, throwable) -> {
-            if (throwable.getCause() instanceof CommandSyntaxException) {
-                sendError.accept(source, Component.literal("Invalid Command Argument: ")
-                    .append(Component.literal("")
-                        .append(ComponentUtils
-                            .fromMessage(((CommandSyntaxException) throwable.getCause()).getRawMessage()))
-                        .withStyle(ChatFormatting.GRAY)));
+        ctx.registerHandler(ArgumentParseException.class, (source, exceptionContext) -> {
+            final Component msg;
+            if (exceptionContext.exception().getCause() instanceof CommandSyntaxException cse) {
+                msg = ComponentUtils.fromMessage(cse.getRawMessage());
+            } else if (exceptionContext.exception().getCause() instanceof ParserException parserException) {
+                msg = parserException.formatCaption(captionFormatter);
             } else {
-                sendError.accept(source, Component.literal("Invalid Command Argument: ")
-                    .append(Component.literal(throwable.getCause().getMessage())
-                        .withStyle(ChatFormatting.GRAY)));
+                msg = Component.literal(exceptionContext.exception().getCause().getMessage());
             }
+            sendError.accept(source, exceptionContext.context().formatCaption(
+                captionFormatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_ARGUMENT,
+                MinecraftVariable.of("cause", Component.literal("")
+                    .append(ComponentUtils.fromMessage(msg))
+                    .withStyle(ChatFormatting.GRAY))
+            ));
         });
-        ctx.registerHandler(NoSuchCommandException.class, (source, sender, throwable) -> {
-            sendError.accept(source, Component.literal(MESSAGE_UNKNOWN_COMMAND));
+        ctx.registerHandler(NoSuchCommandException.class, (source, exceptionContext) -> {
+            sendError.accept(source, exceptionContext.context().formatCaption(
+                captionFormatter,
+                StandardCaptionKeys.EXCEPTION_NO_SUCH_COMMAND
+            ));
         });
-        ctx.registerHandler(NoPermissionException.class, (source, sender, throwable) -> {
-            sendError.accept(source, Component.literal(MESSAGE_NO_PERMS));
+        ctx.registerHandler(NoPermissionException.class, (source, exceptionContext) -> {
+            sendError.accept(source, exceptionContext.context().formatCaption(
+                captionFormatter,
+                StandardCaptionKeys.EXCEPTION_NO_PERMISSION
+            ));
         });
-        ctx.registerHandler(InvalidCommandSenderException.class, (source, sender, throwable) -> {
-            sendError.accept(source, Component.literal(throwable.getMessage()));
+        ctx.registerHandler(InvalidCommandSenderException.class, (source, exceptionContext) -> {
+            sendError.accept(source, exceptionContext.context().formatCaption(
+                captionFormatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
+                CaptionVariable.of("actual", exceptionContext.context().sender().getClass().getSimpleName()),
+                CaptionVariable.of("expected", TypeUtils.simpleName(exceptionContext.exception().requiredSender()))
+            ));
         });
-        ctx.registerHandler(InvalidSyntaxException.class, (source, sender, throwable) -> {
-            sendError.accept(source, Component.literal("Invalid Command Syntax. Correct command syntax is: ")
-                .append(Component.literal(String.format("/%s", throwable.correctSyntax()))
-                    .withStyle(style -> style.withColor(ChatFormatting.GRAY))));
+        ctx.registerHandler(InvalidSyntaxException.class, (source, exceptionContext) -> {
+            sendError.accept(source, exceptionContext.context().formatCaption(
+                captionFormatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_SYNTAX,
+                MinecraftVariable.of("syntax", Component.literal(String.format("/%s", exceptionContext.exception().correctSyntax()))
+                    .withStyle(style -> style.withColor(ChatFormatting.GRAY)))
+            ));
         });
     }
 
@@ -174,9 +196,9 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
         }
     }
 
-    private static <C> MutableComponent decorateHoverStacktrace(
+    private static <C> Component decorateHoverStacktrace(
         final CommandManager<C> manager,
-        final MutableComponent input,
+        final Component input,
         final Throwable cause,
         final C sender
     ) {
@@ -184,10 +206,11 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
             return input;
         }
 
+        final MutableComponent result = input.copy();
         final StringWriter writer = new StringWriter();
         cause.printStackTrace(new PrintWriter(writer));
         final String stackTrace = writer.toString().replace("\t", "    ");
-        return input.withStyle(style -> style
+        return result.withStyle(style -> style
             .withHoverEvent(new HoverEvent(
                 HoverEvent.Action.SHOW_TEXT,
                 Component.literal(stackTrace)

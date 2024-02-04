@@ -31,6 +31,7 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.minecraft.modded.caption.MinecraftCaptionFormatter;
 import org.incendo.cloud.minecraft.modded.internal.ModdedExceptionHandler;
 
 /**
@@ -92,7 +93,8 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
         ModdedExceptionHandler.registerDefaults(
             this,
             FabricClientCommandSource::sendError,
-            source -> source.getPlayer().getGameProfile().getName()
+            source -> source.getPlayer().getGameProfile().getName(),
+            new MinecraftCaptionFormatter<>()
         );
     }
 
