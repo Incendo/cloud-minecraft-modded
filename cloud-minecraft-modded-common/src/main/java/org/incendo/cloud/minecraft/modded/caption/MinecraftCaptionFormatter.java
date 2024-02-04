@@ -23,7 +23,7 @@
 //
 package org.incendo.cloud.minecraft.modded.caption;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -62,7 +62,7 @@ public final class MinecraftCaptionFormatter<C> implements CaptionFormatter<C, C
         final @NonNull Caption captionKey,
         final @NonNull C recipient,
         final @NonNull String caption,
-        final @NonNull Collection<@NonNull CaptionVariable> variables
+        final @NonNull List<@NonNull CaptionVariable> variables
     ) {
         final Map<String, CaptionVariable> byKey = variables.stream().collect(Collectors.toMap(CaptionVariable::key, Function.identity()));
         final MutableComponent component = Component.empty();
