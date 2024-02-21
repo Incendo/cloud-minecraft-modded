@@ -103,7 +103,7 @@ public final class Vector2dParser<C> extends VectorParser<C, Vector2d> {
     }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(
+    public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(
         final @NonNull CommandContext<C> context,
         final @NonNull CommandInput input
     ) {
