@@ -91,7 +91,7 @@ public final class GameProfileParser<C> implements ArgumentParser.FutureArgument
     }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(
+    public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(
         final @NonNull CommandContext<C> context,
         final @NonNull CommandInput input
     ) {
