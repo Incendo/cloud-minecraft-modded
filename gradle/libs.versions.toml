@@ -21,6 +21,7 @@ stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck"
 errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone" }
 
 cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloud" }
+cloud-minecraft-bom = { module = "org.incendo:cloud-minecraft-bom", version.ref = "cloudMinecraft" }
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
