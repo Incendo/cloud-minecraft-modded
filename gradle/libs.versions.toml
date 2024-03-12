@@ -6,7 +6,7 @@ ktlint = "0.50.0"
 errorprone = "2.26.0"
 
 cloud = "2.0.0-beta.4"
-cloudMinecraft = "2.0.0-beta.5"
+cloudMinecraft = "2.0.0-SNAPSHOT"
 
 immutables = "2.10.1"
 
@@ -23,6 +23,9 @@ errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", v
 cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloud" }
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
+cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
+adventureApi = { group = "net.kyori", name = "adventure-api", version = "4.15.0" }
+adventureFabric = "net.kyori:adventure-platform-fabric:5.12.0"
 
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }

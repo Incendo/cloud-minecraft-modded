@@ -23,6 +23,12 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
+        mavenLocal {
+            mavenContent {
+                snapshotsOnly()
+                includeGroup("org.incendo")
+            }
+        }
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             mavenContent { snapshotsOnly() }
         }

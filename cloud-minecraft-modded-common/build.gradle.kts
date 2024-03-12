@@ -14,6 +14,8 @@ dependencies {
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
     api(libs.cloud.brigadier)
+    api(libs.cloud.minecraft.signed.arguments)
+    compileOnly(libs.adventureApi)
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {

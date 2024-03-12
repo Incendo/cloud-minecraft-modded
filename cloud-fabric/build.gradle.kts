@@ -49,6 +49,8 @@ dependencies {
 
     modApi(libs.fabricPermissionsApi)
     include(libs.fabricPermissionsApi)
+
+    modCompileOnly(libs.adventureFabric)
 }
 
 tasks {
