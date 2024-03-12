@@ -158,7 +158,7 @@ public final class UserParser<C> implements NodeSource, ArgumentParser<C, UUID>,
                         .map(profile -> profile.name().orElse(null))
                         .filter(Objects::nonNull)
                         .filter(name -> suggestions.stream().noneMatch(s -> s.suggestion().equals(name)))
-                        .map(Suggestion::simple)
+                        .map(Suggestion::suggestion)
                         .collect(Collectors.toList()));
                 }
                 return suggestions;
