@@ -212,7 +212,7 @@ public final class FabricExample implements ModInitializer {
                 .stream()
                 .map(ModContainer::getMetadata)
                 .map(ModMetadata::getId)
-                .map(Suggestion::simple)
+                .map(Suggestion::suggestion)
                 .collect(Collectors.toList())))
             .parser((commandContext, commandInput) -> {
                 final ModMetadata meta = FabricLoader.getInstance().getModContainer(commandInput.readString())
