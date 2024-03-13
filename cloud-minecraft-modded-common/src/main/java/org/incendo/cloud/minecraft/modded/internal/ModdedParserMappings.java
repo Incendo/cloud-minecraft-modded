@@ -82,7 +82,6 @@ import org.incendo.cloud.minecraft.modded.data.SinglePlayerSelector;
 import org.incendo.cloud.minecraft.modded.parser.RegistryEntryParser;
 import org.incendo.cloud.minecraft.modded.parser.TeamParser;
 import org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
 import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.parser.standard.UUIDParser;
 import org.slf4j.Logger;
@@ -144,8 +143,6 @@ public final class ModdedParserMappings {
             TypeToken.get(MinecraftTime.class),
             params -> VanillaArgumentParsers.<C>timeParser().parser()
         );
-
-        SignedArguments.registerParser(manager);
     }
 
     /**

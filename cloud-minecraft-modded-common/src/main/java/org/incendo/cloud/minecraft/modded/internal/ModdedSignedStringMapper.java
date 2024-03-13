@@ -33,7 +33,7 @@ import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.PlayerChatMessage;
 import org.apiguardian.api.API;
 import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.minecraft.signed.SignedGreedyStringParser;
@@ -53,13 +53,14 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
             .orElseThrow(() -> new IllegalStateException("Could not locate " + SignedStringFactory.class));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void registerBrigadier(final CommandManager<?> manager) {
-        registerBrigadier((BrigadierManagerHolder<?, ?>) manager);
+    public void registerBrigadier(final CommandManager<?> commandManager, final Object brigManager) {
+        registerBrigadier((CloudBrigadierManager) brigManager);
     }
 
-    private static <C> void registerBrigadier(final BrigadierManagerHolder<C, ?> manager) {
-        manager.brigadierManager().registerMapping(
+    private static <C> void registerBrigadier(final CloudBrigadierManager<C, ?> manager) {
+        manager.registerMapping(
             new TypeToken<SignedGreedyStringParser<C>>() {},
             builder -> builder.toConstant(MessageArgument.message()).cloudSuggestions()
         );

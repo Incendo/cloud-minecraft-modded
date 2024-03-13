@@ -54,10 +54,10 @@ public final class FabricSignedStringFactory implements ModdedSignedStringMapper
         }
 
         @Override
-        public void sendMessage(final Audience audience, final ChatType chatType, final Component unsigned) {
+        public void sendMessage(final Audience audience, final ChatType.Bound chatType, final Component unsigned) {
             final net.minecraft.network.chat.Component nativeComponent = NonWrappingComponentSerializer.INSTANCE.serialize(unsigned);
             final PlayerChatMessage playerChatMessage = this.rawSignedMessage.withUnsignedContent(nativeComponent);
-            audience.sendMessage(cast(playerChatMessage), chatType.bind(unsigned));
+            audience.sendMessage(cast(playerChatMessage), chatType);
         }
     }
 }
