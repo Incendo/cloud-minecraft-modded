@@ -92,6 +92,11 @@ val testmod: SourceSet by sourceSets.creating {
     dependencies.add(implementationConfigurationName, main.output)
 }
 
+dependencies {
+    localRuntime(libs.cloud.minecraft.signed.arguments)
+    modLocalRuntime(libs.adventureFabric)
+}
+
 val testmodJar by tasks.registering(Jar::class) {
     archiveClassifier.set("testmod-dev")
     group = LifecycleBasePlugin.BUILD_GROUP
