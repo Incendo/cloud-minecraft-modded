@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.examples.sponge;
+package org.incendo.cloud.examples.sponge;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -40,6 +40,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.permission.PredicatePermission;
 import org.incendo.cloud.sponge.CloudInjectionModule;
@@ -50,7 +51,7 @@ import org.incendo.cloud.sponge.data.ItemStackPredicate;
 import org.incendo.cloud.sponge.data.MultipleEntitySelector;
 import org.incendo.cloud.sponge.data.ProtoItemStack;
 import org.incendo.cloud.sponge.data.SinglePlayerSelector;
-import org.incendo.cloud.type.tuple.Pair;
+import org.incendo.cloud.sponge.exception.ComponentMessageRuntimeException;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
@@ -403,12 +404,16 @@ public final class CloudExamplePlugin {
             .requiredArgumentPair(
                 "itemstack",
                 TypeToken.get(ItemStack.class),
-                Pair.of("item", "amount"),
-                Pair.of(ProtoItemStack.class, Integer.class),
-                (sender, pair) -> {
-                    final ProtoItemStack proto = pair.first();
-                    final int amount = pair.second();
-                    return proto.createItemStack(amount, true);
+                "item", protoItemStackParser(),
+                "amount", integerParser(),
+                (sender, proto, amount) -> {
+                    try {
+                        return ArgumentParseResult.successFuture(
+                            proto.createItemStack(amount, true)
+                        );
+                    } catch (final ComponentMessageRuntimeException e) {
+                        return ArgumentParseResult.failureFuture(e);
+                    }
                 },
                 Description.of("The ItemStack to give")
             )
