@@ -13,7 +13,7 @@ immutables = "2.10.1"
 minecraft = "1.20.4"
 fabricLoader = "0.15.7"
 fabricApi = "0.96.3+1.20.4"
-fabricPermissionsApi = "0.2-SNAPSHOT"
+fabricPermissionsApi = "0.3.1"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
