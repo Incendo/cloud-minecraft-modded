@@ -34,6 +34,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
@@ -92,7 +93,7 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
 
     @SuppressWarnings({"unchecked", "ReferenceEquality"})
     @Override
-    public boolean hasPermission(final C sender, final String permission) {
+    public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
         final CommandSourceStack source = this.senderMapper().reverse(sender);
         if (source.isPlayer()) {
             final PermissionNode<Boolean> node;
@@ -100,12 +101,22 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
                 node = this.permissionNodeCache.get(permission, () -> (PermissionNode<Boolean>) PermissionAPI.getRegisteredNodes().stream()
                     .filter(n -> n.getNodeName().equals(permission) && n.getType() == PermissionTypes.BOOLEAN)
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Could not find registered node for permission " + permission)));
+                    .orElseThrow(PermissionNodeNotFoundException::new));
             } catch (final ExecutionException e) {
+                if (e.getCause() instanceof PermissionNodeNotFoundException) {
+                    return false; // permission node not found (not registered)
+                }
                 throw new RuntimeException("Exception location permission node", e);
             }
             return PermissionAPI.getPermission(source.getPlayer(), node);
         }
         return source.hasPermission(source.getServer().getOperatorUserPermissionLevel());
+    }
+
+    /**
+     * Custom exception used to indicate that the permissionNodeCache loader could not find a permission node
+     */
+    private static final class PermissionNodeNotFoundException extends Exception {
+
     }
 }
