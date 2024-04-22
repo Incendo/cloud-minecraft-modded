@@ -113,7 +113,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 .handler(ctx -> disconnectClient(Minecraft.getInstance())));
 
         commandManager.command(base.literal("requires_cheats")
-                .permission(ModdedPredicatePermissions.Client.cheatsAllowed(false))
+                .permission(ModdedPredicatePermissions.Client.commandsAllowed(false))
                 .handler(ctx -> ctx.sender().sendFeedback(Component.literal("Cheats are enabled!"))));
 
         // Test argument which requires CommandBuildContext/RegistryAccess

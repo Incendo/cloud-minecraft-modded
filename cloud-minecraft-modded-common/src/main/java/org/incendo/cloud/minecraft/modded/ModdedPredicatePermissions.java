@@ -91,19 +91,19 @@ public final class ModdedPredicatePermissions {
         }
 
         /**
-         * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
+         * Get a permission predicate which passes when commands are enabled on the currently running integrated server.
          *
          * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
          *
          * @param <C> sender type
          * @return a predicate permission
          */
-        public static <C> @NonNull PredicatePermission<C> cheatsAllowed() {
-            return cheatsAllowed(true);
+        public static <C> @NonNull PredicatePermission<C> commandsAllowed() {
+            return commandsAllowed(true);
         }
 
         /**
-         * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
+         * Get a permission predicate which passes when commands are enabled on the currently running integrated server.
          *
          * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
          * fall back to the provided boolean argument.</p>
@@ -112,30 +112,57 @@ public final class ModdedPredicatePermissions {
          * @param <C>                sender type
          * @return a predicate permission
          */
-        public static <C> @NonNull PredicatePermission<C> cheatsAllowed(final boolean allowOnMultiplayer) {
-            return PredicatePermission.of(CloudKey.of("cheats-allowed"), sender -> {
-                if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                    return allowOnMultiplayer;
-                }
-                return Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
-                    || Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands();
-            });
+        public static <C> @NonNull PredicatePermission<C> commandsAllowed(final boolean allowOnMultiplayer) {
+            return commandsAllowed(PredicatePermission.of(sender -> allowOnMultiplayer));
         }
 
         /**
-         * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
+         * Get a permission predicate which passes when commands are enabled on the currently running integrated server.
+         *
+         * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
+         * fall back to the provided predicate argument.</p>
+         *
+         * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
+         * @param <C>                sender type
+         * @return a predicate permission
+         */
+        public static <C> @NonNull PredicatePermission<C> commandsAllowed(final @NonNull PredicatePermission<C> allowOnMultiplayer) {
+            return new PredicatePermission<>() {
+                private final CloudKey<Void> key = CloudKey.of("commands-allowed");
+
+                @Override
+                public @NonNull PermissionResult testPermission(final @NonNull C sender) {
+                    if (!Minecraft.getInstance().hasSingleplayerServer()) {
+                        return allowOnMultiplayer.testPermission(sender);
+                    }
+                    return PermissionResult.of(
+                        Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                            || Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands(),
+                        this
+                    );
+                }
+
+                @Override
+                public @NonNull CloudKey<Void> key() {
+                    return this.key;
+                }
+            };
+        }
+
+        /**
+         * Get a permission predicate which passes when commands are disabled on the currently running integrated server.
          *
          * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
          *
          * @param <C> sender type
          * @return a predicate permission
          */
-        public static <C> @NonNull PredicatePermission<C> cheatsDisallowed() {
-            return cheatsDisallowed(true);
+        public static <C> @NonNull PredicatePermission<C> commandsDisallowed() {
+            return commandsDisallowed(true);
         }
 
         /**
-         * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
+         * Get a permission predicate which passes when commands are disabled on the currently running integrated server.
          *
          * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
          * fall back to the provided boolean argument.</p>
@@ -144,14 +171,41 @@ public final class ModdedPredicatePermissions {
          * @param <C>                sender type
          * @return a predicate permission
          */
-        public static <C> @NonNull PredicatePermission<C> cheatsDisallowed(final boolean allowOnMultiplayer) {
-            return PredicatePermission.of(CloudKey.of("cheats-disallowed"), sender -> {
-                if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                    return allowOnMultiplayer;
+        public static <C> @NonNull PredicatePermission<C> commandsDisallowed(final boolean allowOnMultiplayer) {
+            return commandsDisallowed(PredicatePermission.of(sender -> allowOnMultiplayer));
+        }
+
+        /**
+         * Get a permission predicate which passes when commands are disabled on the currently running integrated server.
+         *
+         * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
+         * fall back to the provided predicate argument.</p>
+         *
+         * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
+         * @param <C>                sender type
+         * @return a predicate permission
+         */
+        public static <C> @NonNull PredicatePermission<C> commandsDisallowed(final @NonNull PredicatePermission<C> allowOnMultiplayer) {
+            return new PredicatePermission<>() {
+                private final CloudKey<Void> key = CloudKey.of("commands-disallowed");
+
+                @Override
+                public @NonNull CloudKey<Void> key() {
+                    return this.key;
                 }
-                return !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
-                    && !Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands();
-            });
+
+                @Override
+                public @NonNull PermissionResult testPermission(final @NonNull C sender) {
+                    if (!Minecraft.getInstance().hasSingleplayerServer()) {
+                        return allowOnMultiplayer.testPermission(sender);
+                    }
+                    return PermissionResult.of(
+                        !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                            && !Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands(),
+                        this
+                    );
+                }
+            };
         }
     }
 }
