@@ -97,7 +97,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 }));
 
         commandManager.command(base.literal("say")
-                .required("required", greedyStringParser())
+                .required("message", greedyStringParser())
                 .handler(ctx -> ctx.sender().sendFeedback(
                         Component.literal("Cloud client commands says: " + ctx.get("message"))
                 )));

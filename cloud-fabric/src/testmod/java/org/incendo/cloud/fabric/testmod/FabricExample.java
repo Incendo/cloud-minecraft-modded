@@ -273,6 +273,7 @@ public final class FabricExample implements ModInitializer {
                     target.teleportToWithTicket(location.x(), location.y(), location.z()));
             }));
 
+        /* TODO
         manager.command(base.literal("signed")
             .required("message", signedGreedyStringParser())
             .handler(ctx -> {
@@ -295,6 +296,7 @@ public final class FabricExample implements ModInitializer {
                     mini
                 );
             }));
+         */
 
         manager.command(base.literal("gotochunk")
             .permission("cloud.gotochunk")
