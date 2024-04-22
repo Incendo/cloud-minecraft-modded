@@ -128,7 +128,12 @@ public final class ModdedPredicatePermissions {
          */
         public static <C> @NonNull PredicatePermission<C> commandsAllowed(final @NonNull PredicatePermission<C> allowOnMultiplayer) {
             return new PredicatePermission<>() {
-                private final CloudKey<Void> key = CloudKey.of("commands-allowed");
+                private static final CloudKey<Void> KEY = CloudKey.of("commands-allowed");
+
+                @Override
+                public @NonNull CloudKey<Void> key() {
+                    return KEY;
+                }
 
                 @Override
                 public @NonNull PermissionResult testPermission(final @NonNull C sender) {
@@ -140,11 +145,6 @@ public final class ModdedPredicatePermissions {
                             || Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands(),
                         this
                     );
-                }
-
-                @Override
-                public @NonNull CloudKey<Void> key() {
-                    return this.key;
                 }
             };
         }
@@ -187,11 +187,11 @@ public final class ModdedPredicatePermissions {
          */
         public static <C> @NonNull PredicatePermission<C> commandsDisallowed(final @NonNull PredicatePermission<C> allowOnMultiplayer) {
             return new PredicatePermission<>() {
-                private final CloudKey<Void> key = CloudKey.of("commands-disallowed");
+                private static final CloudKey<Void> KEY = CloudKey.of("commands-disallowed");
 
                 @Override
                 public @NonNull CloudKey<Void> key() {
-                    return this.key;
+                    return KEY;
                 }
 
                 @Override
