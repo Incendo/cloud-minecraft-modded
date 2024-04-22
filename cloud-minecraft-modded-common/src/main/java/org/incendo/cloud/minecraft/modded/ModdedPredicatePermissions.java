@@ -117,8 +117,8 @@ public final class ModdedPredicatePermissions {
                 if (!Minecraft.getInstance().hasSingleplayerServer()) {
                     return allowOnMultiplayer;
                 }
-                return Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                    || Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
+                return Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                    || Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands();
             });
         }
 
@@ -149,8 +149,8 @@ public final class ModdedPredicatePermissions {
                 if (!Minecraft.getInstance().hasSingleplayerServer()) {
                     return allowOnMultiplayer;
                 }
-                return !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                    && !Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
+                return !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                    && !Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands();
             });
         }
     }

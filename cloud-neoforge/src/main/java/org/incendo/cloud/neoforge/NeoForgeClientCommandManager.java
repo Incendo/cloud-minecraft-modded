@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.neoforge;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -33,8 +32,6 @@ import net.neoforged.neoforge.client.ClientCommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.key.CloudKey;
-import org.incendo.cloud.permission.PredicatePermission;
 
 /**
  * A command manager for registering client-side commands.
@@ -63,8 +60,8 @@ public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManage
     /**
      * Create a new command manager instance.
      *
-     * @param executionCoordinator       Execution coordinator instance.
-     * @param senderMapper               Mapper between Minecraft's {@link CommandSourceStack} and the command sender type {@code C}.
+     * @param executionCoordinator Execution coordinator instance.
+     * @param senderMapper         Mapper between Minecraft's {@link CommandSourceStack} and the command sender type {@code C}.
      */
     public NeoForgeClientCommandManager(
         final ExecutionCoordinator<C> executionCoordinator,
@@ -103,95 +100,5 @@ public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManage
     @Override
     public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
         return true;
-    }
-
-    /**
-     * Get a permission predicate which passes when the integrated server is running.
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> integratedServerRunning() {
-        return PredicatePermission.of(
-            CloudKey.of("integrated-server-running"),
-            sender -> Minecraft.getInstance().hasSingleplayerServer()
-        );
-    }
-
-    /**
-     * Get a permission predicate which passes when the integrated server is not running.
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> integratedServerNotRunning() {
-        return PredicatePermission.of(
-            CloudKey.of("integrated-server-not-running"),
-            sender -> !Minecraft.getInstance().hasSingleplayerServer()
-        );
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
-     *
-     * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsAllowed() {
-        return cheatsAllowed(true);
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are enabled on the currently running integrated server.
-     *
-     * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
-     * fall back to the provided boolean argument.</p>
-     *
-     * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
-     * @param <C>                sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsAllowed(final boolean allowOnMultiplayer) {
-        return PredicatePermission.of(CloudKey.of("cheats-allowed"), sender -> {
-            if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                return allowOnMultiplayer;
-            }
-            return Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                || Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
-        });
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
-     *
-     * <p>This predicate will always pass if there is no integrated server running, i.e. when connected to a multiplayer server.</p>
-     *
-     * @param <C> sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsDisallowed() {
-        return cheatsDisallowed(true);
-    }
-
-    /**
-     * Get a permission predicate which passes when cheats are disabled on the currently running integrated server.
-     *
-     * <p>When there is no integrated server running, i.e. when connected to a multiplayer server, the predicate will
-     * fall back to the provided boolean argument.</p>
-     *
-     * @param allowOnMultiplayer whether the predicate should pass on multiplayer servers
-     * @param <C>                sender type
-     * @return a predicate permission
-     */
-    public static <C> @NonNull PredicatePermission<C> cheatsDisallowed(final boolean allowOnMultiplayer) {
-        return PredicatePermission.of(CloudKey.of("cheats-disallowed"), sender -> {
-            if (!Minecraft.getInstance().hasSingleplayerServer()) {
-                return allowOnMultiplayer;
-            }
-            return !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCheatsForAllPlayers()
-                && !Minecraft.getInstance().getSingleplayerServer().getWorldData().getAllowCommands();
-        });
     }
 }

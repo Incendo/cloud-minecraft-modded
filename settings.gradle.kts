@@ -29,6 +29,14 @@ dependencyResolutionManagement {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://maven.fabricmc.net/")
         maven("https://maven.neoforged.net/releases/")
+        maven {
+            name = "Maven for PR #835" // https://github.com/neoforged/NeoForge/pull/835
+            url  = uri("https://prmaven.neoforged.net/NeoForge/pr835")
+            content {
+                includeModule("net.neoforged", "neoforge")
+                includeModule("net.neoforged", "testframework")
+            }
+        }
     }
 }
 
