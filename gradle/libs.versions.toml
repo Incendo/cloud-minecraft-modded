@@ -10,9 +10,9 @@ cloudMinecraft = "2.0.0-beta.6"
 
 immutables = "2.10.1"
 
-minecraft = "1.20.5-rc1"
+minecraft = "1.20.5"
 fabricLoader = "0.15.10"
-fabricApi = "0.97.3+1.20.5"
+fabricApi = "0.97.6+1.20.5"
 fabricPermissionsApi = "0.3.1"
 
 [libraries]
@@ -39,7 +39,7 @@ fabricApi-networking-api-v1 = { module = "net.fabricmc.fabric-api:fabric-network
 fabricApi-lifecycle-events-v1 = { module = "net.fabricmc.fabric-api:fabric-lifecycle-events-v1" }
 fabricPermissionsApi = { group = "me.lucko", name = "fabric-permissions-api", version.ref = "fabricPermissionsApi" }
 
-neoForge = "net.neoforged:neoforge:20.5.0-alpha.1.20.5-rc1.20240422.033338"
+neoForge = "net.neoforged:neoforge:20.5.0-beta"
 
 [plugins]
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }

@@ -35,7 +35,7 @@ tasks {
     processResources {
         val props = mapOf("version" to project.version)
         inputs.properties(props)
-        filesMatching("META-INF/mods.toml") {
+        filesMatching("META-INF/neoforge.mods.toml") {
             expand(props)
         }
     }
