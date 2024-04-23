@@ -23,6 +23,8 @@
 //
 package org.incendo.cloud.neoforge;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * Exception thrown when a permission lookup is performed with a permission not registered to NeoForge.
  */
@@ -30,7 +32,7 @@ public final class PermissionNotRegisteredException extends RuntimeException {
 
     private final String permission;
 
-    PermissionNotRegisteredException(String permission) {
+    PermissionNotRegisteredException(final @NonNull String permission) {
         super(permission + " is not registered to NeoForge.");
         this.permission = permission;
     }
@@ -40,7 +42,7 @@ public final class PermissionNotRegisteredException extends RuntimeException {
      *
      * @return the unregistered permission
      */
-    public String permission() {
+    public @NonNull String permission() {
         return this.permission;
     }
 }
