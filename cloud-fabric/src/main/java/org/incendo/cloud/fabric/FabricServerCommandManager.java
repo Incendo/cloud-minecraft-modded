@@ -124,6 +124,9 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
      */
     @Override
     public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
+        if (permission.isEmpty()) {
+            return true;
+        }
         final CommandSourceStack source = this.senderMapper().reverse(sender);
         return Permissions.check(source, permission, source.getServer().getOperatorUserPermissionLevel());
     }
