@@ -94,7 +94,7 @@ val testmod: SourceSet by sourceSets.creating {
 
 dependencies {
     localRuntime(libs.cloud.minecraft.signed.arguments)
-    modLocalRuntime(libs.adventureFabric)
+    // modLocalRuntime(libs.adventureFabric) // TODO
 }
 
 val testmodJar by tasks.registering(Jar::class) {

@@ -62,8 +62,6 @@ import org.incendo.cloud.minecraft.modded.data.SingleEntitySelector;
 import org.incendo.cloud.minecraft.modded.data.SinglePlayerSelector;
 import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.minecraft.modded.internal.EntitySelectorAccess;
-import org.incendo.cloud.minecraft.modded.internal.MessageArgumentMessageAccess;
-import org.incendo.cloud.minecraft.modded.internal.MessageArgumentPartAccess;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -348,16 +346,14 @@ public final class VanillaArgumentParsers {
             final boolean useSelectors
         ) throws CommandSyntaxException {
             final Component contents = message.toComponent(source, useSelectors);
-            final MessageArgument.Part[] selectors =
-                ((MessageArgumentMessageAccess) message).accessor$parts();
+            final MessageArgument.Part[] selectors = message.parts();
             final Collection<Entity> entities;
             if (!useSelectors || selectors.length == 0) {
                 entities = Collections.emptySet();
             } else {
                 entities = new HashSet<>();
                 for (final MessageArgument.Part selector : selectors) {
-                    entities.addAll(((MessageArgumentPartAccess) selector)
-                        .accessor$selector()
+                    entities.addAll(selector.selector()
                         .findEntities(source));
                 }
             }

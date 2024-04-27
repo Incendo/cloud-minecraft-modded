@@ -97,7 +97,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 }));
 
         commandManager.command(base.literal("say")
-                .required("required", greedyStringParser())
+                .required("message", greedyStringParser())
                 .handler(ctx -> ctx.sender().sendFeedback(
                         Component.literal("Cloud client commands says: " + ctx.get("message"))
                 )));
@@ -113,7 +113,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 .handler(ctx -> disconnectClient(Minecraft.getInstance())));
 
         commandManager.command(base.literal("requires_cheats")
-                .permission(ModdedPredicatePermissions.Client.cheatsAllowed(false))
+                .permission(ModdedPredicatePermissions.Client.commandsAllowed(false))
                 .handler(ctx -> ctx.sender().sendFeedback(Component.literal("Cheats are enabled!"))));
 
         // Test argument which requires CommandBuildContext/RegistryAccess

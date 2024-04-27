@@ -4,9 +4,7 @@
   "required": true,
   "mixins": [
     "EntitySelectorMixin",
-    "EntitySelectorParserMixin",
-    "MessageArgumentMessageAccess",
-    "MessageArgumentPartAccess"
+    "EntitySelectorParserMixin"
   ],
   "injectors": {
     "defaultRequire": 1
