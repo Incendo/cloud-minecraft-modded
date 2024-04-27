@@ -57,6 +57,7 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
     private final CloudBrigadierManager<C, CommandSourceStack> brigadierManager;
     private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
 
+    @SuppressWarnings("this-escape")
     protected NeoForgeCommandManager(
         final ExecutionCoordinator<C> executionCoordinator,
         final SenderMapper<CommandSourceStack, C> senderMapper,
