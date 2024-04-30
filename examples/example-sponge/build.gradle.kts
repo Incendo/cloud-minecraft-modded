@@ -49,3 +49,10 @@ configurations {
         }
     }
 }
+
+afterEvaluate {
+    tasks.compileJava {
+        // TODO - sponge AP not compatible with J21
+        options.compilerArgs.remove("-Werror")
+    }
+}
