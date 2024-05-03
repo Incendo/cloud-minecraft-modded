@@ -23,11 +23,13 @@
 //
 package org.incendo.cloud.sponge;
 
+import io.leangen.geantyref.GenericTypeReflector;
+import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -83,10 +85,11 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
     @Override
     public boolean canExecute(final @NonNull CommandCause cause) {
-        return this.commandManager.testPermission(
-            this.commandManager.senderMapper().map(cause),
-            (Permission) this.namedNode().nodeMeta().getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty())
-        ).allowed();
+        return this.checkAccess(
+            cause,
+            this.namedNode().nodeMeta()
+                .getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap())
+        );
     }
 
     @Override
@@ -188,23 +191,25 @@ final class CloudSpongeCommand<C> implements Command.Raw {
             || node.children().stream().noneMatch(c -> c.component().required());
     }
 
-    @SuppressWarnings("unchecked")
     private void addRequirement(
         final @NonNull CommandNode<C> cloud,
         final @NonNull CommandTreeNode<? extends CommandTreeNode<?>> node
     ) {
-        final Permission permission = (Permission) cloud.nodeMeta()
-            .getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty());
-        final Set<Class<?>> senderTypes = (Set<Class<?>>) cloud.nodeMeta().get(CommandNode.META_KEY_SENDER_TYPES);
-        node.requires(cause -> {
-            final C c = this.commandManager.senderMapper().map(cause);
-            for (final Class<?> senderType : senderTypes) {
-                if (senderType.isInstance(c)) {
-                    return this.commandManager.testPermission(c, permission).allowed();
+        final Map<Type, Permission> accessMap =
+            cloud.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
+        node.requires(cause -> this.checkAccess(cause, accessMap));
+    }
+
+    private boolean checkAccess(final CommandCause cause, final Map<Type, Permission> accessMap) {
+        final C cloudSender = this.commandManager.senderMapper().map(cause);
+        for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
+            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+                if (this.commandManager.testPermission(cloudSender, entry.getValue()).allowed()) {
+                    return true;
                 }
             }
-            return false;
-        });
+        }
+        return false;
     }
 
     private String formatCommandForParsing(final @NonNull String arguments) {
