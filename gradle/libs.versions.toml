@@ -11,7 +11,7 @@ cloudMinecraft = "2.0.0-beta.6"
 immutables = "2.10.1"
 
 minecraft = "1.20.6"
-fabricLoader = "0.15.10"
+fabricLoader = "0.15.11"
 fabricApi = "0.97.8+1.20.6"
 fabricPermissionsApi = "0.3.1"
 
