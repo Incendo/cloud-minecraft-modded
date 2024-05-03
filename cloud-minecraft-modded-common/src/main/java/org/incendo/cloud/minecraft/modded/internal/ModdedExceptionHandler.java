@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -169,11 +170,15 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
             ));
         });
         ctx.registerHandler(InvalidCommandSenderException.class, (source, exceptionContext) -> {
+            final boolean multiple = exceptionContext.exception().requiredSenderTypes().size() > 1;
+            final String expected = multiple
+                ? exceptionContext.exception().requiredSenderTypes().stream().map(TypeUtils::simpleName).collect(Collectors.joining(", "))
+                : TypeUtils.simpleName(exceptionContext.exception().requiredSenderTypes().iterator().next());
             sendError.accept(source, exceptionContext.context().formatCaption(
                 captionFormatter,
-                StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
+                multiple ? StandardCaptionKeys.EXCEPTION_INVALID_SENDER_LIST : StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
                 CaptionVariable.of("actual", exceptionContext.context().sender().getClass().getSimpleName()),
-                CaptionVariable.of("expected", TypeUtils.simpleName(exceptionContext.exception().requiredSender()))
+                CaptionVariable.of("expected", expected)
             ));
         });
         ctx.registerHandler(InvalidSyntaxException.class, (source, exceptionContext) -> {

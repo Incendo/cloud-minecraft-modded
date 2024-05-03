@@ -5,8 +5,8 @@ stylecheck = "0.2.1"
 ktlint = "0.50.0"
 errorprone = "2.27.1"
 
-cloud = "2.0.0-beta.5"
-cloudMinecraft = "2.0.0-beta.6"
+cloud = "2.0.0-SNAPSHOT"
+cloudMinecraft = "2.0.0-SNAPSHOT"
 
 immutables = "2.10.1"
 
