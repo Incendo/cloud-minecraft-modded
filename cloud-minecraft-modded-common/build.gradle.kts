@@ -22,3 +22,7 @@ dependencies {
 tasks.withType(AbstractRemapJarTask::class).configureEach {
     targetNamespace = "named"
 }
+
+tasks.jar {
+    manifest.attributes("FMLModType" to "GAMELIBRARY")
+}
