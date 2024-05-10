@@ -33,6 +33,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
+import net.kyori.adventure.chat.ChatType;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.platform.fabric.AdventureCommandSourceStack;
+import net.kyori.adventure.platform.fabric.FabricServerAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.item.ItemInput;
@@ -60,6 +65,7 @@ import org.incendo.cloud.minecraft.modded.data.MultipleEntitySelector;
 import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
 import org.incendo.cloud.minecraft.modded.parser.NamedColorParser;
 import org.incendo.cloud.minecraft.modded.parser.RegistryEntryParser;
+import org.incendo.cloud.minecraft.signed.SignedString;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.Suggestion;
@@ -69,6 +75,7 @@ import static org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers.c
 import static org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers.itemInput;
 import static org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers.multiplePlayerSelectorParser;
 import static org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers.vec3Parser;
+import static org.incendo.cloud.minecraft.signed.SignedGreedyStringParser.signedGreedyStringParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
@@ -266,7 +273,6 @@ public final class FabricExample implements ModInitializer {
                     target.teleportToWithTicket(location.x(), location.y(), location.z()));
             }));
 
-        /* TODO
         manager.command(base.literal("signed")
             .required("message", signedGreedyStringParser())
             .handler(ctx -> {
@@ -289,7 +295,6 @@ public final class FabricExample implements ModInitializer {
                     mini
                 );
             }));
-         */
 
         manager.command(base.literal("gotochunk")
             .permission("cloud.gotochunk")
