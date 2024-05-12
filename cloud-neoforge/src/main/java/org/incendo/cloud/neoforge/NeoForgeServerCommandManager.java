@@ -27,11 +27,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.util.concurrent.ExecutionException;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
@@ -70,18 +66,7 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
         super(
             executionCoordinator,
             senderMapper,
-            new NeoForgeCommandRegistrationHandler.Server<>(),
-            () -> new CommandSourceStack(
-                CommandSource.NULL,
-                Vec3.ZERO,
-                Vec2.ZERO,
-                null,
-                4,
-                "",
-                Component.empty(),
-                null,
-                null
-            )
+            new NeoForgeCommandRegistrationHandler.Server<>()
         );
 
         if (CloudNeoForgeEntrypoint.hasServerAlreadyStarted()) {

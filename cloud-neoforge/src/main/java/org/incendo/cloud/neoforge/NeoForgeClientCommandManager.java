@@ -23,12 +23,7 @@
 //
 package org.incendo.cloud.neoforge;
 
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.ClientCommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -70,16 +65,7 @@ public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManage
         super(
             executionCoordinator,
             senderMapper,
-            new NeoForgeCommandRegistrationHandler.Client<>(),
-            () -> new ClientCommandSourceStack(
-                CommandSource.NULL,
-                Vec3.ZERO,
-                Vec2.ZERO,
-                4,
-                "",
-                Component.empty(),
-                null
-            )
+            new NeoForgeCommandRegistrationHandler.Client<>()
         );
 
         this.registerParsers();

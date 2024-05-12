@@ -26,7 +26,6 @@ package org.incendo.cloud.neoforge;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Supplier;
 import net.minecraft.commands.CommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
@@ -36,7 +35,6 @@ import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.meta.CommandMeta;
 import org.incendo.cloud.meta.SimpleCommandMeta;
@@ -61,17 +59,13 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
     protected NeoForgeCommandManager(
         final ExecutionCoordinator<C> executionCoordinator,
         final SenderMapper<CommandSourceStack, C> senderMapper,
-        final NeoForgeCommandRegistrationHandler<C> registrationHandler,
-        final Supplier<CommandSourceStack> dummyCommandSourceProvider
+        final NeoForgeCommandRegistrationHandler<C> registrationHandler
     ) {
         super(executionCoordinator, registrationHandler);
         INSTANCES.add(this);
         this.senderMapper = senderMapper;
         this.suggestionFactory = super.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion);
-        this.brigadierManager = new CloudBrigadierManager<>(this, () -> new CommandContext<>(
-            this.senderMapper.map(dummyCommandSourceProvider.get()),
-            this
-        ), senderMapper);
+        this.brigadierManager = new CloudBrigadierManager<>(this, senderMapper);
         ModdedExceptionHandler.registerDefaults(this, new MinecraftCaptionFormatter<>());
         registrationHandler.initialize(this);
         this.captionRegistry().registerProvider(new ModdedDefaultCaptionsProvider<>());

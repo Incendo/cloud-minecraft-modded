@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.fabric;
 
-import java.util.function.Supplier;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -33,7 +32,6 @@ import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.modded.caption.ModdedDefaultCaptionsProvider;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
@@ -75,7 +73,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
      *                                    {@link ExecutionCoordinator#asyncCoordinator()}
      * @param senderMapper                Function that maps {@link SharedSuggestionProvider} to the command sender type
      * @param registrationHandler         the handler accepting command registrations
-     * @param dummyCommandSourceProvider  a provider of a dummy command source, for use with brigadier registration
      * @since 1.5.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
@@ -83,8 +80,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     FabricCommandManager(
         final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
         final @NonNull SenderMapper<S, C> senderMapper,
-        final @NonNull FabricCommandRegistrationHandler<C, S> registrationHandler,
-        final @NonNull Supplier<S> dummyCommandSourceProvider
+        final @NonNull FabricCommandRegistrationHandler<C, S> registrationHandler
     ) {
         super(commandExecutionCoordinator, registrationHandler);
         this.senderMapper = senderMapper;
@@ -93,12 +89,6 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
         // We're always brigadier
         this.brigadierManager = new CloudBrigadierManager<>(
             this,
-            () -> new CommandContext<>(
-                // This looks ugly, but it's what the server does when loading datapack functions in 1.16+
-                // See net.minecraft.server.function.FunctionLoader.reload for reference
-                this.senderMapper.map(dummyCommandSourceProvider.get()),
-                this
-            ),
             this.senderMapper
         );
 

@@ -25,11 +25,7 @@ package org.incendo.cloud.fabric;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
@@ -88,18 +84,7 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
         super(
             commandExecutionCoordinator,
             senderMapper,
-            new FabricCommandRegistrationHandler.Server<>(),
-            () -> new CommandSourceStack(
-                CommandSource.NULL,
-                Vec3.ZERO,
-                Vec2.ZERO,
-                null,
-                4,
-                "",
-                Component.empty(),
-                null,
-                null
-            )
+            new FabricCommandRegistrationHandler.Server<>()
         );
 
         if (LateRegistrationCatcher.hasServerAlreadyStarted()) {

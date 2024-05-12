@@ -25,8 +25,6 @@ package org.incendo.cloud.fabric;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
@@ -83,11 +81,7 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
         super(
             commandExecutionCoordinator,
             senderMapper,
-            new FabricCommandRegistrationHandler.Client<>(),
-            () -> (FabricClientCommandSource) new ClientSuggestionProvider(
-                Minecraft.getInstance().getConnection(),
-                Minecraft.getInstance()
-            )
+            new FabricCommandRegistrationHandler.Client<>()
         );
 
         ModdedExceptionHandler.registerDefaults(
