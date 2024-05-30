@@ -77,7 +77,7 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
         final MinecraftServer engine = (MinecraftServer) serverStartedEngineEvent.engine();
         ContextualArgumentTypeProvider.withBuildContext(
             this.commandManager,
-            CommandBuildContext.configurable(engine.registryAccess(), engine.getWorldData().enabledFeatures()),
+            CommandBuildContext.simple(engine.registryAccess(), engine.getWorldData().enabledFeatures()),
             true,
             () -> {
                 for (final org.incendo.cloud.Command<C> registeredCommand : this.registeredCommands) {
