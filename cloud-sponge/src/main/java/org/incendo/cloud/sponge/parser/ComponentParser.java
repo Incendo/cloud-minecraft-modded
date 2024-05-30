@@ -25,10 +25,12 @@ package org.incendo.cloud.sponge.parser;
 
 import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
+import net.minecraft.commands.arguments.ComponentArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -58,7 +60,7 @@ public final class ComponentParser<C> implements ArgumentParser.FutureArgumentPa
 
     private final ArgumentParser<C, Component> mappedParser =
         new WrappedBrigadierParser<C, net.minecraft.network.chat.Component>(
-            net.minecraft.commands.arguments.ComponentArgument.textComponent()
+            new ContextualArgumentTypeProvider<>(ComponentArgument::textComponent)
         ).flatMapSuccess((ctx, component) ->
             ArgumentParseResult.successFuture(SpongeAdventure.asAdventure(component)));
 
