@@ -26,7 +26,7 @@ cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
 adventureApi = { group = "net.kyori", name = "adventure-api", version = "4.15.0" }
-adventureFabric = "net.kyori:adventure-platform-fabric:5.13.0"
+adventureFabric = "net.kyori:adventure-platform-fabric:5.14.1"
 
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }
