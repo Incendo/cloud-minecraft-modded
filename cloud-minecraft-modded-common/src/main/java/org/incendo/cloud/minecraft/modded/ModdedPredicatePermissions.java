@@ -44,7 +44,7 @@ public final class ModdedPredicatePermissions {
      * @param permissionLevel permission level to require
      * @return a permission predicate that will provide {@link PermissionLevelResult}s
      */
-    public <C> @NonNull PredicatePermission<C> permissionLevel(
+    public static <C> @NonNull PredicatePermission<C> permissionLevel(
         final SenderMapperHolder<? extends SharedSuggestionProvider, C> mapperHolder,
         final int permissionLevel
     ) {
