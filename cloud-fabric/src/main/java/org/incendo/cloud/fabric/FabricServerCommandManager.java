@@ -25,6 +25,7 @@ package org.incendo.cloud.fabric;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -46,6 +47,8 @@ import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
  * @since 1.5.0
  */
 public final class FabricServerCommandManager<C> extends FabricCommandManager<C, CommandSourceStack> {
+
+    private static final boolean HAS_PERMISSIONS_API = FabricLoader.getInstance().isModLoaded("fabric-permissions-api-v0");
 
     /**
      * Create a command manager using native source types.
@@ -113,6 +116,9 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
             return true;
         }
         final CommandSourceStack source = this.senderMapper().reverse(sender);
-        return Permissions.check(source, permission, source.getServer().getOperatorUserPermissionLevel());
+        if (HAS_PERMISSIONS_API) {
+            return Permissions.check(source, permission, source.getServer().getOperatorUserPermissionLevel());
+        }
+        return source.hasPermission(source.getServer().getOperatorUserPermissionLevel());
     }
 }
