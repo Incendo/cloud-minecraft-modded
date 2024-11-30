@@ -13,6 +13,8 @@ dependencies {
     compileOnly(libs.fabricLoader)
 
     modCompileOnly(libs.adventureFabric)
+
+    compileOnly(libs.cloud.minecraft.extras)
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {

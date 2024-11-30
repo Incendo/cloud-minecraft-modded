@@ -99,6 +99,8 @@ dependencies {
     localRuntime(libs.cloud.minecraft.signed.arguments)
     modLocalRuntime(libs.adventureFabric)
     "modTestmodImplementation"(libs.adventureFabric)
+    "testmodImplementation"(libs.cloud.minecraft.extras)
+    localRuntime(libs.cloud.minecraft.extras)
 }
 
 val testmodJar by tasks.registering(Jar::class) {

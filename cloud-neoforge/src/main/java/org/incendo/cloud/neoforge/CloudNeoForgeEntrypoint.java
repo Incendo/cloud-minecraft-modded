@@ -31,9 +31,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
@@ -43,6 +47,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.minecraft.modded.internal.AdventureSupport;
 import org.incendo.cloud.permission.AndPermission;
 import org.incendo.cloud.permission.OrPermission;
 import org.incendo.cloud.permission.Permission;
@@ -58,8 +63,22 @@ public final class CloudNeoForgeEntrypoint {
 
     /**
      * Creates a {@link CloudNeoForgeEntrypoint}.
+     *
+     * @param modBus mod event bus
      */
-    public CloudNeoForgeEntrypoint() {
+    public CloudNeoForgeEntrypoint(final IEventBus modBus) {
+        if (ModList.get().isLoaded("adventure_platform_neoforge")) {
+            NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> {
+                AdventureSupport.get().setupServer(event.getServer());
+            });
+            NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> {
+                AdventureSupport.get().removeServer(event.getServer());
+            });
+            modBus.addListener(FMLClientSetupEvent.class, event -> {
+                AdventureSupport.get().setupClient();
+            });
+        }
+
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> serverStartingCalled = true);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW, CloudNeoForgeEntrypoint::registerPermissions);
 
