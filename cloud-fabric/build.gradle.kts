@@ -51,7 +51,8 @@ dependencies {
     modImplementation(libs.fabricApi.networking.api.v1)
     modImplementation(libs.fabricApi.lifecycle.events.v1)
 
-    modImplementation(libs.fabricPermissionsApi)
+    modCompileOnly(libs.fabricPermissionsApi)
+    modLocalRuntime(libs.fabricPermissionsApi)
 }
 
 tasks {
