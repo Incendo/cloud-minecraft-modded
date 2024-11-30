@@ -35,8 +35,8 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.platform.fabric.AdventureCommandSourceStack;
-import net.kyori.adventure.platform.fabric.FabricServerAudiences;
+import net.kyori.adventure.platform.modcommon.AdventureCommandSourceStack;
+import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -281,7 +281,7 @@ public final class FabricExample implements ModInitializer {
             .required("message", signedGreedyStringParser())
             .handler(ctx -> {
                 final AdventureCommandSourceStack audience =
-                    FabricServerAudiences.of(ctx.sender().getServer()).audience(ctx.sender());
+                    MinecraftServerAudiences.of(ctx.sender().getServer()).audience(ctx.sender());
 
                 final SignedString message = ctx.get("message");
 
