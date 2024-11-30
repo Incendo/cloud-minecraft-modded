@@ -15,6 +15,8 @@ neoForge {
 
 dependencies {
     compileOnly(libs.adventureFabric)
+
+    compileOnly(libs.cloud.minecraft.extras)
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {

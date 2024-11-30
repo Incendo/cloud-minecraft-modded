@@ -27,7 +27,7 @@ import java.util.Objects;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.chat.SignedMessage;
-import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
+import net.kyori.adventure.platform.modcommon.MinecraftAudiences;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import org.apiguardian.api.API;
@@ -42,7 +42,7 @@ public final class ModdedSignedStringFactory implements ModdedSignedStringMapper
      */
     public ModdedSignedStringFactory() {
         // Trigger service load failure when this isn't present
-        Objects.requireNonNull(NonWrappingComponentSerializer.class.getName());
+        Objects.requireNonNull(MinecraftAudiences.class.getName());
     }
 
     @Override
@@ -64,7 +64,8 @@ public final class ModdedSignedStringFactory implements ModdedSignedStringMapper
 
         @Override
         public void sendMessage(final Audience audience, final ChatType.Bound chatType, final Component unsigned) {
-            final net.minecraft.network.chat.Component nativeComponent = NonWrappingComponentSerializer.INSTANCE.serialize(unsigned);
+            final net.minecraft.network.chat.Component nativeComponent =
+                AdventureSupport.get().audiences().asNative(unsigned);
             final PlayerChatMessage playerChatMessage = this.rawSignedMessage.withUnsignedContent(nativeComponent);
             audience.sendMessage(cast(playerChatMessage), chatType);
         }
