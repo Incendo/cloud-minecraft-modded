@@ -133,7 +133,7 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
         final ArgumentParser<?, ?> parser
     ) {
         if (parser instanceof MappedArgumentParser<?, ?, ?> mapped) {
-            unwrap(parsers, mapped);
+            unwrap(parsers, mapped.baseParser());
             return;
         }
         if (parser instanceof EitherParser<?, ?, ?> eitherParser) {
