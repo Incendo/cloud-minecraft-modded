@@ -2,6 +2,7 @@ plugins {
     id("conventions.base")
     id("conventions.publishing")
     id("xyz.jpenilla.quiet-architectury-loom")
+    id("conventions.common-dependencies")
 }
 
 dependencies {
