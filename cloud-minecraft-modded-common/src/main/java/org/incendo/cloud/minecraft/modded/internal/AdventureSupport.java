@@ -54,6 +54,7 @@ public final class AdventureSupport {
         try {
             ComponentMessageThrowableConverter.setup(this);
         } catch (final LinkageError ignored) {
+            // cloud-minecraft-extras not present
         }
     }
 

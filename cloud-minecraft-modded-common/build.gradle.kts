@@ -14,6 +14,7 @@ neoForge {
 }
 
 dependencies {
+    // todo: depend on common when deps fixed
     compileOnly(libs.adventureFabric)
 
     compileOnly(libs.cloud.minecraft.extras)

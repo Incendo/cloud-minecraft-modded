@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.fabric.internal;
 
+import java.util.Objects;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -36,13 +37,21 @@ import org.incendo.cloud.minecraft.modded.internal.AdventureSupport;
 @DefaultQualifier(NonNull.class)
 public final class CloudFabricEntrypoint implements ModInitializer {
 
+    @SuppressWarnings("EmptyCatch")
     @Override
     public void onInitialize() {
         if (FabricLoader.getInstance().isModLoaded("adventure-platform-fabric")) {
-            ServerLifecycleEvents.SERVER_STARTING.register(AdventureSupport.get()::setupServer);
-            ServerLifecycleEvents.SERVER_STOPPED.register(AdventureSupport.get()::removeServer);
-            if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-                AdventureSupport.get().setupClient();
+            try {
+                Objects.requireNonNull(
+                    Class.forName("net.kyori.adventure.platform.modcommon.MinecraftAudiences").getName()
+                );
+
+                ServerLifecycleEvents.SERVER_STARTING.register(AdventureSupport.get()::setupServer);
+                ServerLifecycleEvents.SERVER_STOPPED.register(AdventureSupport.get()::removeServer);
+                if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                    AdventureSupport.get().setupClient();
+                }
+            } catch (final ClassNotFoundException ignored) {
             }
         }
     }
