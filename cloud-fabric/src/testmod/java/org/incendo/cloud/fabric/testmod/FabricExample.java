@@ -41,6 +41,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -49,6 +50,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
@@ -121,7 +123,7 @@ public final class FabricExample implements ModInitializer {
                 ctx.sender().sendSuccess(() -> Component.literal("Yes, the biome ")
                     .append(Component.literal(
                             ctx.sender().registryAccess()
-                                .registryOrThrow(Registries.BIOME)
+                                .lookupOrThrow(Registries.BIOME)
                                 .getKey(ctx.get("biome")).toString())
                         .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD))
                     .append(Component.literal(" is pretty cool"))
@@ -269,8 +271,10 @@ public final class FabricExample implements ModInitializer {
             .handler(ctx -> {
                 final MultipleEntitySelector selector = ctx.get("targets");
                 final Vec3 location = ctx.<Coordinates>get("location").position();
-                selector.values().forEach(target ->
-                    target.teleportToWithTicket(location.x(), location.y(), location.z()));
+                selector.values().forEach(target -> {
+                    target.placePortalTicket(new BlockPos(Mth.floor(location.x()), Mth.floor(location.y()), Mth.floor(location.z())));
+                    target.teleportTo(location.x(), location.y(), location.z());
+                });
             }));
 
         manager.command(base.literal("signed")
@@ -309,7 +313,8 @@ public final class FabricExample implements ModInitializer {
                 }
                 final Vec3 vec = ctx.<ColumnCoordinates>get("chunk_position").position();
                 final ChunkPos pos = new ChunkPos((int) vec.x(), (int) vec.z());
-                player.teleportToWithTicket(pos.getMinBlockX(), 128, pos.getMinBlockZ());
+                player.placePortalTicket(new BlockPos(pos.getMinBlockX(), 128, pos.getMinBlockZ()));
+                player.teleportTo(pos.getMinBlockX(), 128, pos.getMinBlockZ());
             }));
     }
 }

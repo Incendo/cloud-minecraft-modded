@@ -136,7 +136,7 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
             return ArgumentParseResult.failure(new IllegalArgumentException("Unknown registry " + this.registryIdent));
         }
 
-        final V entry = registry.get(key);
+        final V entry = registry.getValue(key);
         if (entry == null) {
             return ArgumentParseResult.failure(new UnknownEntryException(commandContext, key, this.registryIdent));
         }
@@ -146,7 +146,7 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
 
     private Registry<V> resolveRegistry(final CommandContext<C> ctx) {
         final SharedSuggestionProvider reverseMapped = ctx.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
-        return reverseMapped.registryAccess().registry(this.registryIdent).orElse(null);
+        return reverseMapped.registryAccess().lookup(this.registryIdent).orElse(null);
     }
 
     @Override
