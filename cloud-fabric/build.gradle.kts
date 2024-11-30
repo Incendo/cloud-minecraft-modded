@@ -38,7 +38,6 @@ dependencies {
     api(libs.cloud.brigadier)
 
     compileOnly(libs.cloud.minecraft.signed.arguments)
-    modCompileOnly(libs.adventureFabric)
 
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
     localRuntime(project(":cloud-minecraft-modded-common"))
@@ -92,9 +91,14 @@ val testmod: SourceSet by sourceSets.creating {
     dependencies.add(implementationConfigurationName, main.output)
 }
 
+loom {
+    createRemapConfigurations(testmod)
+}
+
 dependencies {
     localRuntime(libs.cloud.minecraft.signed.arguments)
     modLocalRuntime(libs.adventureFabric)
+    "modTestmodImplementation"(libs.adventureFabric)
 }
 
 val testmodJar by tasks.registering(Jar::class) {

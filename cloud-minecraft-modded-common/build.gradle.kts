@@ -13,6 +13,10 @@ neoForge {
     }
 }
 
+dependencies {
+    compileOnly(libs.adventureFabric)
+}
+
 tasks.withType(AbstractRemapJarTask::class).configureEach {
     targetNamespace = "named"
 }

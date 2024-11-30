@@ -17,6 +17,7 @@ fabricApi = "0.110.0+1.21.3"
 fabricPermissionsApi = "0.3.3"
 neoforge = "21.3.56"
 neoform = "1.21.3-20241023.131943"
+adventureMod = "6.1.0"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
@@ -31,7 +32,8 @@ geantyref = { group = "io.leangen.geantyref", name = "geantyref", version.ref = 
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
 adventureApi = { group = "net.kyori", name = "adventure-api", version = "4.15.0" }
-adventureFabric = "net.kyori:adventure-platform-fabric:5.13.0"
+adventureMod = { module = "net.kyori:adventure-platform-mod-shared", version.ref = "adventureMod" }
+adventureFabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventureMod" }
 
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }
