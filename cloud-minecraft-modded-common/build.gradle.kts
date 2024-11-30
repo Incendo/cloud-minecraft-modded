@@ -12,6 +12,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
     compileOnly(libs.fabricLoader)
 
+    // todo: depend on common when deps fixed
     modCompileOnly(libs.adventureFabric)
 
     compileOnly(libs.cloud.minecraft.extras)
