@@ -68,7 +68,7 @@ public final class CloudNeoForgeEntrypoint {
      */
     public CloudNeoForgeEntrypoint(final IEventBus modBus) {
         if (ModList.get().isLoaded("adventure_platform_neoforge")) {
-            NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (ServerStartingEvent event) -> {
+            NeoForge.EVENT_BUS.addListener((ServerStartingEvent event) -> {
                 AdventureSupport.get().setupServer(event.getServer());
             });
             NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> {
