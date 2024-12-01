@@ -27,16 +27,18 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.platform.fabric.AdventureCommandSourceStack;
-import net.kyori.adventure.platform.fabric.FabricServerAudiences;
+import net.kyori.adventure.platform.modcommon.AdventureCommandSourceStack;
+import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -61,9 +63,9 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.FabricServerCommandManager;
 import org.incendo.cloud.fabric.testmod.mixin.GiveCommandAccess;
 import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.modded.data.Coordinates;
 import org.incendo.cloud.minecraft.modded.data.Coordinates.ColumnCoordinates;
-import org.incendo.cloud.minecraft.modded.data.MultipleEntitySelector;
 import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
 import org.incendo.cloud.minecraft.modded.parser.NamedColorParser;
 import org.incendo.cloud.minecraft.modded.parser.RegistryEntryParser;
@@ -88,6 +90,11 @@ public final class FabricExample implements ModInitializer {
         // Create a commands manager. We'll use native command source types for this.
         final FabricServerCommandManager<CommandSourceStack> manager =
             FabricServerCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
+
+        AtomicReference<MinecraftServerAudiences> audiences = new AtomicReference<>();
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> audiences.set(MinecraftServerAudiences.of(server)));
+        MinecraftExceptionHandler.<CommandSourceStack>create(stack -> audiences.get().audience(stack))
+            .registerTo(manager);
 
         final Command.Builder<CommandSourceStack> base = manager.commandBuilder("cloudtest");
 
@@ -224,7 +231,8 @@ public final class FabricExample implements ModInitializer {
                 .map(Suggestion::suggestion)
                 .collect(Collectors.toList())))
             .parser((commandContext, commandInput) -> {
-                final ModMetadata meta = FabricLoader.getInstance().getModContainer(commandInput.readString())
+                final String s = commandInput.readString();
+                final ModMetadata meta = FabricLoader.getInstance().getModContainer(s)
                     .map(ModContainer::getMetadata)
                     .orElse(null);
                 if (meta != null) {
@@ -232,7 +240,7 @@ public final class FabricExample implements ModInitializer {
                 }
                 return ArgumentParseResult.failure(new IllegalArgumentException(String.format(
                     "No mod with id '%s'",
-                    commandInput.peek()
+                    s
                 )));
             })
             .build();
@@ -269,7 +277,7 @@ public final class FabricExample implements ModInitializer {
             .required("targets", multiplePlayerSelectorParser())
             .required("location", vec3Parser(false))
             .handler(ctx -> {
-                final MultipleEntitySelector selector = ctx.get("targets");
+                final MultiplePlayerSelector selector = ctx.get("targets");
                 final Vec3 location = ctx.<Coordinates>get("location").position();
                 selector.values().forEach(target -> {
                     target.placePortalTicket(new BlockPos(Mth.floor(location.x()), Mth.floor(location.y()), Mth.floor(location.z())));
@@ -281,7 +289,7 @@ public final class FabricExample implements ModInitializer {
             .required("message", signedGreedyStringParser())
             .handler(ctx -> {
                 final AdventureCommandSourceStack audience =
-                    FabricServerAudiences.of(ctx.sender().getServer()).audience(ctx.sender());
+                    MinecraftServerAudiences.of(ctx.sender().getServer()).audience(ctx.sender());
 
                 final SignedString message = ctx.get("message");
 

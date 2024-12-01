@@ -11,6 +11,9 @@ dependencies {
     minecraft(libs.minecraft)
     mappings(loom.officialMojangMappings())
     compileOnly(libs.fabricLoader)
+
+    compileOnly(libs.adventureMod)
+    compileOnly(libs.cloud.minecraft.extras)
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {

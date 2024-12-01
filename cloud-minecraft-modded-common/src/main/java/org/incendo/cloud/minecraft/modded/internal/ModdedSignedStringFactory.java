@@ -21,21 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.fabric.internal;
+package org.incendo.cloud.minecraft.modded.internal;
 
+import java.util.Objects;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.chat.SignedMessage;
-import net.kyori.adventure.platform.fabric.impl.NonWrappingComponentSerializer;
+import net.kyori.adventure.platform.modcommon.MinecraftAudiences;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.incendo.cloud.minecraft.modded.internal.ModdedSignedStringMapper;
 import org.incendo.cloud.minecraft.signed.SignedString;
 
 @API(status = API.Status.INTERNAL)
-public final class FabricSignedStringFactory implements ModdedSignedStringMapper.SignedStringFactory {
+public final class ModdedSignedStringFactory implements ModdedSignedStringMapper.SignedStringFactory {
+
+    /**
+     * Creates a new {@link ModdedSignedStringFactory}.
+     */
+    public ModdedSignedStringFactory() {
+        // Trigger service load failure when this isn't present
+        Objects.requireNonNull(MinecraftAudiences.class.getName());
+    }
+
     @Override
     public SignedString create(final String str, final PlayerChatMessage signedMessage) {
         return new SignedStringImpl(str, signedMessage);
@@ -55,7 +64,8 @@ public final class FabricSignedStringFactory implements ModdedSignedStringMapper
 
         @Override
         public void sendMessage(final Audience audience, final ChatType.Bound chatType, final Component unsigned) {
-            final net.minecraft.network.chat.Component nativeComponent = NonWrappingComponentSerializer.INSTANCE.serialize(unsigned);
+            final net.minecraft.network.chat.Component nativeComponent =
+                AdventureSupport.get().audiences().asNative(unsigned);
             final PlayerChatMessage playerChatMessage = this.rawSignedMessage.withUnsignedContent(nativeComponent);
             audience.sendMessage(cast(playerChatMessage), chatType);
         }

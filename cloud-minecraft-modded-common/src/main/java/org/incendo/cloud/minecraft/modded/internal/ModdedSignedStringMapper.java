@@ -49,7 +49,7 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
      * Creates a new mapper.
      */
     public ModdedSignedStringMapper() {
-        this.factory = Services.service(SignedStringFactory.class)
+        this.factory = Services.serviceWithFallback(SignedStringFactory.class)
             .orElseThrow(() -> new IllegalStateException("Could not locate " + SignedStringFactory.class));
     }
 
@@ -102,5 +102,13 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
          * @return new signed string
          */
         SignedString create(String str, PlayerChatMessage signedMessage);
+    }
+
+    public static final class FallbackSignedStringFactory implements SignedStringFactory, Services.Fallback {
+
+        @Override
+        public SignedString create(final String str, final PlayerChatMessage signedMessage) {
+            return SignedString.unsigned(str);
+        }
     }
 }
