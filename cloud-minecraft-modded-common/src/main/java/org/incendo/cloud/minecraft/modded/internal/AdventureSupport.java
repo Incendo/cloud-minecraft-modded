@@ -93,9 +93,8 @@ public final class AdventureSupport {
         final @Nullable MinecraftAudiences server = this.server;
         if (server == null) {
             return Objects.requireNonNull(this.client, "No audiences present");
-        } else {
-            return this.server;
         }
+        return server;
     }
 
     /**
