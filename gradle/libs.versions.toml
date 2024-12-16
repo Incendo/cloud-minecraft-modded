@@ -12,7 +12,7 @@ immutables = "2.10.1"
 
 minecraft = "1.21.3"
 fabricLoader = "0.16.9"
-fabricApi = "0.110.0+1.21.3"
+fabricApi = "0.112.1+1.21.3"
 fabricPermissionsApi = "0.3.3"
 
 [libraries]
