@@ -36,7 +36,7 @@ dependencies {
     api(platform(libs.cloud.minecraft.bom))
     api(libs.cloud.brigadier)
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
-    api(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    api(project(":cloud-minecraft-modded-common"))
 
     jarJar(project(":cloud-minecraft-modded-common"))
     jarJar(libs.cloud.brigadier)

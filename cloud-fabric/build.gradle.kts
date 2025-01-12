@@ -41,8 +41,8 @@ dependencies {
     modCompileOnly(libs.adventureFabric)
 
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
-    localRuntime(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
-    compileOnly(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
+    localRuntime(project(":cloud-minecraft-modded-common"))
+    compileOnly(project(":cloud-minecraft-modded-common"))
     api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
     include(project(":cloud-minecraft-modded-common-fabric-repack"))
 

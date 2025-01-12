@@ -3,14 +3,14 @@ import net.fabricmc.loom.task.AbstractRemapJarTask
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("quiet-fabric-loom")
+    id("net.neoforged.moddev")
     id("conventions.common-dependencies")
 }
 
-dependencies {
-    minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
-    compileOnly(libs.fabricLoader)
+neoForge {
+    enable {
+        neoFormVersion = libs.versions.neoform.get()
+    }
 }
 
 tasks.withType(AbstractRemapJarTask::class).configureEach {
