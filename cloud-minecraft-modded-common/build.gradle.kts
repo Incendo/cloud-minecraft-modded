@@ -3,7 +3,7 @@ import net.fabricmc.loom.task.AbstractRemapJarTask
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("xyz.jpenilla.quiet-architectury-loom")
+    id("quiet-fabric-loom")
     id("conventions.common-dependencies")
 }
 
@@ -18,5 +18,8 @@ tasks.withType(AbstractRemapJarTask::class).configureEach {
 }
 
 tasks.jar {
-    manifest.attributes("FMLModType" to "GAMELIBRARY")
+    manifest.attributes(
+        "FMLModType" to "GAMELIBRARY",
+        "Automatic-Module-Name" to "org.incendo.cloud_minecraft_modded_common",
+    )
 }

@@ -7,6 +7,7 @@ errorprone = "2.27.1"
 
 cloud = "2.0.0"
 cloudMinecraft = "2.0.0-beta.10"
+geantyref = "1.3.16"
 
 immutables = "2.10.1"
 
@@ -14,6 +15,7 @@ minecraft = "1.21.3"
 fabricLoader = "0.16.9"
 fabricApi = "0.110.0+1.21.3"
 fabricPermissionsApi = "0.3.3"
+neoforge = "21.3.56"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
@@ -23,6 +25,8 @@ errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", v
 cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloud" }
 cloud-minecraft-bom = { module = "org.incendo:cloud-minecraft-bom", version.ref = "cloudMinecraft" }
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
+cloud-services = { module = "org.incendo:cloud-services", version.ref = "cloud" }
+geantyref = { group = "io.leangen.geantyref", name = "geantyref", version.ref = "geantyref" }
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
 adventureApi = { group = "net.kyori", name = "adventure-api", version = "4.15.0" }
@@ -39,7 +43,8 @@ fabricApi-networking-api-v1 = { module = "net.fabricmc.fabric-api:fabric-network
 fabricApi-lifecycle-events-v1 = { module = "net.fabricmc.fabric-api:fabric-lifecycle-events-v1" }
 fabricPermissionsApi = { group = "me.lucko", name = "fabric-permissions-api", version.ref = "fabricPermissionsApi" }
 
-neoForge = "net.neoforged:neoforge:21.3.56"
+# For renovate
+zNeoForge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 
 [plugins]
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }

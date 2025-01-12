@@ -1,34 +1,48 @@
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("xyz.jpenilla.quiet-architectury-loom")
+    id("net.neoforged.moddev")
 }
 
-configurations {
-    transitiveInclude {
-        extendsFrom(api.get())
+afterEvaluate {
+    configurations.named("additionalRuntimeClasspath") {
+        extendsFrom(configurations.api.get())
 
-        exclude("org.checkerframework")
-        exclude("org.apiguardian")
         exclude("org.incendo", "cloud-minecraft-modded-common")
     }
-    forgeExtra {
-        extendsFrom(api.get())
+}
+
+neoForge {
+    enable {
+        version = libs.versions.neoforge.get()
+    }
+    mods.register("cloud-neoforge") {
+        sourceSet(sourceSets.main.get())
+    }
+    runs.register("client") {
+        client()
+    }
+    runs.register("server") {
+        server()
+    }
+    runs.configureEach {
+        jvmArgument("-Dcloud.test_commands=true")
     }
 }
 
 dependencies {
-    minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
-    neoForge(libs.neoForge)
-
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
     api(platform(libs.cloud.minecraft.bom))
     api(libs.cloud.brigadier)
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
     api(project(":cloud-minecraft-modded-common", configuration = "namedElements"))
-    include(project(":cloud-minecraft-modded-common"))
+
+    jarJar(project(":cloud-minecraft-modded-common"))
+    jarJar(libs.cloud.brigadier)
+    jarJar(libs.cloud.core)
+    jarJar(libs.cloud.services)
+    jarJar(libs.geantyref)
 }
 
 tasks {
@@ -38,11 +52,5 @@ tasks {
         filesMatching("META-INF/neoforge.mods.toml") {
             expand(props)
         }
-    }
-}
-
-loom {
-    runs.configureEach {
-        vmArg("-Dcloud.test_commands=true")
     }
 }

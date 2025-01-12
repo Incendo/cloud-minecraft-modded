@@ -3,7 +3,7 @@ import net.fabricmc.loom.task.AbstractRunTask
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("xyz.jpenilla.quiet-architectury-loom")
+    id("quiet-fabric-loom")
 }
 
 configurations {
