@@ -26,6 +26,6 @@ tasks.withType(AbstractRemapJarTask::class).configureEach {
 tasks.jar {
     manifest.attributes(
         "FMLModType" to "GAMELIBRARY",
-        "Automatic-Module-Name" to "org.incendo.cloud_minecraft_modded_common",
+        "Automatic-Module-Name" to "org.incendo.cloud.minecraft.modded.common",
     )
 }
