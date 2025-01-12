@@ -55,10 +55,11 @@ dependencies {
 }
 
 tasks {
-    withType<ProcessResources>().configureEach() {
-        inputs.property("version", project.version)
+    withType<ProcessResources>().configureEach {
+        val props = mapOf("version" to project.version)
+        inputs.properties(props)
         filesMatching("fabric.mod.json") {
-            expand("version" to project.version)
+            expand(props)
         }
     }
 
