@@ -1,0 +1,2 @@
+org.incendo.cloud.minecraft.modded.internal.ModdedSignedStringFactory
+org.incendo.cloud.minecraft.modded.internal.ModdedSignedStringMapper$FallbackSignedStringFactory

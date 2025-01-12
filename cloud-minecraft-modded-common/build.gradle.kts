@@ -13,6 +13,12 @@ neoForge {
     }
 }
 
+dependencies {
+    compileOnly(libs.adventureMod)
+
+    compileOnly(libs.cloud.minecraft.extras)
+}
+
 tasks.withType(AbstractRemapJarTask::class).configureEach {
     targetNamespace = "named"
 }
