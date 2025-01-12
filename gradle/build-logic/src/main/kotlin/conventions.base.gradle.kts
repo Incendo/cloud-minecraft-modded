@@ -39,3 +39,11 @@ dependencies {
     compileOnly(libs.bundles.immutables)
     annotationProcessor(libs.bundles.immutables)
 }
+
+tasks {
+    jar {
+        manifest {
+            attributes("Automatic-Module-Name" to "%s.%s".format(project.group, project.name.replace('-', '.')))
+        }
+    }
+}
