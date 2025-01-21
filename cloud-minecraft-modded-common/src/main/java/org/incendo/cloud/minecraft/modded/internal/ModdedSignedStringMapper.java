@@ -24,7 +24,9 @@
 package org.incendo.cloud.minecraft.modded.internal;
 
 import io.leangen.geantyref.TypeToken;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.util.Services;
 import net.minecraft.commands.CommandSigningContext;
@@ -40,6 +42,7 @@ import org.incendo.cloud.minecraft.signed.SignedGreedyStringParser;
 import org.incendo.cloud.minecraft.signed.SignedString;
 import org.incendo.cloud.minecraft.signed.SignedStringMapper;
 import org.incendo.cloud.parser.ArgumentParseResult;
+import org.jetbrains.annotations.NotNull;
 
 @API(status = API.Status.INTERNAL)
 public final class ModdedSignedStringMapper implements SignedStringMapper {
@@ -49,8 +52,7 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
      * Creates a new mapper.
      */
     public ModdedSignedStringMapper() {
-        this.factory = Services.serviceWithFallback(SignedStringFactory.class)
-            .orElseThrow(() -> new IllegalStateException("Could not locate " + SignedStringFactory.class));
+        this.factory = serviceWithFallback(SignedStringFactory.class);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -110,5 +112,40 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
         public SignedString create(final String str, final PlayerChatMessage signedMessage) {
             return SignedString.unsigned(str);
         }
+    }
+
+    private static <P> P serviceWithFallback(final @NotNull Class<P> type) {
+        final ServiceLoader<P> loader = ServiceLoader.load(type, type.getClassLoader());
+        final Iterator<P> it = loader.iterator();
+        Throwable cause = null;
+        P firstFallback = null;
+
+        while (it.hasNext()) {
+            final P instance;
+
+            try {
+                instance = it.next();
+            } catch (final Throwable t) {
+                if (cause == null) {
+                    cause = t;
+                } else {
+                    cause.addSuppressed(t);
+                }
+                continue;
+            }
+
+            if (instance instanceof Services.Fallback) {
+                if (firstFallback == null) {
+                    firstFallback = instance;
+                }
+            } else {
+                return instance;
+            }
+        }
+
+        if (firstFallback != null) {
+            return firstFallback;
+        }
+        throw new IllegalStateException("Could not locate " + type, cause);
     }
 }
