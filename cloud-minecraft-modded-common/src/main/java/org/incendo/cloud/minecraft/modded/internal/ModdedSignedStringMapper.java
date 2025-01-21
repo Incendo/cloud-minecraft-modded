@@ -42,7 +42,6 @@ import org.incendo.cloud.minecraft.signed.SignedGreedyStringParser;
 import org.incendo.cloud.minecraft.signed.SignedString;
 import org.incendo.cloud.minecraft.signed.SignedStringMapper;
 import org.incendo.cloud.parser.ArgumentParseResult;
-import org.jetbrains.annotations.NotNull;
 
 @API(status = API.Status.INTERNAL)
 public final class ModdedSignedStringMapper implements SignedStringMapper {
@@ -114,7 +113,7 @@ public final class ModdedSignedStringMapper implements SignedStringMapper {
         }
     }
 
-    private static <P> P serviceWithFallback(final @NotNull Class<P> type) {
+    private static <P> P serviceWithFallback(final Class<P> type) {
         final ServiceLoader<P> loader = ServiceLoader.load(type, type.getClassLoader());
         final Iterator<P> it = loader.iterator();
         Throwable cause = null;
