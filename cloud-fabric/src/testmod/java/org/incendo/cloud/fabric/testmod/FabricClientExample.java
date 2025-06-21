@@ -38,7 +38,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.synchronization.ArgumentUtils;
@@ -76,14 +77,13 @@ public final class FabricClientExample implements ClientModInitializer {
                     ctx.sender().sendFeedback(
                             Component.literal("Dumping command output to ")
                                     .append(Component.literal(target.toString())
-                                            .withStyle(s -> s.withClickEvent(new ClickEvent(
-                                                    ClickEvent.Action.OPEN_FILE,
+                                            .withStyle(s -> s.withClickEvent(new ClickEvent.OpenFile(
                                                     target.toAbsolutePath().toString()
                                             ))))
                     );
 
                     try (BufferedWriter writer = Files.newBufferedWriter(target); JsonWriter json = new JsonWriter(writer)) {
-                        final CommandDispatcher<SharedSuggestionProvider> dispatcher = Minecraft.getInstance()
+                        final CommandDispatcher<ClientSuggestionProvider> dispatcher = Minecraft.getInstance()
                                 .getConnection()
                                 .getCommands();
                         final JsonObject object = ArgumentUtils.serializeNodeToJson(dispatcher, dispatcher.getRoot());
@@ -138,6 +138,6 @@ public final class FabricClientExample implements ClientModInitializer {
     private static void disconnectClient(final @NonNull Minecraft client) {
         final PauseScreen pauseScreen = new PauseScreen(true);
         pauseScreen.init(client, 0, 0);
-        ((PauseScreenAccess) pauseScreen).disconnect();
+        ((PauseScreenAccess) pauseScreen).cloud$disconnectFromWorld(client, ClientLevel.DEFAULT_QUIT_MESSAGE);
     }
 }

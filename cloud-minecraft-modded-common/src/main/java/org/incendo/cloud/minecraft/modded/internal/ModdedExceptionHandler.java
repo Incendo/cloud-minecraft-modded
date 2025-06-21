@@ -216,15 +216,13 @@ public interface ModdedExceptionHandler<C, S extends SharedSuggestionProvider, T
         cause.printStackTrace(new PrintWriter(writer));
         final String stackTrace = writer.toString().replace("\t", "    ");
         return result.withStyle(style -> style
-            .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
+            .withHoverEvent(new HoverEvent.ShowText(
                 Component.literal(stackTrace)
                     .append(NEWLINE)
                     .append(Component.literal("    Click to copy")
                         .withStyle(s2 -> s2.withColor(ChatFormatting.GRAY).withItalic(true)))
             ))
-            .withClickEvent(new ClickEvent(
-                ClickEvent.Action.COPY_TO_CLIPBOARD,
+            .withClickEvent(new ClickEvent.CopyToClipboard(
                 stackTrace
             )));
     }
