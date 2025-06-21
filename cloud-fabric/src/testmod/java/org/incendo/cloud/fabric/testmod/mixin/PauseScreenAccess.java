@@ -23,13 +23,15 @@
 //
 package org.incendo.cloud.fabric.testmod.mixin;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(PauseScreen.class)
 public interface PauseScreenAccess {
 
-    @Invoker("onDisconnect")
-    void disconnect();
+    @Invoker("disconnectFromWorld")
+    void cloud$disconnectFromWorld(Minecraft minecraft, Component component);
 }

@@ -194,12 +194,10 @@ public final class FabricExample implements ModInitializer {
                 text.append(
                     Component.literal("")
                         .withStyle(style -> style.withColor(ChatFormatting.WHITE)
-                            .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.SUGGEST_COMMAND,
+                            .withClickEvent(new ClickEvent.SuggestCommand(
                                 String.format("/cloudtest mods %s", mod.getId())
                             ))
-                            .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
+                            .withHoverEvent(new HoverEvent.ShowText(
                                 Component.literal("Click for more info")
                             )))
                         .append(Component
