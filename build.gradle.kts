@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.cloud.buildLogic.rootProject.publishing)
+    // alias(libs.plugins.cloud.buildLogic.rootProject.publishing)
+    alias(libs.plugins.centralPublishing)
     alias(libs.plugins.cloud.buildLogic.rootProject.spotless)
 }
 
@@ -15,4 +16,11 @@ tasks {
     spotlessApply {
         dependsOn(gradle.includedBuild("build-logic").task(":spotlessApply"))
     }
+}
+
+tasks.register("publish") // TODO - below makes publish dependsOn it
+centralPortalPublishing.bundle("release") {
+    username = providers.gradleProperty("sonatypeUsername")
+    password = providers.gradleProperty("sonatypePassword")
+    publishingType = "AUTOMATIC"
 }

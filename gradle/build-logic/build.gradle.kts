@@ -15,6 +15,7 @@ dependencies {
     // loom needs this version of asm, for some reason we have an older one on the classpath without this
     implementation("org.ow2.asm:asm:9.8")
     implementation(libs.cloud.build.logic)
+    implementation(libs.centralPublishing)
 
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }

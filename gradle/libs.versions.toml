@@ -1,5 +1,6 @@
 [versions]
 cloud-build-logic = "0.0.16"
+centralPublishing = "0.1.6"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
@@ -21,6 +22,7 @@ adventureMod = "6.4.0"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
+centralPublishing = { module = "dev.lukebemish:central-portal-publishing", version.ref = "centralPublishing" }
 stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck" }
 errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone" }
 
@@ -54,6 +56,7 @@ zNeoForge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-publishing = { id = "org.incendo.cloud-build-logic.publishing.root-project", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.spotless.root-project", version.ref = "cloud-build-logic" }
+centralPublishing = { id = "dev.lukebemish.central-portal-publishing", version.ref = "centralPublishing" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]
