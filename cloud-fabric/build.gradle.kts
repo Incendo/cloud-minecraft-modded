@@ -45,10 +45,10 @@ dependencies {
     api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
     include(project(":cloud-minecraft-modded-common-fabric-repack"))
 
-    modImplementation(platform(libs.fabricApi.bom))
-    modImplementation(libs.fabricApi.command.api.v2)
-    modImplementation(libs.fabricApi.networking.api.v1)
-    modImplementation(libs.fabricApi.lifecycle.events.v1)
+    modImplementation(platform(fabricApiLibs.bom))
+    modImplementation(fabricApiLibs.command.api.v2)
+    modImplementation(fabricApiLibs.networking.api.v1)
+    modImplementation(fabricApiLibs.lifecycle.events.v1)
 
     modCompileOnly(libs.fabricPermissionsApi)
     modLocalRuntime(libs.fabricPermissionsApi)
