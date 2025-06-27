@@ -18,7 +18,6 @@ tasks {
     }
 }
 
-tasks.register("publish") // TODO - below makes publish dependsOn it
 centralPortalPublishing.bundle("release") {
     username = providers.gradleProperty("sonatypeUsername")
     password = providers.gradleProperty("sonatypePassword")
