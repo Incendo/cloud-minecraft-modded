@@ -6,7 +6,7 @@ plugins {
 repositories {
     gradlePluginPortal()
     mavenCentral()
-    maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+    maven("https://central.sonatype.com/repository/maven-snapshots/") {
         mavenContent { snapshotsOnly() }
     }
 }
@@ -15,7 +15,6 @@ dependencies {
     // loom needs this version of asm, for some reason we have an older one on the classpath without this
     implementation("org.ow2.asm:asm:9.8")
     implementation(libs.cloud.build.logic)
-    implementation(libs.centralPublishing)
 
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
