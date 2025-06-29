@@ -87,4 +87,9 @@ public final class NeoForgeClientCommandManager<C> extends NeoForgeCommandManage
     public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
         return true;
     }
+
+    @Override
+    public boolean isClientCommandManager() {
+        return true;
+    }
 }
