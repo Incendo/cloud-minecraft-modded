@@ -16,7 +16,7 @@ fabricLoader = "0.16.14"
 fabricPermissionsApi = "0.4.1"
 neoforge = "21.7.17-beta"
 neoform = "1.21.7-20250630.141722"
-adventureMod = "6.4.0"
+adventureMod = "6.5.1"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
