@@ -11,11 +11,11 @@ geantyref = "1.3.16"
 
 immutables = "2.11.0"
 
-minecraft = "1.21.7"
+minecraft = "1.21.8"
 fabricLoader = "0.16.14"
 fabricPermissionsApi = "0.4.1"
-neoforge = "21.7.17-beta"
-neoform = "1.21.7-20250630.141722"
+neoforge = "21.8.13"
+neoform = "1.21.8-20250717.133445"
 adventureMod = "6.5.1"
 
 [libraries]
