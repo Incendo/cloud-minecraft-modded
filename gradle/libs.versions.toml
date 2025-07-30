@@ -12,7 +12,7 @@ geantyref = "1.3.16"
 immutables = "2.11.1"
 
 minecraft = "1.21.8"
-fabricLoader = "0.16.14"
+fabricLoader = "0.17.0"
 fabricPermissionsApi = "0.4.1"
 neoforge = "21.8.13"
 neoform = "1.21.8-20250717.133445"
