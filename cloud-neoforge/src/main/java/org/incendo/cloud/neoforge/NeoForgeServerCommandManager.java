@@ -111,6 +111,6 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
             }
             return PermissionAPI.getPermission(source.getPlayer(), node);
         }
-        return source.hasPermission(source.getServer().getOperatorUserPermissionLevel());
+        return source.hasPermission(source.getServer().operatorUserPermissionLevel());
     }
 }

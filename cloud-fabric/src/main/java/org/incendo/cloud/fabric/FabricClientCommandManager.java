@@ -87,7 +87,7 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
         ModdedExceptionHandler.registerDefaults(
             this,
             FabricClientCommandSource::sendError,
-            source -> source.getPlayer().getGameProfile().getName(),
+            source -> source.getPlayer().getGameProfile().name(),
             new MinecraftCaptionFormatter<>()
         );
     }

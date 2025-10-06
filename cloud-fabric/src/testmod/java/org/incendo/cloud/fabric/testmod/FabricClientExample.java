@@ -51,7 +51,6 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.description.CommandDescription;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.FabricClientCommandManager;
-import org.incendo.cloud.fabric.testmod.mixin.PauseScreenAccess;
 import org.incendo.cloud.minecraft.modded.ModdedPredicatePermissions;
 import org.incendo.cloud.minecraft.modded.parser.VanillaArgumentParsers;
 import org.incendo.cloud.parser.flag.CommandFlag;
@@ -138,6 +137,6 @@ public final class FabricClientExample implements ClientModInitializer {
     private static void disconnectClient(final @NonNull Minecraft client) {
         final PauseScreen pauseScreen = new PauseScreen(true);
         pauseScreen.init(client, 0, 0);
-        ((PauseScreenAccess) pauseScreen).cloud$disconnectFromWorld(client, ClientLevel.DEFAULT_QUIT_MESSAGE);
+        client.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE);
     }
 }
