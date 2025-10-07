@@ -24,4 +24,5 @@ indra {
 javadocLinks {
     override(libs.fabricLoader, "https://maven.fabricmc.net/docs/fabric-loader-{version}")
     excludes.add("net.fabricmc.fabric-api:")
+    defaultJavadocProvider = "https://www.javadocs.dev/{group}/{name}/{version}"
 }
