@@ -2,7 +2,7 @@ import org.spongepowered.gradle.plugin.config.PluginLoaders
 import org.spongepowered.plugin.metadata.model.PluginDependency
 
 plugins {
-    id("org.spongepowered.gradle.plugin") version "2.2.0"
+    id("org.spongepowered.gradle.plugin") version "2.3.1-SNAPSHOT"
     id("conventions.base")
     alias(libs.plugins.shadow)
 }
@@ -14,7 +14,8 @@ dependencies {
 
 sponge {
     injectRepositories(false)
-    apiVersion("11.0.0-SNAPSHOT")
+    apiVersion("12.1.0-SNAPSHOT")
+    minecraftVersion("1.21.1")
     plugin("cloud-example-sponge") {
         loader {
             name(PluginLoaders.JAVA_PLAIN)
@@ -23,7 +24,7 @@ sponge {
         displayName("Cloud example Sponge plugin")
         description("Plugin to demonstrate and test the Sponge implementation of cloud")
         license("MIT")
-        entrypoint("cloud.commandframework.examples.sponge.CloudExamplePlugin")
+        entrypoint("org.incendo.cloud.examples.sponge.CloudExamplePlugin")
         dependency("spongeapi") {
             loadOrder(PluginDependency.LoadOrder.AFTER)
             optional(false)
@@ -35,24 +36,10 @@ tasks {
     assemble {
         dependsOn(shadowJar)
     }
-}
 
-configurations {
-    spongeRuntime {
-        resolutionStrategy {
-            cacheChangingModulesFor(1, "MINUTES")
-            eachDependency {
-                if (target.name == "spongevanilla") {
-                    useVersion("1.20.+")
-                }
-            }
+    shadowJar {
+        dependencies {
+            exclude(dependency("io.leangen.geantyref:.*"))
         }
-    }
-}
-
-afterEvaluate {
-    tasks.compileJava {
-        // TODO - sponge AP not compatible with J21
-        options.compilerArgs.remove("-Werror")
     }
 }
