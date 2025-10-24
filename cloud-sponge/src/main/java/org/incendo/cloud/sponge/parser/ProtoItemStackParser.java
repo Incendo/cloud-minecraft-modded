@@ -158,7 +158,7 @@ public final class ProtoItemStackParser<C> implements NodeSource,
             final int stackSize,
             final boolean respectMaximumStackSize
         ) throws ComponentMessageRuntimeException {
-            return this.createItemStack(stackSize, respectMaximumStackSize).createSnapshot();
+            return this.createItemStack(stackSize, respectMaximumStackSize).asImmutable();
         }
 
     }
