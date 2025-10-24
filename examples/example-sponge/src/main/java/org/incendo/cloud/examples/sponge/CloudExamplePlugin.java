@@ -30,6 +30,7 @@ import com.google.inject.TypeLiteral;
 import io.leangen.geantyref.TypeToken;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,7 +66,6 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.trader.Villager;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
@@ -198,7 +198,7 @@ public final class CloudExamplePlugin {
                     return;
                 }
                 final ItemStack modified = ItemStack.builder()
-                    .fromItemStack(result.polledItem().createStack())
+                    .fromItemStack(result.polledItem().asMutable())
                     .add(Keys.APPLIED_ENCHANTMENTS, List.of(
                         Enchantment.of(
                             ctx.<EnchantmentType>get("enchantment_type"),
@@ -367,7 +367,7 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("user")
             .required("user", userParser())
             .handler(ctx -> {
-                ctx.sender().audience().sendMessage(text(ctx.<User>get("user").toString()));
+                ctx.sender().audience().sendMessage(text(ctx.<UUID>get("user").toString()));
             }));
         this.commandManager.command(cloud.literal("data")
             .required("data", dataContainerParser())
