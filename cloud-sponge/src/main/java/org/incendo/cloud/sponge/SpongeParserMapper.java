@@ -46,6 +46,7 @@ import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.parser.standard.UUIDParser;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 
 import static java.util.Objects.requireNonNull;
 
@@ -60,11 +61,12 @@ public final class SpongeParserMapper<C> {
     private final Map<Class<?>, Mapping<C, ?>> mappers = new HashMap<>();
 
     SpongeParserMapper() {
-        this.initStandardMappers();
+
     }
 
-    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapComponent(final CommandComponent<C> commandComponent) {
-        final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result = this.mapParser(commandComponent.parser());
+    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapComponent(
+        final CommandComponent<C> commandComponent, final RegistryHolder holder) {
+        final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result = this.mapParser(commandComponent.parser(), holder);
         // final boolean customSuggestionsProvider = !DELEGATING_SUGGESTIONS_PROVIDER.isInstance(commandComponent.getSuggestionsProvider());
         // todo: not exactly the same as in v1...
         final boolean customSuggestionsProvider = commandComponent.parser() != commandComponent.suggestionProvider();
@@ -75,13 +77,14 @@ public final class SpongeParserMapper<C> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapParser(final ArgumentParser<C, ?> argumentParser) {
+    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapParser(
+        final ArgumentParser<C, ?> argumentParser, final RegistryHolder holder) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result;
         ArgumentParser<C, ?> parser = argumentParser;
         while (parser instanceof MappedArgumentParser<?, ?, ?>) {
             parser = ((MappedArgumentParser<C, ?, ?>) parser).baseParser();
         }
-        final Mapping<C, ?> mapper = this.mappers.get(parser.getClass());
+        final Mapping<C, ?> mapper = this.getOrCreateMappers(holder).get(parser.getClass());
         if (mapper != null) {
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> apply =
                 (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) ((Function) mapper.mapper).apply(parser);
@@ -91,43 +94,51 @@ public final class SpongeParserMapper<C> {
             }
             result = apply;
         } else if (parser instanceof NodeSource) {
-            result = ((NodeSource) parser).node();
+            result = ((NodeSource) parser).node(holder);
         } else {
-            result = CommandTreeNodeTypes.STRING.get().createNode().customCompletions().word();
+            result = CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().word();
         }
         return result;
     }
 
-    private void initStandardMappers() {
+    private synchronized Map<Class<?>, Mapping<C, ?>> getOrCreateMappers(final RegistryHolder holder) {
+        if (this.mappers.isEmpty()) {
+            this.initStandardMappers(holder);
+        }
+
+        return this.mappers;
+    }
+
+    private void initStandardMappers(final RegistryHolder holder) {
         this.registerMapping(new TypeToken<StringParser<C>>() {
         }, builder -> builder.to(stringParser -> {
             final StringParser.StringMode mode = stringParser.stringMode();
             if (mode == StringParser.StringMode.SINGLE) {
-                return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().word();
+                return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().word();
             } else if (mode == StringParser.StringMode.QUOTED) {
-                return CommandTreeNodeTypes.STRING.get().createNode().customCompletions();
+                return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions();
             } else if (mode == StringParser.StringMode.GREEDY || mode == StringParser.StringMode.GREEDY_FLAG_YIELDING) {
-                return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
+                return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().greedy();
             }
             throw new IllegalArgumentException("Unknown string mode '" + mode + "'!");
         }));
         this.registerMapping(new TypeToken<ByteParser<C>>() {
         }, builder -> builder.to(byteParser -> {
-            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
+            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             node.min((int) byteParser.range().minByte());
             node.max((int) byteParser.range().maxByte());
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<ShortParser<C>>() {
         }, builder -> builder.to(shortParser -> {
-            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
+            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             node.min((int) shortParser.range().minShort());
             node.max((int) shortParser.range().maxShort());
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<IntegerParser<C>>() {
         }, builder -> builder.to(integerParser -> {
-            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
+            final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             if (integerParser.hasMin()) {
                 node.min(integerParser.range().minInt());
             }
@@ -138,7 +149,7 @@ public final class SpongeParserMapper<C> {
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<FloatParser<C>>() {
         }, builder -> builder.to(floatParser -> {
-            final CommandTreeNode.Range<Float> node = CommandTreeNodeTypes.FLOAT.get().createNode();
+            final CommandTreeNode.Range<Float> node = CommandTreeNodeTypes.FLOAT.get(holder).createNode();
             if (floatParser.hasMin()) {
                 node.min(floatParser.range().minFloat());
             }
@@ -149,7 +160,7 @@ public final class SpongeParserMapper<C> {
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<DoubleParser<C>>() {
         }, builder -> builder.to(doubleParser -> {
-            final CommandTreeNode.Range<Double> node = CommandTreeNodeTypes.DOUBLE.get().createNode();
+            final CommandTreeNode.Range<Double> node = CommandTreeNodeTypes.DOUBLE.get(holder).createNode();
             if (doubleParser.hasMin()) {
                 node.min(doubleParser.range().minDouble());
             }
@@ -160,7 +171,7 @@ public final class SpongeParserMapper<C> {
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<LongParser<C>>() {
         }, builder -> builder.to(longParser -> {
-            final CommandTreeNode.Range<Long> node = CommandTreeNodeTypes.LONG.get().createNode();
+            final CommandTreeNode.Range<Long> node = CommandTreeNodeTypes.LONG.get(holder).createNode();
             if (longParser.hasMin()) {
                 node.min(longParser.range().minLong());
             }
@@ -171,19 +182,19 @@ public final class SpongeParserMapper<C> {
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<BooleanParser<C>>() {
         }, builder -> builder.to(booleanParser -> {
-            return CommandTreeNodeTypes.BOOL.get().createNode();
+            return CommandTreeNodeTypes.BOOL.get(holder).createNode();
         }));
         this.registerMapping(new TypeToken<CommandFlagParser<C>>() {
         }, builder -> builder.to(flagArgumentParser -> {
-            return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
+            return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().greedy();
         }));
         this.registerMapping(new TypeToken<StringArrayParser<C>>() {
         }, builder -> builder.to(stringArrayParser -> {
-            return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
+            return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().greedy();
         }));
         this.registerMapping(new TypeToken<UUIDParser<C>>() {
         }, builder -> builder.to(uuidParser -> {
-            return CommandTreeNodeTypes.UUID.get().createNode();
+            return CommandTreeNodeTypes.UUID.get(holder).createNode();
         }));
     }
 

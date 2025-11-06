@@ -24,19 +24,15 @@
 package org.incendo.cloud.sponge.parser;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import net.kyori.adventure.util.ComponentMessageThrowable;
+import net.kyori.adventure.text.Component;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
-import net.minecraft.nbt.CompoundTag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
-import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -47,11 +43,10 @@ import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
-import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
-import org.spongepowered.common.data.persistence.NBTTranslator;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * An argument for parsing {@link ProtoItemStack ProtoItemStacks} from an {@link ItemType} identifier
@@ -69,19 +64,24 @@ import org.spongepowered.common.data.persistence.NBTTranslator;
 public final class ProtoItemStackParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, SuggestionProvider<C> {
 
+    private ProtoItemStackParser(final RegistryHolder registryHolder) {
+        //todo: Use ContextualArgumentTypeProvider
+        this.mappedParser = new WrappedBrigadierParser<C, ItemInput>(ItemArgument.item((CommandBuildContext) registryHolder))
+            .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(new ProtoItemStackImpl(itemInput)));
+    }
+
     /**
      * Creates a new {@link ProtoItemStackParser}.
      *
      * @param <C> command sender type
+     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser() {
-        return ParserDescriptor.of(new ProtoItemStackParser<>(), ProtoItemStack.class);
+    public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser(final RegistryHolder registryHolder) {
+        return ParserDescriptor.of(new ProtoItemStackParser<>(registryHolder), ProtoItemStack.class);
     }
 
-    private final ArgumentParser<C, ProtoItemStack> mappedParser =
-        new WrappedBrigadierParser<C, ItemInput>(new ContextualArgumentTypeProvider<>(ItemArgument::item))
-            .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(new ProtoItemStackImpl(itemInput)));
+    private final ArgumentParser<C, ProtoItemStack> mappedParser;
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ProtoItemStack>> parseFuture(
@@ -100,44 +100,21 @@ public final class ProtoItemStackParser<C> implements NodeSource,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.ITEM_STACK.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.ITEM_STACK.get(holder).createNode();
     }
 
     private static final class ProtoItemStackImpl implements ProtoItemStack {
 
-        // todo: use accessor
-        private static final Field COMPOUND_TAG_FIELD =
-            Arrays.stream(ItemInput.class.getDeclaredFields())
-                .filter(f -> f.getType().equals(CompoundTag.class))
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
-
-        static {
-            COMPOUND_TAG_FIELD.setAccessible(true);
-        }
-
         private final ItemInput itemInput;
-        private final @Nullable DataContainer extraData;
 
         ProtoItemStackImpl(final @NonNull ItemInput itemInput) {
             this.itemInput = itemInput;
-            try {
-                final CompoundTag tag = (CompoundTag) COMPOUND_TAG_FIELD.get(itemInput);
-                this.extraData = tag == null ? null : NBTTranslator.INSTANCE.translate(tag);
-            } catch (final IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            }
         }
 
         @Override
         public @NonNull ItemType itemType() {
             return (ItemType) this.itemInput.getItem();
-        }
-
-        @Override
-        public @Nullable DataContainer extraData() {
-            return this.extraData;
         }
 
         @SuppressWarnings("ConstantConditions")
@@ -149,7 +126,7 @@ public final class ProtoItemStackParser<C> implements NodeSource,
             try {
                 return (ItemStack) (Object) this.itemInput.createItemStack(stackSize, respectMaximumStackSize);
             } catch (final CommandSyntaxException ex) {
-                throw new ComponentMessageRuntimeException(ComponentMessageThrowable.getMessage(ex), ex);
+                throw new ComponentMessageRuntimeException(Component.text(ex.getMessage()));
             }
         }
 

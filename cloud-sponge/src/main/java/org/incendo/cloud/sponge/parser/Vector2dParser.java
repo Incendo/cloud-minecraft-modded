@@ -39,6 +39,7 @@ import org.incendo.cloud.sponge.SpongeCommandContextKeys;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.math.vector.Vector2d;
 
 /**
@@ -111,7 +112,7 @@ public final class Vector2dParser<C> extends VectorParser<C, Vector2d> {
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.VEC2.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.VEC2.get(holder).createNode();
     }
 }

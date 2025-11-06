@@ -26,6 +26,7 @@ package org.incendo.cloud.sponge.parser;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +35,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
-import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -46,6 +46,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.BlockChangeFlags;
 import org.spongepowered.api.world.server.ServerLocation;
@@ -68,21 +69,26 @@ import org.spongepowered.common.world.SpongeBlockChangeFlag;
  */
 public final class BlockInputParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, BlockInput>, SuggestionProvider<C> {
 
+    private BlockInputParser(final RegistryHolder registryHolder) {
+        //todo: Use ContextualArgumentTypeProvider
+        this.mappedParser = new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(
+            BlockStateArgument.block((CommandBuildContext) registryHolder)
+        ).flatMapSuccess((ctx, blockInput) ->
+            ArgumentParseResult.successFuture(new BlockInputImpl(blockInput)));
+    }
+
     /**
      * Creates a new {@link BlockInputParser}.
      *
      * @param <C> command sender type
+     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, BlockInput> blockInputParser() {
-        return ParserDescriptor.of(new BlockInputParser<>(), BlockInput.class);
+    public static <C> ParserDescriptor<C, BlockInput> blockInputParser(final RegistryHolder registryHolder) {
+        return ParserDescriptor.of(new BlockInputParser<>(registryHolder), BlockInput.class);
     }
 
-    private final ArgumentParser<C, BlockInput> mappedParser =
-        new WrappedBrigadierParser<C, net.minecraft.commands.arguments.blocks.BlockInput>(
-            new ContextualArgumentTypeProvider<>(BlockStateArgument::block)
-        ).flatMapSuccess((ctx, blockInput) ->
-            ArgumentParseResult.successFuture(new BlockInputImpl(blockInput)));
+    private final ArgumentParser<C, BlockInput> mappedParser;
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull BlockInput>> parseFuture(
@@ -101,8 +107,8 @@ public final class BlockInputParser<C> implements NodeSource, ArgumentParser.Fut
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.BLOCK_STATE.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.BLOCK_STATE.get(holder).createNode();
     }
 
     private static final class BlockInputImpl implements BlockInput {
