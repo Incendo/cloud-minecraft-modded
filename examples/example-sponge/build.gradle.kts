@@ -14,8 +14,8 @@ dependencies {
 
 sponge {
     injectRepositories(false)
-    apiVersion("12.1.0-SNAPSHOT")
-    minecraftVersion("1.21.1")
+    apiVersion("14.1.0-SNAPSHOT")
+    minecraftVersion("1.21.4")
     plugin("cloud-example-sponge") {
         loader {
             name(PluginLoaders.JAVA_PLAIN)

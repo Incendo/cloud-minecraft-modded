@@ -25,6 +25,7 @@ package org.incendo.cloud.sponge;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * Implemented by {@link org.incendo.cloud.parser.ArgumentParser} which also supply a special {@link CommandTreeNode.Argument}.
@@ -34,8 +35,9 @@ public interface NodeSource {
     /**
      * Get the node for this parser.
      *
+     * @param registryHolder registry holder
      * @return argument node
      */
-    CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node();
+    CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(RegistryHolder registryHolder);
 
 }

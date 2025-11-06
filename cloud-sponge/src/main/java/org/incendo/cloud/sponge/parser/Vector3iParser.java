@@ -40,6 +40,7 @@ import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.common.util.VecHelper;
 import org.spongepowered.math.vector.Vector3i;
 
@@ -93,8 +94,8 @@ public final class Vector3iParser<C> implements NodeSource, ArgumentParser.Futur
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.BLOCK_POS.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.BLOCK_POS.get(holder).createNode();
     }
 
 }

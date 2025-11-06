@@ -47,6 +47,7 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * Argument for selecting one or more {@link Entity Entities} using a {@link Selector}.
@@ -102,8 +103,8 @@ public final class MultipleEntitySelectorParser<C> implements NodeSource,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.ENTITY.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.ENTITY.get(holder).createNode();
     }
 
     private static final class MultipleEntitySelectorImpl implements MultipleEntitySelector {
