@@ -25,6 +25,7 @@ package org.incendo.cloud.sponge.parser;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -32,7 +33,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
-import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -42,6 +42,7 @@ import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.common.util.VecHelper;
 
@@ -53,20 +54,25 @@ import org.spongepowered.common.util.VecHelper;
 public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, BlockPredicate>,
     NodeSource, SuggestionProvider<C> {
 
+    private BlockPredicateParser(final RegistryHolder registryHolder) {
+        //todo: Use ContextualArgumentTypeProvider
+        this.mappedParser = new WrappedBrigadierParser<C, BlockPredicateArgument.Result>(
+            net.minecraft.commands.arguments.blocks.BlockPredicateArgument.blockPredicate((CommandBuildContext) registryHolder)
+        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result)));
+    }
+
     /**
      * Creates a new {@link BlockPredicateParser}.
      *
      * @param <C> command sender type
+     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, BlockPredicate> blockPredicateParser() {
-        return ParserDescriptor.of(new BlockPredicateParser<>(), BlockPredicate.class);
+    public static <C> ParserDescriptor<C, BlockPredicate> blockPredicateParser(final RegistryHolder registryHolder) {
+        return ParserDescriptor.of(new BlockPredicateParser<>(registryHolder), BlockPredicate.class);
     }
 
-    private final ArgumentParser<C, BlockPredicate> mappedParser =
-        new WrappedBrigadierParser<C, BlockPredicateArgument.Result>(
-            new ContextualArgumentTypeProvider<>(net.minecraft.commands.arguments.blocks.BlockPredicateArgument::blockPredicate)
-        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result)));
+    private final ArgumentParser<C, BlockPredicate> mappedParser;
 
     @Override
     public @NonNull CompletableFuture<@NonNull ArgumentParseResult<BlockPredicate>> parseFuture(
@@ -85,8 +91,8 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.BLOCK_PREDICATE.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.BLOCK_PREDICATE.get(holder).createNode();
     }
 
     private record BlockPredicateImpl(Predicate<BlockInWorld> predicate) implements BlockPredicate {

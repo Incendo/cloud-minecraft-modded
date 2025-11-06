@@ -58,6 +58,8 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
 
     private void handleRegistrationEvent(final RegisterCommandEvent<Command.Raw> event) {
         this.commandManager.registrationCalled();
+        this.commandManager.registerParsers(event.registryHolder());
+
         for (final CommandNode<C> node : this.commandManager.commandTree().rootNodes()) {
             this.registerCommand(event, requireNonNull(node.component()));
         }

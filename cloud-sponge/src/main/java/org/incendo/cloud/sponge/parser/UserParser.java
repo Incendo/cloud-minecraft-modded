@@ -56,6 +56,7 @@ import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.user.UserManager;
 
 /**
@@ -166,8 +167,8 @@ public final class UserParser<C> implements NodeSource, ArgumentParser<C, UUID>,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.GAME_PROFILE.get().createNode().customCompletions();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.GAME_PROFILE.get(holder).createNode().customCompletions();
     }
 
     /**

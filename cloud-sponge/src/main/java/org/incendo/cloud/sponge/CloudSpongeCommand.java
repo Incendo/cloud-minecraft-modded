@@ -45,6 +45,7 @@ import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
+import org.spongepowered.api.registry.RegistryHolder;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -118,7 +119,7 @@ final class CloudSpongeCommand<C> implements Command.Raw {
     }
 
     @Override
-    public CommandTreeNode.Root commandTree() {
+    public CommandTreeNode.Root commandTree(final RegistryHolder holder) {
         final CommandTreeNode<CommandTreeNode.Root> root = CommandTreeNode.root();
 
         final CommandNode<C> cloud = this.namedNode();
@@ -129,27 +130,27 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
         this.addRequirement(cloud, root);
 
-        this.addChildren(root, cloud);
+        this.addChildren(root, cloud, holder);
         return (CommandTreeNode.Root) root;
     }
 
-    private void addChildren(final CommandTreeNode<?> node, final CommandNode<C> cloud) {
+    private void addChildren(final CommandTreeNode<?> node, final CommandNode<C> cloud, final RegistryHolder holder) {
         for (final CommandNode<C> child : cloud.children()) {
             final CommandComponent<C> value = child.component();
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
             if (value.parser() instanceof LiteralParser) {
                 treeNode = (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) CommandTreeNode.literal();
             } else if (value.parser() instanceof AggregateParser<C, ?> aggregate) {
-                this.handleAggregate(node, child, aggregate);
+                this.handleAggregate(node, child, aggregate, holder);
                 continue;
             } else {
-                treeNode = this.commandManager.parserMapper().mapComponent(value);
+                treeNode = this.commandManager.parserMapper().mapComponent(value, holder);
             }
             this.addRequirement(child, treeNode);
             if (canExecute(child)) {
                 treeNode.executable();
             }
-            this.addChildren(treeNode, child);
+            this.addChildren(treeNode, child, holder);
             node.child(value.name(), treeNode);
         }
     }
@@ -157,13 +158,14 @@ final class CloudSpongeCommand<C> implements Command.Raw {
     private void handleAggregate(
         final CommandTreeNode<?> node,
         final CommandNode<C> child,
-        final AggregateParser<C, ?> compound
+        final AggregateParser<C, ?> compound,
+        final RegistryHolder holder
     ) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
         final ArrayDeque<Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>>> nodes = new ArrayDeque<>();
         for (final CommandComponent<C> component : compound.components()) {
             final String name = component.name();
-            nodes.add(Pair.of(name, this.commandManager.parserMapper().mapParser(component.parser())));
+            nodes.add(Pair.of(name, this.commandManager.parserMapper().mapParser(component.parser(), holder)));
         }
         Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> argument = null;
         while (!nodes.isEmpty()) {
@@ -180,7 +182,7 @@ final class CloudSpongeCommand<C> implements Command.Raw {
             this.addRequirement(child, argument.second());
         }
         treeNode = argument.second();
-        this.addChildren(treeNode, child);
+        this.addChildren(treeNode, child, holder);
         node.child(compound.components().get(0).toString(), treeNode);
     }
 

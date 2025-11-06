@@ -24,9 +24,7 @@
 package org.incendo.cloud.sponge.data;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.sponge.exception.ComponentMessageRuntimeException;
-import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -42,15 +40,6 @@ public interface ProtoItemStack {
      * @return the {@link ItemType}
      */
     @NonNull ItemType itemType();
-
-    /**
-     * Get any extra data besides the {@link ItemType} that may have been parsed.
-     *
-     * <p>Will return {@code null} if there is no extra data.</p>
-     *
-     * @return the extra data or {@code null}
-     */
-    @Nullable DataContainer extraData();
 
     /**
      * Create a new {@link ItemStack} from the state of this {@link ProtoItemStack}.

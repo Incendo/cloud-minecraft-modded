@@ -37,6 +37,7 @@ import org.incendo.cloud.sponge.NodeSource;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * An argument for parsing {@link NamedTextColor NamedTextColors}.
@@ -77,8 +78,8 @@ public final class NamedTextColorParser<C> implements NodeSource, ArgumentParser
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.COLOR.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.COLOR.get(holder).createNode();
     }
 
 }

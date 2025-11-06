@@ -38,6 +38,7 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.spongepowered.api.command.parameter.managed.operator.Operator;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.registry.RegistryTypes;
 
 /**
@@ -98,8 +99,8 @@ public final class OperatorParser<C> implements NodeSource, ArgumentParser<C, Op
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.OPERATION.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.OPERATION.get(holder).createNode();
     }
 
 }
