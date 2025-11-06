@@ -33,6 +33,7 @@ import org.incendo.cloud.sponge.NodeSource;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * Argument for parsing {@link ResourceKey ResourceKeys}.
@@ -65,8 +66,8 @@ public final class ResourceKeyParser<C> implements NodeSource, ArgumentParser<C,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.RESOURCE_LOCATION.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.RESOURCE_LOCATION.get(holder).createNode();
     }
 
 }

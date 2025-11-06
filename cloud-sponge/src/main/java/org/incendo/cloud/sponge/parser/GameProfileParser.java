@@ -44,6 +44,7 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.common.profile.SpongeGameProfile;
 
 /**
@@ -99,8 +100,8 @@ public final class GameProfileParser<C> implements ArgumentParser.FutureArgument
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.GAME_PROFILE.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.GAME_PROFILE.get(holder).createNode();
     }
 
 

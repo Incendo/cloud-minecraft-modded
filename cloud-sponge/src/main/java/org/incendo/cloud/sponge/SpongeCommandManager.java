@@ -72,6 +72,7 @@ import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.registry.DefaultedRegistryType;
 import org.spongepowered.api.registry.Registry;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.api.registry.RegistryType;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.math.vector.Vector2d;
@@ -115,7 +116,6 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
         this.senderMapper = senderMapper;
         this.parserMapper = new SpongeParserMapper<>();
         this.registerCommandPreProcessor(new SpongeCommandPreprocessor<>(this));
-        this.registerParsers();
         this.captionRegistry().registerProvider(new SpongeDefaultCaptionsProvider<>());
         this.suggestionFactory = super.suggestionFactory().mapped(SpongeSuggestion::spongeSuggestion);
 
@@ -137,19 +137,24 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
         );
     }
 
-    private void registerParsers() {
+    /**
+     * Register parsers
+     *
+     * @param registryHolder Register holder
+     */
+    public void registerParsers(final RegistryHolder registryHolder) {
         this.parserRegistry()
-            .registerParser(ComponentParser.componentParser())
+            .registerParser(ComponentParser.componentParser(registryHolder))
             .registerParser(NamedTextColorParser.namedTextColorParser())
             .registerParser(OperatorParser.operatorParser())
             .registerParser(WorldParser.worldParser())
-            .registerParser(ProtoItemStackParser.protoItemStackParser())
-            .registerParser(ItemStackPredicateParser.itemStackPredicateParser())
+            .registerParser(ProtoItemStackParser.protoItemStackParser(registryHolder))
+            .registerParser(ItemStackPredicateParser.itemStackPredicateParser(registryHolder))
             .registerParser(ResourceKeyParser.resourceKeyParser())
             .registerParser(GameProfileParser.gameProfileParser())
             .registerParser(GameProfileCollectionParser.gameProfileCollectionParser())
-            .registerParser(BlockInputParser.blockInputParser())
-            .registerParser(BlockPredicateParser.blockPredicateParser())
+            .registerParser(BlockInputParser.blockInputParser(registryHolder))
+            .registerParser(BlockPredicateParser.blockPredicateParser(registryHolder))
             .registerParser(UserParser.userParser())
             .registerParser(DataContainerParser.dataContainerParser())
             .registerAnnotationMapper(

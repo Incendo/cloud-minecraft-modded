@@ -39,6 +39,7 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
 import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.common.data.persistence.NBTTranslator;
 
 /**
@@ -82,8 +83,8 @@ public final class DataContainerParser<C> implements ArgumentParser.FutureArgume
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.NBT_COMPOUND_TAG.get().createNode();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.NBT_COMPOUND_TAG.get(holder).createNode();
     }
 
 }

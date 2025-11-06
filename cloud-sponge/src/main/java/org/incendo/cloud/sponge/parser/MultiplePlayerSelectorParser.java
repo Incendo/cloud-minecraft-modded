@@ -48,6 +48,7 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * Argument for selecting one or more {@link Player Players} using a {@link Selector}.
@@ -102,8 +103,8 @@ public final class MultiplePlayerSelectorParser<C> implements NodeSource,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.ENTITY.get().createNode().playersOnly();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.ENTITY.get(holder).createNode().playersOnly();
     }
 
     private static final class MultiplePlayerSelectorImpl implements MultiplePlayerSelector {

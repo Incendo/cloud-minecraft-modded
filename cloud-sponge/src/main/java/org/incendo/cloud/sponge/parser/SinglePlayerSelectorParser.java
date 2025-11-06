@@ -45,6 +45,7 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.registry.RegistryHolder;
 
 /**
  * Argument for selecting a single {@link Player} using a {@link Selector}.
@@ -100,8 +101,8 @@ public final class SinglePlayerSelectorParser<C> implements NodeSource,
     }
 
     @Override
-    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node() {
-        return CommandTreeNodeTypes.ENTITY.get().createNode().playersOnly().single();
+    public CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node(final RegistryHolder holder) {
+        return CommandTreeNodeTypes.ENTITY.get(holder).createNode().playersOnly().single();
     }
 
 

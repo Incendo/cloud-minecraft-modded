@@ -30,6 +30,7 @@ import com.google.inject.TypeLiteral;
 import io.leangen.geantyref.TypeToken;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,8 +66,9 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.trader.Villager;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -146,11 +148,14 @@ public final class CloudExamplePlugin {
             .defaultHandlers()
             .decorator(message -> Component.text().append(COMMAND_PREFIX, space(), message).build())
             .registerTo(this.commandManager);
-
-        this.registerCommands();
     }
 
-    private void registerCommands() {
+    @Listener
+    public void onRegisterCommands(final RegisterCommandEvent<org.spongepowered.api.command.Command.Parameterized> event) {
+        this.registerCommands(event.registryHolder());
+    }
+
+    private void registerCommands(RegistryHolder registryHolder) {
         this.commandManager.command(this.commandManager.commandBuilder("cloud_test1")
             .permission("cloud.test1")
             .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
@@ -198,7 +203,7 @@ public final class CloudExamplePlugin {
                     return;
                 }
                 final ItemStack modified = ItemStack.builder()
-                    .fromItemStack(result.polledItem().createStack())
+                    .fromItemStack(result.polledItem().asMutable())
                     .add(Keys.APPLIED_ENCHANTMENTS, List.of(
                         Enchantment.of(
                             ctx.<EnchantmentType>get("enchantment_type"),
@@ -283,9 +288,9 @@ public final class CloudExamplePlugin {
                 ctx.sender().audience().sendMessage(text(ctx.<ServerWorld>get("world").key().asString()));
             }));
         this.commandManager.command(cloud.literal("test_item")
-            .required("item", protoItemStackParser())
+            .required("item", protoItemStackParser(registryHolder))
             .literal("is")
-            .required("predicate", itemStackPredicateParser())
+            .required("predicate", itemStackPredicateParser(registryHolder))
             .handler(ctx -> {
                 final ItemStack item = ctx.<ProtoItemStack>get("item").createItemStack(1, true);
                 final ItemStackPredicate predicate = ctx.get("predicate");
@@ -367,7 +372,7 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("user")
             .required("user", userParser())
             .handler(ctx -> {
-                ctx.sender().audience().sendMessage(text(ctx.<User>get("user").toString()));
+                ctx.sender().audience().sendMessage(text(ctx.<UUID>get("user").toString()));
             }));
         this.commandManager.command(cloud.literal("data")
             .required("data", dataContainerParser())
@@ -377,7 +382,7 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("setblock")
             .permission("cloud.setblock")
             .required("position", vector3iParser())
-            .required("block", blockInputParser())
+            .required("block", blockInputParser(registryHolder))
             .handler(ctx -> {
                 final Vector3i position = ctx.get("position");
                 final BlockInput input = ctx.get("block");
@@ -391,7 +396,7 @@ public final class CloudExamplePlugin {
                 }
             }));
         this.commandManager.command(cloud.literal("blockinput")
-            .required("block", blockInputParser())
+            .required("block", blockInputParser(registryHolder))
             .handler(ctx -> {
                 final BlockInput input = ctx.get("block");
                 ctx.sender().audience().sendMessage(text(
@@ -404,7 +409,7 @@ public final class CloudExamplePlugin {
             .requiredArgumentPair(
                 "itemstack",
                 TypeToken.get(ItemStack.class),
-                "item", protoItemStackParser(),
+                "item", protoItemStackParser(registryHolder),
                 "amount", integerParser(),
                 (sender, proto, amount) -> {
                     try {
@@ -424,9 +429,9 @@ public final class CloudExamplePlugin {
                 // todo: cause.cause().root() returns DedicatedServer during permission checks?
                 return cause.subject() instanceof Player;
             }))
-            .required("predicate", blockPredicateParser())
+            .required("predicate", blockPredicateParser(registryHolder))
             .required("radius", integerParser())
-            .required("replacement", blockInputParser())
+            .required("replacement", blockInputParser(registryHolder))
             .handler(ctx -> {
                 final BlockPredicate predicate = ctx.get("predicate");
                 final int radius = ctx.get("radius");
