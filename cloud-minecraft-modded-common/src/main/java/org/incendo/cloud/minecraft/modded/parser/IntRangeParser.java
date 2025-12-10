@@ -23,7 +23,7 @@
 //
 package org.incendo.cloud.minecraft.modded.parser;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.arguments.RangeArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
@@ -31,7 +31,7 @@ import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
- * An argument parsing an unbounded {@link net.minecraft.advancements.critereon.MinMaxBounds.Ints integer range}, in the form
+ * An argument parsing an unbounded {@link net.minecraft.advancements.criterion.MinMaxBounds.Ints integer range}, in the form
  * {@code [min]..[max]}, where both lower and upper bounds are optional.
  *
  * @param <C> the sender type

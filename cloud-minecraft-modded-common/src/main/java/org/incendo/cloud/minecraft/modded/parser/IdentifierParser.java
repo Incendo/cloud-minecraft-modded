@@ -23,18 +23,18 @@
 //
 package org.incendo.cloud.minecraft.modded.parser;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
- * An argument parsing a {@link ResourceLocation}.
+ * An argument parsing a {@link Identifier}.
  *
  * @param <C> the sender type
  */
-public final class ResourceLocationParser<C> extends WrappedBrigadierParser<C, ResourceLocation> {
+public final class IdentifierParser<C> extends WrappedBrigadierParser<C, Identifier> {
 
     /**
      * Creates a new resource location parser.
@@ -42,8 +42,8 @@ public final class ResourceLocationParser<C> extends WrappedBrigadierParser<C, R
      * @param <C> command sender type
      * @return the created parser
      */
-    public static <C> @NonNull ParserDescriptor<C, ResourceLocation> resourceLocationParser() {
-        return ParserDescriptor.of(new ResourceLocationParser<>(), ResourceLocation.class);
+    public static <C> @NonNull ParserDescriptor<C, Identifier> resourceLocationParser() {
+        return ParserDescriptor.of(new IdentifierParser<>(), Identifier.class);
     }
 
     /**
@@ -52,12 +52,12 @@ public final class ResourceLocationParser<C> extends WrappedBrigadierParser<C, R
      * @param <C> the command sender type
      * @return the component builder
      */
-    public static <C> CommandComponent.@NonNull Builder<C, ResourceLocation> resourceLocationComponent() {
-        return CommandComponent.<C, ResourceLocation>builder().parser(resourceLocationParser());
+    public static <C> CommandComponent.@NonNull Builder<C, Identifier> resourceLocationComponent() {
+        return CommandComponent.<C, Identifier>builder().parser(resourceLocationParser());
     }
 
-    ResourceLocationParser() {
-        super(net.minecraft.commands.arguments.ResourceLocationArgument.id());
+    IdentifierParser() {
+        super(net.minecraft.commands.arguments.IdentifierArgument.id());
     }
 
 }

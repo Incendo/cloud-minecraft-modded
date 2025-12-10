@@ -37,12 +37,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.AngleArgument;
 import net.minecraft.commands.arguments.ColorArgument;
 import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.commands.arguments.NbtPathArgument;
 import net.minecraft.commands.arguments.NbtTagArgument;
@@ -51,7 +52,6 @@ import net.minecraft.commands.arguments.OperationArgument;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.RangeArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
@@ -61,8 +61,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.apiguardian.api.API;
@@ -129,7 +129,7 @@ public final class ModdedParserMappings {
         registerConstantNativeParserSupplier(manager, OperationArgument.Operation.class, OperationArgument.operation());
         registerConstantNativeParserSupplier(manager, AngleArgument.SingleAngle.class, AngleArgument.angle());
         registerConstantNativeParserSupplier(manager, new TypeToken<>() {}, SwizzleArgument.swizzle());
-        registerConstantNativeParserSupplier(manager, ResourceLocation.class, ResourceLocationArgument.id());
+        registerConstantNativeParserSupplier(manager, Identifier.class, IdentifierArgument.id());
         registerConstantNativeParserSupplier(manager, EntityAnchorArgument.Anchor.class, EntityAnchorArgument.anchor());
         registerConstantNativeParserSupplier(manager, MinMaxBounds.Ints.class, RangeArgument.intRange());
         registerConstantNativeParserSupplier(manager, MinMaxBounds.Doubles.class, RangeArgument.floatRange());
@@ -222,7 +222,7 @@ public final class ModdedParserMappings {
         final Set<Class<?>> seenClasses = new HashSet<>();
         /* Some registries have types that are too generic... we'll skip those for now.
          * Eventually, these could be resolved by using ParserParameters in some way? */
-        seenClasses.add(ResourceLocation.class);
+        seenClasses.add(Identifier.class);
         seenClasses.add(Codec.class);
         seenClasses.add(String.class); // avoid pottery pattern registry overriding default string parser
         for (final Field field : Registries.class.getDeclaredFields()) {

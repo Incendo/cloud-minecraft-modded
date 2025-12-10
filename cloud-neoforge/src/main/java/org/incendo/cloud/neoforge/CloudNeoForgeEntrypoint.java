@@ -157,7 +157,9 @@ public final class CloudNeoForgeEntrypoint {
         final UUID uuid,
         final PermissionDynamicContext<?>... contexts
     ) {
-        return player != null && player.hasPermissions(player.level().getServer().operatorUserPermissionLevel());
+        return player != null && player.permissions().hasPermission(
+            new net.minecraft.server.permissions.Permission.HasCommandLevel(player.level().getServer().operatorUserPermissions().level())
+        );
     }
 
     private static void testClientManager() {

@@ -136,7 +136,7 @@ public final class FabricClientExample implements ClientModInitializer {
 
     private static void disconnectClient(final @NonNull Minecraft client) {
         final PauseScreen pauseScreen = new PauseScreen(true);
-        pauseScreen.init(client, 0, 0);
+        pauseScreen.init(0, 0);
         client.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE);
     }
 }

@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.minecraft.modded.permission;
 
+import net.minecraft.server.permissions.PermissionLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
 import org.incendo.cloud.internal.ImmutableImpl;
@@ -48,7 +49,7 @@ public interface PermissionLevelResult extends PermissionResult {
     static @NonNull PermissionLevelResult of(
         final boolean result,
         final @NonNull Permission permission,
-        final int requiredPermissionLevel
+        final @NonNull PermissionLevel requiredPermissionLevel
     ) {
         return PermissionLevelResultImpl.of(result, permission, requiredPermissionLevel);
     }
@@ -65,5 +66,5 @@ public interface PermissionLevelResult extends PermissionResult {
      * @return the required permission level
      */
     @SuppressWarnings("unused")
-    int requiredPermissionLevel();
+    @NonNull PermissionLevel requiredPermissionLevel();
 }

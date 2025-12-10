@@ -27,6 +27,7 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.permissions.Permission;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
@@ -117,8 +118,10 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
         }
         final CommandSourceStack source = this.senderMapper().reverse(sender);
         if (HAS_PERMISSIONS_API) {
-            return Permissions.check(source, permission, source.getServer().operatorUserPermissionLevel());
+            return Permissions.check(source, permission, source.getServer().operatorUserPermissions().level());
         }
-        return source.hasPermission(source.getServer().operatorUserPermissionLevel());
+        return source.permissions().hasPermission(
+            new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level())
+        );
     }
 }

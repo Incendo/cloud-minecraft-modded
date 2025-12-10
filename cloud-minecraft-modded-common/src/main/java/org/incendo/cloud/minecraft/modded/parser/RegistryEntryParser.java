@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.component.CommandComponent;
@@ -124,9 +124,9 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
         final @NonNull CommandContext<@NonNull C> commandContext,
         final @NonNull CommandInput commandInput
     ) {
-        final ResourceLocation key;
+        final Identifier key;
         try {
-            key = ResourceLocation.read(new StringReader(commandInput.readString()));
+            key = Identifier.read(new StringReader(commandInput.readString()));
         } catch (final CommandSyntaxException ex) {
             return ArgumentParseResult.failure(ex);
         }
@@ -154,9 +154,9 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
         final @NonNull CommandContext<C> commandContext,
         final @NonNull CommandInput input
     ) {
-        final Set<ResourceLocation> ids = this.resolveRegistry(commandContext).keySet();
+        final Set<Identifier> ids = this.resolveRegistry(commandContext).keySet();
         final List<String> results = new ArrayList<>(ids.size());
-        for (final ResourceLocation entry : ids) {
+        for (final Identifier entry : ids) {
             if (entry.getNamespace().equals(NAMESPACE_MINECRAFT)) {
                 results.add(entry.getPath());
             }
@@ -183,7 +183,7 @@ public final class RegistryEntryParser<C, V> implements ArgumentParser<C, V>, Bl
 
         UnknownEntryException(
             final CommandContext<?> context,
-            final ResourceLocation key,
+            final Identifier key,
             final ResourceKey<? extends Registry<?>> registry
         ) {
             super(

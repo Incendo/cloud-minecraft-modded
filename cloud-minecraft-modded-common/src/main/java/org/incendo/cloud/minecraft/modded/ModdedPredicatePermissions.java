@@ -24,8 +24,9 @@
 package org.incendo.cloud.minecraft.modded;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.PermissionSource;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.key.CloudKey;
@@ -47,14 +48,16 @@ public final class ModdedPredicatePermissions {
      */
     public static <C> @NonNull PredicatePermission<C> permissionLevel(
         final SenderMapperHolder<? extends SharedSuggestionProvider, C> mapperHolder,
-        final int permissionLevel
+        final PermissionLevel permissionLevel
     ) {
         return new PredicatePermission<>() {
             @Override
             public @NonNull PermissionResult testPermission(final @NonNull C sender) {
                 final SharedSuggestionProvider suggestionProvider = mapperHolder.senderMapper().reverse(sender);
                 return PermissionLevelResult.of(
-                    suggestionProvider instanceof PermissionSource permissionSource && permissionSource.hasPermission(permissionLevel),
+                    suggestionProvider.permissions().hasPermission(
+                        new Permission.HasCommandLevel(permissionLevel)
+                    ),
                     this,
                     permissionLevel
                 );

@@ -28,6 +28,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.util.concurrent.ExecutionException;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.permissions.Permission;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
@@ -111,6 +112,8 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
             }
             return PermissionAPI.getPermission(source.getPlayer(), node);
         }
-        return source.hasPermission(source.getServer().operatorUserPermissionLevel());
+        return source.permissions().hasPermission(
+            new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level())
+        );
     }
 }
