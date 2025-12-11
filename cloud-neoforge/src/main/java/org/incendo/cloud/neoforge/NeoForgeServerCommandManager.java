@@ -112,6 +112,14 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
             }
             return PermissionAPI.getPermission(source.getPlayer(), node);
         }
+
+        // noinspection ConstantConditions - vanilla annotations are lying
+        if (source.getServer() == null) {
+            // Handle 1.21.11 quirk, this is a best effort impl. for 'restricted' checking...
+            // If necessary we could use Mixin to allow explicitly setting the flag.
+            return false; // Permission is implicitly not empty
+        }
+
         return source.permissions().hasPermission(
             new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level())
         );

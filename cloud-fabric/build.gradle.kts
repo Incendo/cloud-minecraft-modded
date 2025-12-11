@@ -29,7 +29,12 @@ configurations {
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
+    mappings(
+        loom.layered {
+            officialMojangMappings()
+            parchment(property("neoForge.parchment.parchmentArtifact"))
+        }
+    )
     modImplementation(libs.fabricLoader)
 
     api(platform(libs.cloud.bom))

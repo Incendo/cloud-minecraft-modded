@@ -7,7 +7,12 @@ plugins {
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
+    mappings(
+        loom.layered {
+            officialMojangMappings()
+            parchment(property("neoForge.parchment.parchmentArtifact"))
+        }
+    )
     compileOnly(libs.fabricLoader)
 }
 
