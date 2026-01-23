@@ -10,7 +10,7 @@ dependencies {
     mappings(
         loom.layered {
             officialMojangMappings()
-            parchment(property("neoForge.parchment.parchmentArtifact"))
+            parchment(property("neoForge.parchment.parchmentArtifact")!!)
         }
     )
     compileOnly(libs.fabricLoader)
