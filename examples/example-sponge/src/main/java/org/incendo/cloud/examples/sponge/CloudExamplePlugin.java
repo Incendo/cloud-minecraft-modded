@@ -155,7 +155,7 @@ public final class CloudExamplePlugin {
         this.registerCommands(event.registryHolder());
     }
 
-    private void registerCommands(RegistryHolder registryHolder) {
+    private void registerCommands(final RegistryHolder registryHolder) {
         this.commandManager.command(this.commandManager.commandBuilder("cloud_test1")
             .permission("cloud.test1")
             .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
