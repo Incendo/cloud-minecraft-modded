@@ -1,18 +1,12 @@
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("quiet-fabric-loom")
+    id("net.fabricmc.fabric-loom")
     id("conventions.common-dependencies")
 }
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(
-        loom.layered {
-            officialMojangMappings()
-            parchment(property("neoForge.parchment.parchmentArtifact")!!)
-        }
-    )
     compileOnly(libs.fabricLoader)
 }
 

@@ -3,7 +3,15 @@ import net.fabricmc.loom.task.AbstractRunTask
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("quiet-fabric-loom")
+    id("net.fabricmc.fabric-loom")
+}
+
+val transitiveInclude: Configuration by configurations.creating {
+    extendsFrom(configurations.api.get())
+
+    exclude("org.checkerframework")
+    exclude("org.apiguardian")
+    exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
 }
 
 configurations {
@@ -11,13 +19,6 @@ configurations {
         resolutionStrategy {
             force("net.fabricmc:fabric-loader:${libs.versions.fabricLoader.get()}")
         }
-    }
-    transitiveInclude {
-        extendsFrom(api.get())
-
-        exclude("org.checkerframework")
-        exclude("org.apiguardian")
-        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
     runtimeClasspath {
         exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
@@ -29,13 +30,7 @@ configurations {
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(
-        loom.layered {
-            officialMojangMappings()
-            parchment(property("neoForge.parchment.parchmentArtifact")!!)
-        }
-    )
-    modImplementation(libs.fabricLoader)
+    implementation(libs.fabricLoader)
 
     api(platform(libs.cloud.bom))
     api(libs.cloud.core)
@@ -47,16 +42,20 @@ dependencies {
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
     localRuntime(project(":cloud-minecraft-modded-common"))
     compileOnly(project(":cloud-minecraft-modded-common"))
-    api(project(":cloud-minecraft-modded-common-fabric-repack", configuration = "namedElements"))
+    api(project(":cloud-minecraft-modded-common-fabric-repack"))
     include(project(":cloud-minecraft-modded-common-fabric-repack"))
 
-    modImplementation(platform(fabricApiLibs.bom))
-    modImplementation(fabricApiLibs.command.api.v2)
-    modImplementation(fabricApiLibs.networking.api.v1)
-    modImplementation(fabricApiLibs.lifecycle.events.v1)
+    implementation(platform(fabricApiLibs.bom))
+    implementation(fabricApiLibs.command.api.v2)
+    implementation(fabricApiLibs.networking.api.v1)
+    implementation(fabricApiLibs.lifecycle.events.v1)
 
-    modCompileOnly(libs.fabricPermissionsApi)
-    modLocalRuntime(libs.fabricPermissionsApi)
+    compileOnly(libs.fabricPermissionsApi)
+    localRuntime(libs.fabricPermissionsApi)
+
+    transitiveInclude.resolvedConfiguration.resolvedArtifacts.forEach {
+        include(it.moduleVersion.id.toString())
+    }
 }
 
 tasks {
@@ -97,14 +96,10 @@ val testmod: SourceSet by sourceSets.creating {
     dependencies.add(implementationConfigurationName, main.output)
 }
 
-loom {
-    createRemapConfigurations(testmod)
-}
-
 dependencies {
     localRuntime(libs.cloud.minecraft.signed.arguments)
-    modLocalRuntime(libs.adventureFabric)
-    "modTestmodImplementation"(libs.adventureFabric)
+    localRuntime(libs.adventureFabric)
+    "testmodImplementation"(libs.adventureFabric)
     "testmodImplementation"(libs.cloud.minecraft.extras)
     localRuntime(libs.cloud.minecraft.extras)
 }

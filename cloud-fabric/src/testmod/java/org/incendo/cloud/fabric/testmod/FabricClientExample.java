@@ -121,7 +121,7 @@ public final class FabricClientExample implements ClientModInitializer {
                 .handler(ctx -> {
                     try {
                         ctx.sender().sendFeedback(
-                                ctx.<ItemInput>get("item").createItemStack(1, false).getDisplayName()
+                                ctx.<ItemInput>get("item").createItemStack(1).getDisplayName()
                         );
                     } catch (final CommandSyntaxException ex) {
                         ctx.sender().sendError(ComponentUtils.fromMessage(ex.getRawMessage()));
