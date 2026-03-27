@@ -3,15 +3,7 @@ import net.fabricmc.loom.task.AbstractRunTask
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("net.fabricmc.fabric-loom")
-}
-
-val transitiveInclude: Configuration by configurations.creating {
-    extendsFrom(configurations.api.get())
-
-    exclude("org.checkerframework")
-    exclude("org.apiguardian")
-    exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
+    id("xyz.jpenilla.quiet-fabric-loom")
 }
 
 configurations {
@@ -19,6 +11,13 @@ configurations {
         resolutionStrategy {
             force("net.fabricmc:fabric-loader:${libs.versions.fabricLoader.get()}")
         }
+    }
+    transitiveInclude {
+        extendsFrom(api.get())
+
+        exclude("org.checkerframework")
+        exclude("org.apiguardian")
+        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
     runtimeClasspath {
         exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
@@ -52,10 +51,6 @@ dependencies {
 
     compileOnly(libs.fabricPermissionsApi)
     localRuntime(libs.fabricPermissionsApi)
-
-    transitiveInclude.resolvedConfiguration.resolvedArtifacts.forEach {
-        include(it.moduleVersion.id.toString())
-    }
 }
 
 tasks {

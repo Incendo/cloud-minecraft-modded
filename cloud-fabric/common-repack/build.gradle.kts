@@ -1,7 +1,7 @@
 plugins {
     id("conventions.base")
     id("conventions.publishing")
-    id("net.fabricmc.fabric-loom")
+    id("xyz.jpenilla.quiet-fabric-loom")
     id("conventions.common-dependencies")
 }
 
@@ -15,9 +15,6 @@ tasks {
     jar {
         from(zipTree(common.tasks.jar.flatMap { it.archiveFile })) {
             exclude("META-INF/MANIFEST.MF")
-        }
-        manifest {
-            attributes("Fabric-Loom-Remap" to true)
         }
     }
     sourcesJar {
