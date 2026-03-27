@@ -17,13 +17,6 @@ configurations {
 
         exclude("org.checkerframework")
         exclude("org.apiguardian")
-        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
-    }
-    runtimeClasspath {
-        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
-    }
-    compileClasspath {
-        exclude("org.incendo", "cloud-minecraft-modded-common-fabric-repack")
     }
 }
 
@@ -39,10 +32,8 @@ dependencies {
     compileOnly(libs.cloud.minecraft.signed.arguments)
 
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
-    localRuntime(project(":cloud-minecraft-modded-common"))
-    compileOnly(project(":cloud-minecraft-modded-common"))
-    api(project(":cloud-minecraft-modded-common-fabric-repack"))
-    include(project(":cloud-minecraft-modded-common-fabric-repack"))
+    api(project(":cloud-minecraft-modded-common"))
+    include(project(":cloud-minecraft-modded-common"))
 
     implementation(platform(fabricApiLibs.bom))
     implementation(fabricApiLibs.command.api.v2)
