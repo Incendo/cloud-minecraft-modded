@@ -234,11 +234,11 @@ public final class ModdedParserMappings {
             }
 
             final Type generic = field.getGenericType(); /* RegistryKey<? extends Registry<?>> */
-            if (!(generic instanceof ParameterizedType)) {
+            if (!(generic instanceof ParameterizedType parameterizedType)) {
                 continue;
             }
 
-            Type registryType = ((ParameterizedType) generic).getActualTypeArguments()[0];
+            Type registryType = parameterizedType.getActualTypeArguments()[0];
             while (registryType instanceof WildcardType) {
                 registryType = ((WildcardType) registryType).getUpperBounds()[0];
             }

@@ -28,8 +28,8 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -90,7 +90,7 @@ abstract class FabricCommandRegistrationHandler<C, S extends SharedSuggestionPro
                 if (connection == null) {
                     throw new IllegalStateException("Expected connection to be present but it wasn't!");
                 }
-                final CommandDispatcher<FabricClientCommandSource> dispatcher = ClientCommandManager.getActiveDispatcher();
+                final CommandDispatcher<FabricClientCommandSource> dispatcher = ClientCommands.getActiveDispatcher();
                 if (dispatcher == null) {
                     throw new IllegalStateException("Expected an active dispatcher!");
                 }

@@ -321,10 +321,10 @@ public final class VanillaArgumentParsers {
         final @NonNull Function<CommandSourceStack, CompletableFuture<ArgumentParseResult<O>>> resultFunction
     ) {
         final SharedSuggestionProvider nativeSource = context.get(ModdedCommandContextKeys.SHARED_SUGGESTION_PROVIDER);
-        if (!(nativeSource instanceof CommandSourceStack) || isClientSource(nativeSource)) {
+        if (!(nativeSource instanceof CommandSourceStack commandSourceStack) || isClientSource(nativeSource)) {
             return ArgumentParseResult.failureFuture(serverOnly());
         }
-        return resultFunction.apply((CommandSourceStack) nativeSource);
+        return resultFunction.apply(commandSourceStack);
     }
 
     /**

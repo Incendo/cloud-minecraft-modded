@@ -17,9 +17,9 @@ tasks {
 indra {
     checkstyle().set(libs.versions.checkstyle)
     javaVersions {
-        target(21)
-        testWith().set(setOf(21))
-        minimumToolchain(21)
+        target(25)
+        testWith().set(setOf(25))
+        minimumToolchain(25)
     }
 }
 

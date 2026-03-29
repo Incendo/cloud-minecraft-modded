@@ -16,7 +16,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("quiet-fabric-loom") version "1.15-SNAPSHOT"
+    id("xyz.jpenilla.quiet-fabric-loom-repositories") version "1.15-SNAPSHOT"
     id("net.neoforged.moddev.repositories") version "2.0.140"
 }
 
@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("fabricApiLibs") {
-            from("net.fabricmc.fabric-api:fabric-api-catalog:0.141.1+1.21.11")
+            from("net.fabricmc.fabric-api:fabric-api-catalog:0.144.3+26.1")
         }
     }
 }
@@ -43,6 +43,4 @@ rootProject.name = "cloud-minecraft-modded"
 
 include("cloud-minecraft-modded-common")
 include("cloud-fabric")
-include("cloud-fabric/common-repack")
-findProject(":cloud-fabric/common-repack")?.name = "cloud-minecraft-modded-common-fabric-repack"
 include("cloud-neoforge")

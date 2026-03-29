@@ -3,7 +3,7 @@ cloud-build-logic = "0.0.18"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "1.8.0"
-errorprone = "2.27.1"
+errorprone = "2.48.0"
 
 cloud = "2.0.0"
 cloudMinecraft = "2.0.0-beta.14"
@@ -11,12 +11,12 @@ geantyref = "1.3.16"
 
 immutables = "2.12.1"
 
-minecraft = "1.21.11"
-fabricLoader = "0.18.4"
-fabricPermissionsApi = "0.6.1"
-neoforge = "21.11.37-beta"
-neoform = "1.21.11-20251209.172050"
-adventureMod = "6.8.0"
+minecraft = "26.1"
+fabricLoader = "0.18.5"
+fabricPermissionsApi = "0.7.0"
+neoforge = "26.1.0.6-beta"
+neoform = "26.1-1"
+adventureMod = "6.9.0-SNAPSHOT"
 
 [libraries]
 cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "cloud-build-logic" }
