@@ -1,7 +1,12 @@
 plugins {
     id("conventions.base")
-    id("conventions.publishing")
+    id("conventions.mod-publishing")
     id("net.neoforged.moddev")
+}
+
+publishMods.modrinth {
+    file = tasks.jar.flatMap { it.archiveFile }
+    modLoaders = listOf("neoforge")
 }
 
 afterEvaluate {

@@ -2,8 +2,15 @@ import net.fabricmc.loom.task.AbstractRunTask
 
 plugins {
     id("conventions.base")
-    id("conventions.publishing")
+    id("conventions.mod-publishing")
     id("xyz.jpenilla.quiet-fabric-loom")
+}
+
+publishMods.modrinth {
+    file = tasks.jar.flatMap { it.archiveFile }
+    modLoaders = listOf("fabric")
+    requires("fabric-api")
+    optional("fabric-permissions-api")
 }
 
 configurations {

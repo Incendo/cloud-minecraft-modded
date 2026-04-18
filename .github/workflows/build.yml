@@ -49,3 +49,9 @@ jobs:
                   ORG_GRADLE_PROJECT_sonatypePassword: "${{ secrets.SONATYPE_PASSWORD }}"
                   ORG_GRADLE_PROJECT_signingKey: "${{ secrets.SIGNING_KEY }}"
                   ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.SIGNING_PASSWORD }}"
+            - name: Publish Modrinth
+              if: "${{ env.STATUS == 'release' && github.event_name == 'release' }}"
+              run: ./gradlew publishModrinth
+              env:
+                  MODRINTH_TOKEN: "${{ secrets.MODRINTH_TOKEN }}"
+                  RELEASE_NOTES: "${{ github.event.release.body }}"
