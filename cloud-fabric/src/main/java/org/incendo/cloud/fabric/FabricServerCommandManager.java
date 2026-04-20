@@ -132,4 +132,9 @@ public final class FabricServerCommandManager<C> extends FabricCommandManager<C,
             new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level())
         );
     }
+
+    @Override
+    public boolean isClientCommandManager() {
+        return false;
+    }
 }
