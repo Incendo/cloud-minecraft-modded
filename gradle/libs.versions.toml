@@ -10,7 +10,7 @@ cloud = "2.0.0"
 cloudMinecraft = "2.0.0-beta.15"
 geantyref = "1.3.16"
 
-immutables = "2.12.1"
+immutables = "2.12.2"
 
 minecraft = "26.1"
 fabricLoader = "0.19.3"
