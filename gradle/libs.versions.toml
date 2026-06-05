@@ -1,6 +1,6 @@
 [versions]
 cloud-build-logic = "0.0.19"
-mod-publish-plugin = "1.1.0"
+mod-publish-plugin = "2.0.0"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "1.8.0"
