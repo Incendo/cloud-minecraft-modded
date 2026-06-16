@@ -56,6 +56,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.TeamColor;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.component.DefaultValue;
 import org.incendo.cloud.component.TypedCommandComponent;
@@ -67,8 +68,8 @@ import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.modded.data.Coordinates;
 import org.incendo.cloud.minecraft.modded.data.Coordinates.ColumnCoordinates;
 import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
-import org.incendo.cloud.minecraft.modded.parser.NamedColorParser;
 import org.incendo.cloud.minecraft.modded.parser.RegistryEntryParser;
+import org.incendo.cloud.minecraft.modded.parser.TeamColorParser;
 import org.incendo.cloud.minecraft.signed.SignedString;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -139,18 +140,18 @@ public final class FabricExample implements ModInitializer {
         );
 
         final CloudKey<MultiplePlayerSelector> playersKey = CloudKey.of("players", MultiplePlayerSelector.class);
-        final CloudKey<ChatFormatting> textColorKey = CloudKey.of("color", ChatFormatting.class);
+        final CloudKey<TeamColor> textColorKey = CloudKey.of("color", TeamColor.class);
 
         manager.command(base.literal("wave")
             .required(playersKey, multiplePlayerSelectorParser())
-            .required(textColorKey, NamedColorParser.namedColorParser())
+            .required(textColorKey, TeamColorParser.teamColorParser())
             .handler(ctx -> {
                 final MultiplePlayerSelector selector = ctx.get(playersKey);
                 final Collection<ServerPlayer> selected = selector.values();
                 selected.forEach(selectedPlayer ->
                     selectedPlayer.sendSystemMessage(
                         Component.literal("Wave from ")
-                            .withStyle(style -> style.withColor(ctx.get(textColorKey)))
+                            .withStyle(style -> style.withColor(ctx.get(textColorKey).textColor()))
                             .append(ctx.sender().getDisplayName())
                     ));
                 ctx.sender().sendSuccess(

@@ -23,41 +23,42 @@
 //
 package org.incendo.cloud.minecraft.modded.parser;
 
-import net.minecraft.ChatFormatting;
+import net.minecraft.commands.arguments.TeamColorArgument;
+import net.minecraft.world.scores.TeamColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
- * An argument for named colors in the {@link ChatFormatting} enum.
+ * An argument for team colors.
  *
  * @param <C> the sender type
  */
-public final class NamedColorParser<C> extends WrappedBrigadierParser<C, ChatFormatting> {
+public final class TeamColorParser<C> extends WrappedBrigadierParser<C, TeamColor> {
 
     /**
-     * Creates a new named color parser.
+     * Creates a new team color parser.
      *
      * @param <C> command sender type
      * @return the created parser
      */
-    public static <C> @NonNull ParserDescriptor<C, ChatFormatting> namedColorParser() {
-        return ParserDescriptor.of(new NamedColorParser<>(), ChatFormatting.class);
+    public static <C> @NonNull ParserDescriptor<C, TeamColor> teamColorParser() {
+        return ParserDescriptor.of(new TeamColorParser<>(), TeamColor.class);
     }
 
     /**
-     * Returns a {@link CommandComponent.Builder} using {@link #namedColorParser()} as the parser.
+     * Returns a {@link CommandComponent.Builder} using {@link #teamColorParser()} as the parser.
      *
      * @param <C> the command sender type
      * @return the component builder
      */
-    public static <C> CommandComponent.@NonNull Builder<C, ChatFormatting> namedColorComponent() {
-        return CommandComponent.<C, ChatFormatting>builder().parser(namedColorParser());
+    public static <C> CommandComponent.@NonNull Builder<C, TeamColor> teamColorComponent() {
+        return CommandComponent.<C, TeamColor>builder().parser(teamColorParser());
     }
 
-    NamedColorParser() {
-        super(net.minecraft.commands.arguments.ColorArgument.color());
+    TeamColorParser() {
+        super(TeamColorArgument.teamColor());
     }
 
 }
