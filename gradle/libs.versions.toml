@@ -17,6 +17,7 @@ fabricLoader = "0.19.3"
 fabricPermissionsApi = "0.7.0"
 neoforge = "26.2.0.0-beta"
 neoform = "26.2-1"
+adventureApi = "5.1.1"
 adventureMod = "7.0.0-SNAPSHOT"
 
 [libraries]
@@ -33,7 +34,7 @@ geantyref = { group = "io.leangen.geantyref", name = "geantyref", version.ref = 
 cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloudMinecraft" }
 cloud-minecraft-signed-arguments = { module = "org.incendo:cloud-minecraft-signed-arguments", version.ref = "cloudMinecraft" }
 cloud-minecraft-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "cloudMinecraft" }
-adventureApi = { group = "net.kyori", name = "adventure-api", version = "4.17.0" }
+adventureApi = { group = "net.kyori", name = "adventure-api", version.ref = "adventureApi" }
 adventureMod = { module = "net.kyori:adventure-platform-mod-shared", version.ref = "adventureMod" }
 adventureFabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventureMod" }
 
