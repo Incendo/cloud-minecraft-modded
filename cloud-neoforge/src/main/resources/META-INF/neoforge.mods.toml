@@ -16,7 +16,7 @@ displayTest = "IGNORE_ALL_VERSION"
 [[dependencies.cloud]]
 modId = "neoforge"
 type = "required"
-versionRange = "[26.2,)"
+versionRange = "[26.1,)"
 ordering = "NONE"
 side = "BOTH"
 
