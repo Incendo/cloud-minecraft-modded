@@ -1,5 +1,5 @@
 [versions]
-cloud-build-logic = "0.0.21"
+cloud-build-logic = "0.0.22"
 mod-publish-plugin = "2.0.0"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
