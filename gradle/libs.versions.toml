@@ -17,7 +17,7 @@ fabricLoader = "0.19.3"
 fabricPermissionsApi = "0.7.0"
 neoforge = "26.2.0.0-beta"
 neoform = "26.2-1"
-adventureApi = "5.1.1"
+adventureApi = "5.2.0"
 adventureMod = "7.1.1"
 
 [libraries]
