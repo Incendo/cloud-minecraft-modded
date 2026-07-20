@@ -38,7 +38,8 @@ adventureApi = { group = "net.kyori", name = "adventure-api", version.ref = "adv
 adventureMod = { module = "net.kyori:adventure-platform-mod-shared", version.ref = "adventureMod" }
 adventureFabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventureMod" }
 
-immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
+immutablesValue = { group = "org.immutables", name = "value", version.ref = "immutables" }
+immutablesValueAnnotations = { group = "org.immutables", name = "value-annotations", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }
 
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
@@ -52,6 +53,3 @@ zNeoForge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 cloud-buildLogic-spotless = { id = "org.incendo.cloud-build-logic.spotless", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-publishing = { id = "org.incendo.cloud-build-logic.publishing.root-project", version.ref = "cloud-build-logic" }
 cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.spotless.root-project", version.ref = "cloud-build-logic" }
-
-[bundles]
-immutables = ["immutables", "immutablesAnnotate"]

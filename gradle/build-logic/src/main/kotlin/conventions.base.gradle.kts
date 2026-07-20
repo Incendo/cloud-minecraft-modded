@@ -36,6 +36,7 @@ cloudSpotless {
 dependencies {
     checkstyle(libs.stylecheck)
     errorprone(libs.errorproneCore)
-    compileOnly(libs.bundles.immutables)
-    annotationProcessor(libs.bundles.immutables)
+    compileOnlyApi(libs.immutablesValueAnnotations)
+    compileOnlyApi(libs.immutablesAnnotate)
+    annotationProcessor(libs.immutablesValue)
 }
