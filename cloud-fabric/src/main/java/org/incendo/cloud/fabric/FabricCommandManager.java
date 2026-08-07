@@ -26,13 +26,12 @@ package org.incendo.cloud.fabric;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.CommandManager;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.SenderMapper;
-import org.incendo.cloud.SenderMapperHolder;
-import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.minecraft.modded.ModdedCommandManager;
 import org.incendo.cloud.minecraft.modded.caption.ModdedDefaultCaptionsProvider;
 import org.incendo.cloud.minecraft.modded.internal.ModdedParserMappings;
 import org.incendo.cloud.minecraft.modded.internal.ModdedPreprocessor;
@@ -52,8 +51,8 @@ import org.incendo.cloud.suggestion.SuggestionFactory;
  * @see FabricServerCommandManager for server commands
  * @since 1.5.0
  */
-public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider> extends CommandManager<C> implements
-    BrigadierManagerHolder<C, S>, SenderMapperHolder<S, C> {
+@DefaultQualifier(NonNull.class)
+public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider> extends ModdedCommandManager<C, S> {
 
     private final SenderMapper<S, C> senderMapper;
     private final CloudBrigadierManager<C, S> brigadierManager;
@@ -78,9 +77,9 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     @API(status = API.Status.STABLE, since = "2.0.0")
     @SuppressWarnings("unchecked")
     FabricCommandManager(
-        final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
-        final @NonNull SenderMapper<S, C> senderMapper,
-        final @NonNull FabricCommandRegistrationHandler<C, S> registrationHandler
+        final ExecutionCoordinator<C> commandExecutionCoordinator,
+        final SenderMapper<S, C> senderMapper,
+        final FabricCommandRegistrationHandler<C, S> registrationHandler
     ) {
         super(commandExecutionCoordinator, registrationHandler);
         this.senderMapper = senderMapper;
@@ -100,27 +99,13 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
     }
 
     @Override
-    public final @NonNull SenderMapper<S, C> senderMapper() {
+    public final SenderMapper<S, C> senderMapper() {
         return this.senderMapper;
     }
 
     @Override
-    public final @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory() {
+    public final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory() {
         return this.suggestionFactory;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>This will always return true for {@link FabricCommandManager}s.</p>
-     *
-     * @return {@code true}
-     * @since 2.0.0
-     */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    @Override
-    public final boolean hasBrigadierManager() {
-        return true;
     }
 
     /**
@@ -132,7 +117,7 @@ public abstract class FabricCommandManager<C, S extends SharedSuggestionProvider
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     @Override
-    public final @NonNull CloudBrigadierManager<C, S> brigadierManager() {
+    public final CloudBrigadierManager<C, S> brigadierManager() {
         return this.brigadierManager;
     }
 
