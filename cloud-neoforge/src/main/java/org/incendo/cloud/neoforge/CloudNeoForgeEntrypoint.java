@@ -140,7 +140,7 @@ public final class CloudNeoForgeEntrypoint {
     }
 
     private static void recurseCommandPermission(final Set<String> permissions, final Permission permission) {
-        if (permission instanceof PredicatePermission<?> || permission == Permission.empty()) {
+        if (permission instanceof PredicatePermission<?> || permission.equals(Permission.empty())) {
             return;
         }
         if (permission instanceof OrPermission || permission instanceof AndPermission) {
