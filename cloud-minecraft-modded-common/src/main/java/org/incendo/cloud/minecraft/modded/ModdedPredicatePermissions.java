@@ -146,7 +146,7 @@ public final class ModdedPredicatePermissions {
                         return allowOnMultiplayer.testPermission(sender);
                     }
                     return PermissionResult.of(
-                        Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                        Minecraft.getInstance().getSingleplayerServer().getGuestCommandAccess()
                             || Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands(),
                         this
                     );
@@ -205,7 +205,7 @@ public final class ModdedPredicatePermissions {
                         return allowOnMultiplayer.testPermission(sender);
                     }
                     return PermissionResult.of(
-                        !Minecraft.getInstance().getSingleplayerServer().getPlayerList().isAllowCommandsForAllPlayers()
+                        !Minecraft.getInstance().getSingleplayerServer().getGuestCommandAccess()
                             && !Minecraft.getInstance().getSingleplayerServer().getWorldData().isAllowCommands(),
                         this
                     );

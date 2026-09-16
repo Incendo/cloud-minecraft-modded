@@ -82,7 +82,7 @@ tasks {
 }
 
 /* set up a testmod source set */
-val testmod: SourceSet by sourceSets.creating {
+val testmod = sourceSets.create("testmod") {
     val main = sourceSets.main.get()
     compileClasspath += main.compileClasspath
     runtimeClasspath += main.runtimeClasspath
@@ -97,7 +97,7 @@ dependencies {
     localRuntime(libs.cloud.minecraft.extras)
 }
 
-val testmodJar by tasks.registering(Jar::class) {
+val testmodJar = tasks.register<Jar>("testmodJar") {
     archiveClassifier.set("testmod-dev")
     group = LifecycleBasePlugin.BUILD_GROUP
     from(testmod.output)
