@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("fabricApiLibs") {
-            from("net.fabricmc.fabric-api:fabric-api-catalog:0.160.6+26.3")
+            from("net.fabricmc.fabric-api:fabric-api-catalog:0.161.0+26.3")
         }
     }
 }
