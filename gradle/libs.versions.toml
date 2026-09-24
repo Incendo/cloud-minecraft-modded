@@ -8,7 +8,7 @@ errorprone = "2.50.0"
 
 cloud = "2.1.0"
 cloudMinecraft = "2.0.1"
-geantyref = "1.3.16"
+geantyref = "2.0.1"
 
 immutables = "2.12.2"
 
