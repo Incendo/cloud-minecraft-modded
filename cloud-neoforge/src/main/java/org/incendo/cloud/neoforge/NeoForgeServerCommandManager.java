@@ -124,4 +124,9 @@ public final class NeoForgeServerCommandManager<C> extends NeoForgeCommandManage
             new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level())
         );
     }
+
+    @Override
+    public boolean isClientCommandManager() {
+        return false;
+    }
 }

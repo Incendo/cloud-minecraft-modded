@@ -29,15 +29,13 @@ import java.util.WeakHashMap;
 import net.minecraft.commands.CommandSourceStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
-import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
-import org.incendo.cloud.SenderMapperHolder;
-import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.meta.CommandMeta;
 import org.incendo.cloud.meta.SimpleCommandMeta;
+import org.incendo.cloud.minecraft.modded.ModdedCommandManager;
 import org.incendo.cloud.minecraft.modded.caption.MinecraftCaptionFormatter;
 import org.incendo.cloud.minecraft.modded.caption.ModdedDefaultCaptionsProvider;
 import org.incendo.cloud.minecraft.modded.internal.ModdedExceptionHandler;
@@ -46,8 +44,7 @@ import org.incendo.cloud.minecraft.modded.internal.ModdedPreprocessor;
 import org.incendo.cloud.suggestion.SuggestionFactory;
 
 @DefaultQualifier(NonNull.class)
-public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
-    implements BrigadierManagerHolder<C, CommandSourceStack>, SenderMapperHolder<CommandSourceStack, C> {
+public abstract class NeoForgeCommandManager<C> extends ModdedCommandManager<C, CommandSourceStack> {
 
     static final Set<NeoForgeCommandManager<?>> INSTANCES = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
@@ -87,11 +84,6 @@ public abstract class NeoForgeCommandManager<C> extends CommandManager<C>
     @Override
     public final CloudBrigadierManager<C, CommandSourceStack> brigadierManager() {
         return this.brigadierManager;
-    }
-
-    @Override
-    public final boolean hasBrigadierManager() {
-        return true;
     }
 
     @Override

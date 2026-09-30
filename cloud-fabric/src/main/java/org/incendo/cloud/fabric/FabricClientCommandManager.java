@@ -106,4 +106,9 @@ public final class FabricClientCommandManager<C> extends FabricCommandManager<C,
     public boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
         return true;
     }
+
+    @Override
+    public boolean isClientCommandManager() {
+        return true;
+    }
 }
