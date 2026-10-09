@@ -27,6 +27,7 @@ import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -61,7 +62,7 @@ public final class SpongeParserMapper<C> {
     private final Map<Class<?>, Mapping<C, ?>> mappers = new HashMap<>();
 
     SpongeParserMapper() {
-
+        this.initStandardMappers();
     }
 
     @SuppressWarnings("ReferenceEquality") // Identity determines whether the parser itself provides suggestions.
@@ -86,10 +87,10 @@ public final class SpongeParserMapper<C> {
         while (parser instanceof MappedArgumentParser<C, ?, ?> mapped && !(parser instanceof NodeSource)) {
             parser = mapped.baseParser();
         }
-        final Mapping<C, ?> mapper = this.getOrCreateMappers(holder).get(parser.getClass());
+        final Mapping<C, ?> mapper = this.mappers.get(parser.getClass());
         if (mapper != null) {
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> apply =
-                (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) ((Function) mapper.mapper).apply(parser);
+                (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) ((BiFunction) mapper.mapper).apply(parser, holder);
             if (mapper.cloudSuggestions) {
                 apply.customCompletions();
                 return apply;
@@ -103,17 +104,9 @@ public final class SpongeParserMapper<C> {
         return result;
     }
 
-    private synchronized Map<Class<?>, Mapping<C, ?>> getOrCreateMappers(final RegistryHolder holder) {
-        if (this.mappers.isEmpty()) {
-            this.initStandardMappers(holder);
-        }
-
-        return this.mappers;
-    }
-
-    private void initStandardMappers(final RegistryHolder holder) {
+    private void initStandardMappers() {
         this.registerMapping(new TypeToken<StringParser<C>>() {
-        }, builder -> builder.to(stringParser -> {
+        }, builder -> builder.to((stringParser, holder) -> {
             final StringParser.StringMode mode = stringParser.stringMode();
             if (mode == StringParser.StringMode.SINGLE) {
                 return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().word();
@@ -125,21 +118,21 @@ public final class SpongeParserMapper<C> {
             throw new IllegalArgumentException("Unknown string mode '" + mode + "'!");
         }));
         this.registerMapping(new TypeToken<ByteParser<C>>() {
-        }, builder -> builder.to(byteParser -> {
+        }, builder -> builder.to((byteParser, holder) -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             node.min((int) byteParser.range().minByte());
             node.max((int) byteParser.range().maxByte());
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<ShortParser<C>>() {
-        }, builder -> builder.to(shortParser -> {
+        }, builder -> builder.to((shortParser, holder) -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             node.min((int) shortParser.range().minShort());
             node.max((int) shortParser.range().maxShort());
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<IntegerParser<C>>() {
-        }, builder -> builder.to(integerParser -> {
+        }, builder -> builder.to((integerParser, holder) -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get(holder).createNode();
             if (integerParser.hasMin()) {
                 node.min(integerParser.range().minInt());
@@ -150,7 +143,7 @@ public final class SpongeParserMapper<C> {
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<FloatParser<C>>() {
-        }, builder -> builder.to(floatParser -> {
+        }, builder -> builder.to((floatParser, holder) -> {
             final CommandTreeNode.Range<Float> node = CommandTreeNodeTypes.FLOAT.get(holder).createNode();
             if (floatParser.hasMin()) {
                 node.min(floatParser.range().minFloat());
@@ -161,7 +154,7 @@ public final class SpongeParserMapper<C> {
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<DoubleParser<C>>() {
-        }, builder -> builder.to(doubleParser -> {
+        }, builder -> builder.to((doubleParser, holder) -> {
             final CommandTreeNode.Range<Double> node = CommandTreeNodeTypes.DOUBLE.get(holder).createNode();
             if (doubleParser.hasMin()) {
                 node.min(doubleParser.range().minDouble());
@@ -172,7 +165,7 @@ public final class SpongeParserMapper<C> {
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<LongParser<C>>() {
-        }, builder -> builder.to(longParser -> {
+        }, builder -> builder.to((longParser, holder) -> {
             final CommandTreeNode.Range<Long> node = CommandTreeNodeTypes.LONG.get(holder).createNode();
             if (longParser.hasMin()) {
                 node.min(longParser.range().minLong());
@@ -183,19 +176,19 @@ public final class SpongeParserMapper<C> {
             return node;
         }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<BooleanParser<C>>() {
-        }, builder -> builder.to(booleanParser -> {
+        }, builder -> builder.to((booleanParser, holder) -> {
             return CommandTreeNodeTypes.BOOL.get(holder).createNode();
         }));
         this.registerMapping(new TypeToken<CommandFlagParser<C>>() {
-        }, builder -> builder.to(flagArgumentParser -> {
+        }, builder -> builder.to((flagArgumentParser, holder) -> {
             return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().greedy();
         }));
         this.registerMapping(new TypeToken<StringArrayParser<C>>() {
-        }, builder -> builder.to(stringArrayParser -> {
+        }, builder -> builder.to((stringArrayParser, holder) -> {
             return CommandTreeNodeTypes.STRING.get(holder).createNode().customCompletions().greedy();
         }));
         this.registerMapping(new TypeToken<UUIDParser<C>>() {
-        }, builder -> builder.to(uuidParser -> {
+        }, builder -> builder.to((uuidParser, holder) -> {
             return CommandTreeNodeTypes.UUID.get(holder).createNode();
         }));
     }
@@ -284,13 +277,27 @@ public final class SpongeParserMapper<C> {
          * @param mapper mapper function
          * @return this builder
          */
-        @NonNull MappingBuilder<C, A> to(@NonNull Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper);
+        default @NonNull MappingBuilder<C, A> to(
+            @NonNull Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
+        ) {
+            return this.to((parser, holder) -> mapper.apply(parser));
+        }
+
+        /**
+         * Set the mapper function, receiving the registry holder for the current command tree.
+         *
+         * @param mapper mapper function
+         * @return this builder
+         */
+        @NonNull MappingBuilder<C, A> to(
+            @NonNull BiFunction<A, RegistryHolder, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
+        );
 
     }
 
     private static final class MappingBuilderImpl<C, A extends ArgumentParser<C, ?>> implements MappingBuilder<C, A> {
 
-        private Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper;
+        private BiFunction<A, RegistryHolder, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper;
         private boolean cloudSuggestions;
 
         @Override
@@ -301,7 +308,7 @@ public final class SpongeParserMapper<C> {
 
         @Override
         public @NonNull MappingBuilder<C, A> to(
-            final @NonNull Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
+            final @NonNull BiFunction<A, RegistryHolder, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
         ) {
             this.mapper = mapper;
             return this;
@@ -315,7 +322,7 @@ public final class SpongeParserMapper<C> {
     }
 
     private record Mapping<C, A extends ArgumentParser<C, ?>>(
-        Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
+        BiFunction<A, RegistryHolder, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
         boolean cloudSuggestions
     ) {}
 
