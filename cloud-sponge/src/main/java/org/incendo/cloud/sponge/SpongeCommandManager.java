@@ -185,7 +185,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
         );
         for (final Field field : RegistryTypes.class.getDeclaredFields()) {
             final Type generic = field.getGenericType(); /* RegistryType<?> */
-            if (!(generic instanceof ParameterizedType)) {
+            if (!(generic instanceof ParameterizedType parameterizedType)) {
                 continue;
             }
 
@@ -199,7 +199,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
                 continue;
             }
             final DefaultedRegistryType<?> defaultedRegistryType = (DefaultedRegistryType<?>) registryType;
-            final Type valueType = ((ParameterizedType) generic).getActualTypeArguments()[0];
+            final Type valueType = parameterizedType.getActualTypeArguments()[0];
 
             this.parserRegistry().registerParserSupplier(
                 TypeToken.get(valueType),

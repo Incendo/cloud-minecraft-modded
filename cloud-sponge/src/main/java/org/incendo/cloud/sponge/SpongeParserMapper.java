@@ -64,6 +64,7 @@ public final class SpongeParserMapper<C> {
 
     }
 
+    @SuppressWarnings("ReferenceEquality") // Identity determines whether the parser itself provides suggestions.
     CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapComponent(
         final CommandComponent<C> commandComponent, final RegistryHolder holder) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result = this.mapParser(commandComponent.parser(), holder);

@@ -60,8 +60,8 @@ public interface SpongeSuggestion extends Suggestion {
     static @NonNull SpongeSuggestion spongeSuggestion(
         final @NonNull Suggestion suggestion
     ) {
-        if (suggestion instanceof SpongeSuggestion) {
-            return (SpongeSuggestion) suggestion;
+        if (suggestion instanceof SpongeSuggestion spongeSuggestion) {
+            return spongeSuggestion;
         }
         if (suggestion instanceof TooltipSuggestion tooltipSuggestion) {
             final @Nullable Component tooltip = Optional.ofNullable(tooltipSuggestion.tooltip())
