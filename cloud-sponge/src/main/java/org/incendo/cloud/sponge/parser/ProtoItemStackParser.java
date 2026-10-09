@@ -25,16 +25,17 @@ package org.incendo.cloud.sponge.parser;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.concurrent.CompletableFuture;
-import net.kyori.adventure.text.Component;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.network.chat.ComponentUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.sponge.NodeSource;
 import org.incendo.cloud.sponge.data.ProtoItemStack;
@@ -47,26 +48,27 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.registry.RegistryHolder;
+import org.spongepowered.common.adventure.SpongeAdventure;
 
 /**
  * An argument for parsing {@link ProtoItemStack ProtoItemStacks} from an {@link ItemType} identifier
- * and optional NBT data. The stack size of the resulting snapshot will always be {@code 1}.
+ * and optional data components.
  *
  * <p>Example input strings:</p>
  * <ul>
  *     <li>{@code apple}</li>
  *     <li>{@code minecraft:apple}</li>
- *     <li>{@code diamond_sword{Enchantments:[{id:sharpness,lvl:5}]}}</li>
+ *     <li>{@code diamond_sword[enchantments={sharpness:5}]}</li>
  * </ul>
  *
  * @param <C> command sender type
  */
 public final class ProtoItemStackParser<C> implements NodeSource,
-    ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, SuggestionProvider<C> {
+    ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, MappedArgumentParser<C, ItemInput, ProtoItemStack>, SuggestionProvider<C> {
 
-    private ProtoItemStackParser(final RegistryHolder registryHolder) {
-        //todo: Use ContextualArgumentTypeProvider
-        this.mappedParser = new WrappedBrigadierParser<C, ItemInput>(ItemArgument.item((CommandBuildContext) registryHolder))
+    private ProtoItemStackParser() {
+        this.nativeParser = new WrappedBrigadierParser<>(new ContextualArgumentTypeProvider<>(ItemArgument::item));
+        this.mappedParser = this.nativeParser
             .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(new ProtoItemStackImpl(itemInput)));
     }
 
@@ -74,14 +76,19 @@ public final class ProtoItemStackParser<C> implements NodeSource,
      * Creates a new {@link ProtoItemStackParser}.
      *
      * @param <C> command sender type
-     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser(final RegistryHolder registryHolder) {
-        return ParserDescriptor.of(new ProtoItemStackParser<>(registryHolder), ProtoItemStack.class);
+    public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser() {
+        return ParserDescriptor.of(new ProtoItemStackParser<>(), ProtoItemStack.class);
     }
 
+    private final WrappedBrigadierParser<C, ItemInput> nativeParser;
     private final ArgumentParser<C, ProtoItemStack> mappedParser;
+
+    @Override
+    public @NonNull ArgumentParser<C, ItemInput> baseParser() {
+        return this.nativeParser;
+    }
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ProtoItemStack>> parseFuture(
@@ -114,28 +121,24 @@ public final class ProtoItemStackParser<C> implements NodeSource,
 
         @Override
         public @NonNull ItemType itemType() {
-            return (ItemType) this.itemInput.getItem();
+            return (ItemType) this.itemInput.item().value();
         }
 
         @SuppressWarnings("ConstantConditions")
         @Override
-        public @NonNull ItemStack createItemStack(
-            final int stackSize,
-            final boolean respectMaximumStackSize
-        ) throws ComponentMessageRuntimeException {
+        public @NonNull ItemStack createItemStack(final int stackSize) throws ComponentMessageRuntimeException {
             try {
-                return (ItemStack) (Object) this.itemInput.createItemStack(stackSize, respectMaximumStackSize);
+                return (ItemStack) (Object) this.itemInput.createItemStack(stackSize);
             } catch (final CommandSyntaxException ex) {
-                throw new ComponentMessageRuntimeException(Component.text(ex.getMessage()));
+                throw new ComponentMessageRuntimeException(
+                    SpongeAdventure.asAdventure(ComponentUtils.fromMessage(ex.getRawMessage())), ex
+                );
             }
         }
 
         @Override
-        public @NonNull ItemStackSnapshot createItemStackSnapshot(
-            final int stackSize,
-            final boolean respectMaximumStackSize
-        ) throws ComponentMessageRuntimeException {
-            return this.createItemStack(stackSize, respectMaximumStackSize).asImmutable();
+        public @NonNull ItemStackSnapshot createItemStackSnapshot(final int stackSize) throws ComponentMessageRuntimeException {
+            return this.createItemStack(stackSize).asImmutable();
         }
 
     }

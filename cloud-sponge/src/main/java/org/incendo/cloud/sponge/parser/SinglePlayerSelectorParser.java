@@ -81,9 +81,8 @@ public final class SinglePlayerSelectorParser<C> implements NodeSource,
             final EntitySelector parsed = result.parsedValue().get();
             final ServerPlayer player;
             try {
-                // todo: a more proper fix then setting permission level 2
                 player = (ServerPlayer) parsed.findSinglePlayer(
-                    ((CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)).withPermission(2)
+                    (CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)
                 );
             } catch (final CommandSyntaxException ex) {
                 return ArgumentParseResult.failure(ex);

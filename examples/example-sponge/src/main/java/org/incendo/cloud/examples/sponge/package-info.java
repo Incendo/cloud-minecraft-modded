@@ -22,6 +22,6 @@
 // SOFTWARE.
 //
 /**
- * Cloud example for Sponge API v8
+ * Cloud example for Sponge API v19
  */
 package org.incendo.cloud.examples.sponge;

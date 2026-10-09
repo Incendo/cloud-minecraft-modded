@@ -85,7 +85,7 @@ public final class MultiplePlayerSelectorParser<C> implements NodeSource,
             final List<ServerPlayer> players;
             try {
                 players = parsed.findPlayers(
-                    ((CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)).withPermission(2)
+                    (CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)
                 ).stream().map(p -> (ServerPlayer) p).collect(Collectors.toList());
             } catch (final CommandSyntaxException ex) {
                 return ArgumentParseResult.failure(ex);

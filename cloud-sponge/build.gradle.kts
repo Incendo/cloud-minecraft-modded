@@ -9,12 +9,12 @@ dependencies {
     implementation(libs.cloud.brigadier)
     offlineLinkedJavadoc(project(":cloud-minecraft-modded-common"))
     implementation(project(":cloud-minecraft-modded-common"))
-    compileOnly("org.spongepowered:spongeapi:14.1.0-SNAPSHOT")
-    compileOnly("org.spongepowered:sponge:1.21.4-14.0.0-SNAPSHOT")
+    compileOnly("org.spongepowered:spongeapi:19.0.0-SNAPSHOT")
+    compileOnly("org.spongepowered:sponge:26.1.2-19.0.0-SNAPSHOT")
 }
 
 neoForge {
     enable {
-        neoFormVersion = "1.21.4-20241203.161809"
+        neoFormVersion = "26.1.2-1"
     }
 }

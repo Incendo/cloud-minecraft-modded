@@ -27,7 +27,6 @@ import io.leangen.geantyref.TypeToken;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.server.MinecraftServer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.component.CommandComponent;
@@ -37,14 +36,14 @@ import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvide
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.MappedArgumentParser;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.parser.flag.CommandFlag;
+import org.incendo.cloud.parser.flag.CommandFlagParser;
 import org.incendo.cloud.parser.standard.EitherParser;
-import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
-import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 
 import static java.util.Objects.requireNonNull;
 
@@ -58,11 +57,20 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
 
     private void handleRegistrationEvent(final RegisterCommandEvent<Command.Raw> event) {
         this.commandManager.registrationCalled();
-        this.commandManager.registerParsers(event.registryHolder());
-
-        for (final CommandNode<C> node : this.commandManager.commandTree().rootNodes()) {
-            this.registerCommand(event, requireNonNull(node.component()));
-        }
+        // Sponge's CommandsMixin exposes the native CommandBuildContext as the event's RegistryHolder.
+        // Initialize before parsing/completions, and refresh cached types on every registration (including reloads).
+        ContextualArgumentTypeProvider.withBuildContext(
+            this.commandManager,
+            (CommandBuildContext) event.registryHolder(),
+            true,
+            () -> {
+                this.commandManager.registerParsers();
+                this.initializeNativeArgumentTypes();
+                for (final CommandNode<C> node : this.commandManager.commandTree().rootNodes()) {
+                    this.registerCommand(event, requireNonNull(node.component()));
+                }
+            }
+        );
     }
 
     private void registerCommand(final RegisterCommandEvent<Command.Raw> event, final CommandComponent<C> rootLiteral) {
@@ -75,29 +83,19 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
         );
     }
 
-    private void startedEngine(final StartedEngineEvent<Server> serverStartedEngineEvent) {
-        final MinecraftServer engine = (MinecraftServer) serverStartedEngineEvent.engine();
-        ContextualArgumentTypeProvider.withBuildContext(
-            this.commandManager,
-            CommandBuildContext.simple(engine.registryAccess(), engine.getWorldData().enabledFeatures()),
-            true,
-            () -> {
-                for (final org.incendo.cloud.Command<C> registeredCommand : this.registeredCommands) {
-                    for (final CommandComponent<C> component : registeredCommand.components()) {
-                        if (component.type() == CommandComponent.ComponentType.LITERAL
-                            || component.type() == CommandComponent.ComponentType.FLAG) {
-                            continue;
-                        }
-
-                        for (final ArgumentParser<?, ?> parser : unwrap(component.parser())) {
-                            if (parser instanceof WrappedBrigadierParser<?, ?> wrappedBrigadierParser) {
-                                wrappedBrigadierParser.nativeArgumentType();
-                            }
-                        }
+    private void initializeNativeArgumentTypes() {
+        for (final org.incendo.cloud.Command<C> registeredCommand : this.registeredCommands) {
+            for (final CommandComponent<C> component : registeredCommand.components()) {
+                if (component.type() == CommandComponent.ComponentType.LITERAL) {
+                    continue;
+                }
+                for (final ArgumentParser<?, ?> parser : unwrap(component.parser())) {
+                    if (parser instanceof WrappedBrigadierParser<?, ?> wrappedBrigadierParser) {
+                        wrappedBrigadierParser.nativeArgumentType();
                     }
                 }
             }
-        );
+        }
     }
 
     void initialize(final @NonNull SpongeCommandManager<C> commandManager) {
@@ -106,13 +104,6 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
             EventListenerRegistration.builder(new TypeToken<RegisterCommandEvent<Command.Raw>>() {})
                 .plugin(this.commandManager.owningPluginContainer())
                 .listener(this::handleRegistrationEvent)
-                .order(Order.DEFAULT)
-                .build()
-        );
-        Sponge.eventManager().registerListener(
-            EventListenerRegistration.builder(new TypeToken<StartedEngineEvent<Server>>() {})
-                .plugin(this.commandManager.owningPluginContainer())
-                .listener(this::startedEngine)
                 .order(Order.DEFAULT)
                 .build()
         );
@@ -134,6 +125,15 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
         final Set<ArgumentParser<?, ?>> parsers,
         final ArgumentParser<?, ?> parser
     ) {
+        if (parser instanceof CommandFlagParser<?> flagParser) {
+            for (final CommandFlag<?> flag : flagParser.flags()) {
+                final CommandComponent<?> component = flag.commandComponent();
+                if (component != null) {
+                    unwrap(parsers, component.parser());
+                }
+            }
+            return;
+        }
         if (parser instanceof MappedArgumentParser<?, ?, ?> mapped) {
             unwrap(parsers, mapped.baseParser());
             return;

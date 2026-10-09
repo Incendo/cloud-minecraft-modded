@@ -25,7 +25,6 @@ package org.incendo.cloud.sponge.parser;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -33,8 +32,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.sponge.NodeSource;
 import org.incendo.cloud.sponge.data.BlockPredicate;
@@ -52,27 +53,32 @@ import org.spongepowered.common.util.VecHelper;
  * @param <C> command sender type
  */
 public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, BlockPredicate>,
-    NodeSource, SuggestionProvider<C> {
+    MappedArgumentParser<C, BlockPredicateArgument.Result, BlockPredicate>, NodeSource, SuggestionProvider<C> {
 
-    private BlockPredicateParser(final RegistryHolder registryHolder) {
-        //todo: Use ContextualArgumentTypeProvider
-        this.mappedParser = new WrappedBrigadierParser<C, BlockPredicateArgument.Result>(
-            net.minecraft.commands.arguments.blocks.BlockPredicateArgument.blockPredicate((CommandBuildContext) registryHolder)
-        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result)));
+    private BlockPredicateParser() {
+        this.nativeParser = new WrappedBrigadierParser<>(new ContextualArgumentTypeProvider<>(BlockPredicateArgument::blockPredicate));
+        this.mappedParser = this.nativeParser.flatMapSuccess(
+            (ctx, result) -> ArgumentParseResult.successFuture(new BlockPredicateImpl(result))
+        );
     }
 
     /**
      * Creates a new {@link BlockPredicateParser}.
      *
      * @param <C> command sender type
-     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, BlockPredicate> blockPredicateParser(final RegistryHolder registryHolder) {
-        return ParserDescriptor.of(new BlockPredicateParser<>(registryHolder), BlockPredicate.class);
+    public static <C> ParserDescriptor<C, BlockPredicate> blockPredicateParser() {
+        return ParserDescriptor.of(new BlockPredicateParser<>(), BlockPredicate.class);
     }
 
+    private final WrappedBrigadierParser<C, BlockPredicateArgument.Result> nativeParser;
     private final ArgumentParser<C, BlockPredicate> mappedParser;
+
+    @Override
+    public @NonNull ArgumentParser<C, BlockPredicateArgument.Result> baseParser() {
+        return this.nativeParser;
+    }
 
     @Override
     public @NonNull CompletableFuture<@NonNull ArgumentParseResult<BlockPredicate>> parseFuture(

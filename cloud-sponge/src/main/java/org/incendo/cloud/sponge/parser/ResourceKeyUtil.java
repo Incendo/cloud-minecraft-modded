@@ -23,10 +23,7 @@
 //
 package org.incendo.cloud.sponge.parser;
 
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.parser.ArgumentParseResult;
@@ -40,24 +37,8 @@ final class ResourceKeyUtil {
     private ResourceKeyUtil() {
     }
 
-    private static final SimpleCommandExceptionType ERROR_INVALID_RESOURCE_LOCATION;
-
-    static {
-        try {
-            // ERROR_INVALID (todo: use accessor)
-            final Field errorInvalidResourceLocationField = Arrays.stream(ResourceLocation.class.getDeclaredFields())
-                    .filter(it -> it.getType().equals(SimpleCommandExceptionType.class))
-                    .findFirst()
-                    .orElseThrow(IllegalStateException::new);
-            errorInvalidResourceLocationField.setAccessible(true);
-            ERROR_INVALID_RESOURCE_LOCATION = (SimpleCommandExceptionType) errorInvalidResourceLocationField.get(null);
-        } catch (final Exception ex) {
-            throw new RuntimeException("Couldn't access ERROR_INVALID command exception type.", ex);
-        }
-    }
-
     static <T> ArgumentParseResult<T> invalidResourceKey() {
-        return ArgumentParseResult.failure(ERROR_INVALID_RESOURCE_LOCATION.create());
+        return ArgumentParseResult.failure(Identifier.ERROR_INVALID.create());
     }
 
     static @Nullable ResourceKey resourceKey(final @NonNull String input) {

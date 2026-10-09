@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.server.players.NameAndId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
@@ -76,7 +77,7 @@ public final class GameProfileCollectionParser<C> implements NodeSource,
         new WrappedBrigadierParser<C, GameProfileArgument.Result>(
             net.minecraft.commands.arguments.GameProfileArgument.gameProfile()
         ).flatMapSuccess((ctx, argumentResult) -> {
-            final Collection<com.mojang.authlib.GameProfile> profiles;
+            final Collection<NameAndId> profiles;
             try {
                 profiles = argumentResult.getNames(
                     (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE)

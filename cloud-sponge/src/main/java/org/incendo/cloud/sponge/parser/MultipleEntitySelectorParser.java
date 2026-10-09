@@ -85,7 +85,7 @@ public final class MultipleEntitySelectorParser<C> implements NodeSource,
             final List<Entity> entities;
             try {
                 entities = parsed.findEntities(
-                    ((CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)).withPermission(2)
+                    (CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)
                 ).stream().map(e -> (Entity) e).collect(Collectors.toList());
             } catch (final CommandSyntaxException ex) {
                 return ArgumentParseResult.failure(ex);

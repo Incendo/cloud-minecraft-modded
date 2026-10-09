@@ -152,10 +152,10 @@ public final class CloudExamplePlugin {
 
     @Listener
     public void onRegisterCommands(final RegisterCommandEvent<org.spongepowered.api.command.Command.Parameterized> event) {
-        this.registerCommands(event.registryHolder());
+        this.registerCommands();
     }
 
-    private void registerCommands(final RegistryHolder registryHolder) {
+    private void registerCommands() {
         this.commandManager.command(this.commandManager.commandBuilder("cloud_test1")
             .permission("cloud.test1")
             .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
@@ -189,11 +189,10 @@ public final class CloudExamplePlugin {
             .optional("level", integerParser(), DefaultValue.constant(1))
             .handler(ctx -> {
                 final Object subject = ctx.sender().subject();
-                if (!(subject instanceof Player)) {
+                if (!(subject instanceof Player player)) {
                     ctx.sender().audience().sendMessage(text("This command is for players only!", RED));
                     return;
                 }
-                final Player player = (Player) subject;
                 final Hotbar hotbar = player.inventory().hotbar();
                 final int index = hotbar.selectedSlotIndex();
                 final Slot slot = hotbar.slot(index).get();
@@ -229,7 +228,7 @@ public final class CloudExamplePlugin {
                 final int first = ctx.get("first");
                 final int second = ctx.get("second");
                 final Operator operator = ctx.get("operator");
-                if (!(operator instanceof Operator.Simple)) {
+                if (!(operator instanceof Operator.Simple simple)) {
                     ctx.sender().audience().sendMessage(
                         text("That type of operator is not applicable here!", RED)
                     );
@@ -245,7 +244,7 @@ public final class CloudExamplePlugin {
                     .append(space())
                     .append(text('→', BLUE))
                     .append(space())
-                    .append(text(((Operator.Simple) operator).apply(first, second)))
+                    .append(text(simple.apply(first, second)))
                 );
             }));
         this.commandManager.command(cloud.literal("modifylevel")
@@ -253,25 +252,24 @@ public final class CloudExamplePlugin {
             .required("value", doubleParser())
             .handler(ctx -> {
                 final Object subject = ctx.sender().subject();
-                if (!(subject instanceof Player)) { // todo: a solution to this
+                if (!(subject instanceof Player player)) { // todo: a solution to this
                     ctx.sender().audience().sendMessage(text("This command is for players only!", RED));
                     return;
                 }
-                final Player player = (Player) subject;
                 final Operator operator = ctx.get("operator");
                 final double value = ctx.get("value");
-                if (operator == Operators.ASSIGN.get()) {
+                if (operator.equals(Operators.ASSIGN.get())) {
                     player.offer(Keys.EXPERIENCE, (int) value);
                     return;
                 }
-                if (!(operator instanceof Operator.Simple)) {
+                if (!(operator instanceof Operator.Simple simple)) {
                     ctx.sender().audience().sendMessage(
                         text("That type of operator is not applicable here!", RED)
                     );
                     return;
                 }
                 final int currentXp = player.get(Keys.EXPERIENCE).get();
-                player.offer(Keys.EXPERIENCE, (int) ((Operator.Simple) operator).apply(currentXp, value));
+                player.offer(Keys.EXPERIENCE, (int) simple.apply(currentXp, value));
             }));
         this.commandManager.command(cloud.literal("selectplayer")
             .required("player", singlePlayerSelectorParser())
@@ -288,11 +286,11 @@ public final class CloudExamplePlugin {
                 ctx.sender().audience().sendMessage(text(ctx.<ServerWorld>get("world").key().asString()));
             }));
         this.commandManager.command(cloud.literal("test_item")
-            .required("item", protoItemStackParser(registryHolder))
+            .required("item", protoItemStackParser())
             .literal("is")
-            .required("predicate", itemStackPredicateParser(registryHolder))
+            .required("predicate", itemStackPredicateParser())
             .handler(ctx -> {
-                final ItemStack item = ctx.<ProtoItemStack>get("item").createItemStack(1, true);
+                final ItemStack item = ctx.<ProtoItemStack>get("item").createItemStack(1);
                 final ItemStackPredicate predicate = ctx.get("predicate");
                 final Component message = text(builder -> {
                     builder.append(item.get(Keys.DISPLAY_NAME).orElse(item.type().asComponent()))
@@ -382,7 +380,7 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("setblock")
             .permission("cloud.setblock")
             .required("position", vector3iParser())
-            .required("block", blockInputParser(registryHolder))
+            .required("block", blockInputParser())
             .handler(ctx -> {
                 final Vector3i position = ctx.get("position");
                 final BlockInput input = ctx.get("block");
@@ -396,7 +394,7 @@ public final class CloudExamplePlugin {
                 }
             }));
         this.commandManager.command(cloud.literal("blockinput")
-            .required("block", blockInputParser(registryHolder))
+            .required("block", blockInputParser())
             .handler(ctx -> {
                 final BlockInput input = ctx.get("block");
                 ctx.sender().audience().sendMessage(text(
@@ -409,12 +407,12 @@ public final class CloudExamplePlugin {
             .requiredArgumentPair(
                 "itemstack",
                 TypeToken.get(ItemStack.class),
-                "item", protoItemStackParser(registryHolder),
+                "item", protoItemStackParser(),
                 "amount", integerParser(),
                 (sender, proto, amount) -> {
                     try {
                         return ArgumentParseResult.successFuture(
-                            proto.createItemStack(amount, true)
+                            proto.createItemStack(amount)
                         );
                     } catch (final ComponentMessageRuntimeException e) {
                         return ArgumentParseResult.failureFuture(e);
@@ -429,9 +427,9 @@ public final class CloudExamplePlugin {
                 // todo: cause.cause().root() returns DedicatedServer during permission checks?
                 return cause.subject() instanceof Player;
             }))
-            .required("predicate", blockPredicateParser(registryHolder))
+            .required("predicate", blockPredicateParser())
             .required("radius", integerParser())
-            .required("replacement", blockInputParser(registryHolder))
+            .required("replacement", blockInputParser())
             .handler(ctx -> {
                 final BlockPredicate predicate = ctx.get("predicate");
                 final int radius = ctx.get("radius");

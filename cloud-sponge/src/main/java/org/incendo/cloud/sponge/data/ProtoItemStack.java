@@ -30,7 +30,7 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 /**
- * Result for an argument which parses an {@link ItemType} and optional extra NBT data.
+ * Result for an argument which parses an {@link ItemType} and optional data components.
  */
 public interface ProtoItemStack {
 
@@ -44,30 +44,23 @@ public interface ProtoItemStack {
     /**
      * Create a new {@link ItemStack} from the state of this {@link ProtoItemStack}.
      *
-     * <p>A {@link ComponentMessageRuntimeException} will be thrown if the stack size was too large for the
-     * provided {@link ItemType}.</p>
+     * <p>Vanilla validates the resulting components and maximum stack size.</p>
      *
-     * @param stackSize               stack size
-     * @param respectMaximumStackSize whether to respect {@link ItemType#maxStackQuantity()}
+     * @param stackSize stack size
      * @return the created {@link ItemStack}
      * @throws ComponentMessageRuntimeException if the {@link ItemStack} could not be created
      */
-    @NonNull ItemStack createItemStack(int stackSize, boolean respectMaximumStackSize) throws ComponentMessageRuntimeException;
+    @NonNull ItemStack createItemStack(int stackSize) throws ComponentMessageRuntimeException;
 
     /**
      * Create a new {@link ItemStackSnapshot} from the state of this {@link ProtoItemStack}.
      *
-     * <p>A {@link ComponentMessageRuntimeException} will be thrown if the stack size was too large for the
-     * provided {@link ItemType}.</p>
+     * <p>Vanilla validates the resulting components and maximum stack size.</p>
      *
-     * @param stackSize               stack size
-     * @param respectMaximumStackSize whether to respect {@link ItemType#maxStackQuantity()}
+     * @param stackSize stack size
      * @return the created {@link ItemStackSnapshot}
      * @throws ComponentMessageRuntimeException if the {@link ItemStackSnapshot} could not be created
      */
-    @NonNull ItemStackSnapshot createItemStackSnapshot(
-            int stackSize,
-            boolean respectMaximumStackSize
-    ) throws ComponentMessageRuntimeException;
+    @NonNull ItemStackSnapshot createItemStackSnapshot(int stackSize) throws ComponentMessageRuntimeException;
 
 }

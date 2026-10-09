@@ -25,14 +25,15 @@ package org.incendo.cloud.sponge.parser;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.sponge.NodeSource;
 import org.incendo.cloud.sponge.data.ItemStackPredicate;
@@ -49,27 +50,32 @@ import org.spongepowered.api.registry.RegistryHolder;
  * @param <C> command sender type
  */
 public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, ItemStackPredicate>,
-    NodeSource, SuggestionProvider<C> {
+    MappedArgumentParser<C, ItemPredicateArgument.Result, ItemStackPredicate>, NodeSource, SuggestionProvider<C> {
 
-    private ItemStackPredicateParser(final RegistryHolder registryHolder) {
-        //todo: Use ContextualArgumentTypeProvider
-        this.mappedParser = new WrappedBrigadierParser<C, ItemPredicateArgument.Result>(
-            ItemPredicateArgument.itemPredicate((CommandBuildContext) registryHolder)
-        ).flatMapSuccess((ctx, result) -> ArgumentParseResult.successFuture(new ItemStackPredicateImpl(result)));
+    private ItemStackPredicateParser() {
+        this.nativeParser = new WrappedBrigadierParser<>(new ContextualArgumentTypeProvider<>(ItemPredicateArgument::itemPredicate));
+        this.mappedParser = this.nativeParser.flatMapSuccess(
+            (ctx, result) -> ArgumentParseResult.successFuture(new ItemStackPredicateImpl(result))
+        );
     }
 
     /**
      * Creates a new {@link ItemStackPredicateParser}.
      *
      * @param <C> command sender type
-     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, ItemStackPredicate> itemStackPredicateParser(final RegistryHolder registryHolder) {
-        return ParserDescriptor.of(new ItemStackPredicateParser<>(registryHolder), ItemStackPredicate.class);
+    public static <C> ParserDescriptor<C, ItemStackPredicate> itemStackPredicateParser() {
+        return ParserDescriptor.of(new ItemStackPredicateParser<>(), ItemStackPredicate.class);
     }
 
+    private final WrappedBrigadierParser<C, ItemPredicateArgument.Result> nativeParser;
     private final ArgumentParser<C, ItemStackPredicate> mappedParser;
+
+    @Override
+    public @NonNull ArgumentParser<C, ItemPredicateArgument.Result> baseParser() {
+        return this.nativeParser;
+    }
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ItemStackPredicate>> parseFuture(

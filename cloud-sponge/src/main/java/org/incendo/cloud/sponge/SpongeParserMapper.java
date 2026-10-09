@@ -82,8 +82,9 @@ public final class SpongeParserMapper<C> {
         final ArgumentParser<C, ?> argumentParser, final RegistryHolder holder) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result;
         ArgumentParser<C, ?> parser = argumentParser;
-        while (parser instanceof MappedArgumentParser<?, ?, ?>) {
-            parser = ((MappedArgumentParser<C, ?, ?>) parser).baseParser();
+        // Sponge's mapped parsers supply their own native tree nodes; do not unwrap past them.
+        while (parser instanceof MappedArgumentParser<C, ?, ?> mapped && !(parser instanceof NodeSource)) {
+            parser = mapped.baseParser();
         }
         final Mapping<C, ?> mapper = this.getOrCreateMappers(holder).get(parser.getClass());
         if (mapper != null) {

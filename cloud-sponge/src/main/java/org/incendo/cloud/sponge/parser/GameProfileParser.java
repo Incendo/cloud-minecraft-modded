@@ -27,6 +27,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.players.NameAndId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
@@ -68,7 +69,7 @@ public final class GameProfileParser<C> implements ArgumentParser.FutureArgument
         new WrappedBrigadierParser<C, net.minecraft.commands.arguments.GameProfileArgument.Result>(
             net.minecraft.commands.arguments.GameProfileArgument.gameProfile()
         ).flatMapSuccess((ctx, argumentResult) -> {
-            final Collection<com.mojang.authlib.GameProfile> profiles;
+            final Collection<NameAndId> profiles;
             try {
                 profiles = argumentResult.getNames(
                     (CommandSourceStack) ctx.get(SpongeCommandContextKeys.COMMAND_CAUSE)

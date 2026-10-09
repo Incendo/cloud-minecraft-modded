@@ -81,7 +81,7 @@ public final class SingleEntitySelectorParser<C> implements NodeSource,
             final Entity entity;
             try {
                 entity = (Entity) parsed.findSingleEntity(
-                    ((CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)).withPermission(2)
+                    (CommandSourceStack) commandContext.get(SpongeCommandContextKeys.COMMAND_CAUSE)
                 );
             } catch (final CommandSyntaxException ex) {
                 return ArgumentParseResult.failure(ex);

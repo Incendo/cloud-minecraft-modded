@@ -25,14 +25,15 @@ package org.incendo.cloud.sponge.parser;
 
 import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ComponentArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.minecraft.modded.internal.ContextualArgumentTypeProvider;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.sponge.NodeSource;
 import org.incendo.cloud.suggestion.Suggestion;
@@ -43,17 +44,16 @@ import org.spongepowered.api.registry.RegistryHolder;
 import org.spongepowered.common.adventure.SpongeAdventure;
 
 /**
- * An argument for parsing {@link Component Components} from json formatted text.
+ * An argument for parsing {@link Component Components} using Minecraft's text-component syntax.
  *
  * @param <C> command sender type
  */
-public final class ComponentParser<C> implements ArgumentParser.FutureArgumentParser<C, Component>, NodeSource, SuggestionProvider<C> {
+public final class ComponentParser<C> implements ArgumentParser.FutureArgumentParser<C, Component>,
+    MappedArgumentParser<C, net.minecraft.network.chat.Component, Component>, NodeSource, SuggestionProvider<C> {
 
-    private ComponentParser(final RegistryHolder registryHolder) {
-        //todo: Use ContextualArgumentTypeProvider
-        this.mappedParser = new WrappedBrigadierParser<C, net.minecraft.network.chat.Component>(
-            ComponentArgument.textComponent((CommandBuildContext) registryHolder)
-        ).flatMapSuccess((ctx, component) ->
+    private ComponentParser() {
+        this.nativeParser = new WrappedBrigadierParser<>(new ContextualArgumentTypeProvider<>(ComponentArgument::textComponent));
+        this.mappedParser = this.nativeParser.flatMapSuccess((ctx, component) ->
             ArgumentParseResult.successFuture(SpongeAdventure.asAdventure(component)));
     }
 
@@ -61,14 +61,19 @@ public final class ComponentParser<C> implements ArgumentParser.FutureArgumentPa
      * Creates a new {@link ComponentParser}.
      *
      * @param <C> command sender type
-     * @param registryHolder register holder
      * @return new parser
      */
-    public static <C> ParserDescriptor<C, Component> componentParser(final RegistryHolder registryHolder) {
-        return ParserDescriptor.of(new ComponentParser<>(registryHolder), Component.class);
+    public static <C> ParserDescriptor<C, Component> componentParser() {
+        return ParserDescriptor.of(new ComponentParser<>(), Component.class);
     }
 
+    private final WrappedBrigadierParser<C, net.minecraft.network.chat.Component> nativeParser;
     private final ArgumentParser<C, Component> mappedParser;
+
+    @Override
+    public @NonNull ArgumentParser<C, net.minecraft.network.chat.Component> baseParser() {
+        return this.nativeParser;
+    }
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull Component>> parseFuture(
