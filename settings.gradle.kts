@@ -6,10 +6,18 @@ pluginManagement {
             mavenContent { snapshotsOnly() }
         }
         maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.spongepowered.org/repository/maven-public/") {
+            mavenContent { includeGroup("org.spongepowered") }
+        }
         maven("https://maven.fabricmc.net/")
         maven("https://maven.neoforged.net/releases/")
         maven("https://maven.architectury.dev/")
         maven("https://repo.jpenilla.xyz/snapshots/")
+    }
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.spongepowered.org/repository/maven-public/")
     }
     includeBuild("gradle/build-logic")
 }
@@ -26,6 +34,9 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://central.sonatype.com/repository/maven-snapshots/") {
             mavenContent { snapshotsOnly() }
+        }
+        maven("https://repo.spongepowered.org/repository/maven-public/") {
+            mavenContent { includeGroup("org.spongepowered") }
         }
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://maven.fabricmc.net/")
@@ -44,3 +55,6 @@ rootProject.name = "cloud-minecraft-modded"
 include("cloud-minecraft-modded-common")
 include("cloud-fabric")
 include("cloud-neoforge")
+include("cloud-sponge")
+include("examples/example-sponge")
+findProject(":examples/example-sponge")?.name = "example-sponge"
