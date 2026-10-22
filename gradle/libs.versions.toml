@@ -4,7 +4,7 @@ mod-publish-plugin = "2.2.0"
 checkstyle = "10.26.1"
 stylecheck = "0.2.1"
 ktlint = "1.8.0"
-errorprone = "2.50.0"
+errorprone = "2.51.0"
 
 cloud = "2.1.0"
 cloudMinecraft = "2.0.1"
